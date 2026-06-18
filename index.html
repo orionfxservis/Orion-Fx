@@ -606,7 +606,8 @@
     .project-thumb {
       width: 100%;
       height: 160px;
-      object-fit: cover;
+      object-fit: contain;
+      background-color: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
       margin-bottom: 14px;
       transition: transform 0.5s ease;
@@ -1499,7 +1500,7 @@
             </article>
           `).join("");
           if (window.observer) {
-            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            document.querySelectorAll('#projectsGrid .reveal').forEach(el => window.observer.observe(el));
           }
         }
       }
@@ -1526,7 +1527,7 @@
                   </article>
                 `).join("");
                 if (window.observer) {
-                  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+                  document.querySelectorAll('#projectsGrid .reveal').forEach(el => window.observer.observe(el));
                 }
               }
             }).catch(() => {
@@ -1583,12 +1584,12 @@
       });
 
       // Intersection Observer for Animations
-      const observer = new IntersectionObserver((entries) => {
+      window.observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
             // Optional: unobserve if you only want it to run once
-            observer.unobserve(entry.target);
+            window.observer.unobserve(entry.target);
           }
         });
       }, {
@@ -1596,7 +1597,7 @@
         rootMargin: "0px 0px -50px 0px"
       });
 
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      document.querySelectorAll('.reveal').forEach(el => window.observer.observe(el));
 
       // Contact Form Submission Handler
       const contactForm = document.getElementById('contactForm');
