@@ -1,12 +1,19 @@
-/index.html
-/pages/blog.html
-/pages/privacy-policy.html
-/pages/terms-of-service.html
-/pages/cookie-policy.html
-/pages/disclaimer.html
-
-/css/style.css
-/js/main.js
-
-/assets/images/
-/assets/icons/
+/admin
+│
+├── index.html
+├── blogs.html
+├── leads.html
+├── analytics.html
+├── settings.html
+│
+├── css
+│   ├── admin.css
+│
+├── js
+│   ├── dashboard.js
+│   ├── blogs.js
+│   └── analytics.js
+│
+└── assets
+    ├── icons
+    └── images

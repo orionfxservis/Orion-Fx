@@ -411,41 +411,63 @@
     </div>
   </footer>
 
-  <script src="../assets/projects-data.js"></script>
+  <script src="../js/projects-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const grid = document.getElementById("projectsGrid");
-      const projects = window.orionProjects || [];
+      
+      function renderLocalProjects() {
+        const projects = window.orionProjects || [];
+        projects.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderList(projects);
+      }
 
-      // Sort projects by date descending (newest first)
-      projects.sort((a, b) => new Date(b.date) - new Date(a.date));
+      function renderList(projectsList) {
+        grid.innerHTML = projectsList.map((project, idx) => `
+          <article class="card reveal" style="transition-delay: ${idx * 100}ms;">
+            <div>
+              <a href="${project.link}" target="_blank" rel="noopener" style="display:block; overflow:hidden; border-radius:16px;">
+                <img src="${project.image}" alt="${project.title}" class="project-thumb">
+              </a>
+              <h3>${project.title}</h3>
+              <p class="muted">${project.description}</p>
+            </div>
+            <div>
+              <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
+            </div>
+          </article>
+        `).join("");
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
 
-      grid.innerHTML = projects.map((project, idx) => `
-        <article class="card reveal" style="transition-delay: ${idx * 100}ms;">
-          <div>
-            <a href="${project.link}" target="_blank" rel="noopener" style="display:block; overflow:hidden; border-radius:16px;">
-              <img src="${project.image}" alt="${project.title}" class="project-thumb">
-            </a>
-            <h3>${project.title}</h3>
-            <p class="muted">${project.description}</p>
-          </div>
-          <div>
-            <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
-          </div>
-        </article>
-      `).join("");
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      }
 
-      // Reveal animation observer
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
+        supabase.from('projects')
+          .select('*')
+          .order('date', { ascending: false })
+          .then(({ data: projects, error }) => {
+            if (error || !projects || projects.length === 0) {
+              renderLocalProjects();
+            } else {
+              renderList(projects);
+            }
+          }).catch(() => {
+            renderLocalProjects();
+          });
+      } else {
+        renderLocalProjects();
+      }
     });
   </script>
 </body>

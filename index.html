@@ -1443,7 +1443,9 @@
   <!-- Go to Top Button -->
   <button id="goTopBtn" title="Go to top" onclick="scrollToTop()">↑</button>
 
-  <script src="assets/projects-data.js"></script>
+  <script src="js/projects-data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
   <script>
     // Header Scroll Effect
     const header = document.getElementById('header');
@@ -1477,27 +1479,62 @@
 
     // Scroll Spy & Smooth Scroll Event Listeners
     document.addEventListener("DOMContentLoaded", () => {
-      // Render Latest 3 Projects dynamically
+      // Render Latest 3 Projects dynamically (Supabase with Local Fallback)
       const grid = document.getElementById("projectsGrid");
-      if (grid && window.orionProjects) {
-        const projects = [...window.orionProjects];
-        // Sort projects by date descending (newest first)
-        projects.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        // Take top 3
-        const latestProjects = projects.slice(0, 3);
-        
-        grid.innerHTML = latestProjects.map((project) => `
-          <article class="card project reveal" tabindex="0">
-            <a href="${project.link}" target="_blank" rel="noopener"
-              style="display:block; overflow:hidden; border-radius:16px;">
-              <img src="${project.image}" alt="${project.title}" class="project-thumb">
-            </a>
-            <h3>${project.title}</h3>
-            <p class="muted">${project.description}</p>
-            <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
-          </article>
-        `).join("");
+      
+      function renderLocalFallbackProjects() {
+        if (window.orionProjects) {
+          const projects = [...window.orionProjects];
+          projects.sort((a, b) => new Date(b.date) - new Date(a.date));
+          const latestProjects = projects.slice(0, 3);
+          grid.innerHTML = latestProjects.map((project) => `
+            <article class="card project reveal" tabindex="0">
+              <a href="${project.link}" target="_blank" rel="noopener"
+                style="display:block; overflow:hidden; border-radius:16px;">
+                <img src="${project.image}" alt="${project.title}" class="project-thumb">
+              </a>
+              <h3>${project.title}</h3>
+              <p class="muted">${project.description}</p>
+              <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
+            </article>
+          `).join("");
+          if (window.observer) {
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+          }
+        }
+      }
+
+      if (grid) {
+        if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
+          supabase.from('projects')
+            .select('*')
+            .order('date', { ascending: false })
+            .limit(3)
+            .then(({ data: projects, error }) => {
+              if (error || !projects || projects.length === 0) {
+                renderLocalFallbackProjects();
+              } else {
+                grid.innerHTML = projects.map((project) => `
+                  <article class="card project reveal" tabindex="0">
+                    <a href="${project.link}" target="_blank" rel="noopener"
+                      style="display:block; overflow:hidden; border-radius:16px;">
+                      <img src="${project.image}" alt="${project.title}" class="project-thumb">
+                    </a>
+                    <h3>${project.title}</h3>
+                    <p class="muted">${project.description}</p>
+                    <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
+                  </article>
+                `).join("");
+                if (window.observer) {
+                  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+                }
+              }
+            }).catch(() => {
+              renderLocalFallbackProjects();
+            });
+        } else {
+          renderLocalFallbackProjects();
+        }
       }
 
       const sections = document.querySelectorAll('main[id], section[id]');
@@ -1564,8 +1601,27 @@
       // Contact Form Submission Handler
       const contactForm = document.getElementById('contactForm');
       if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
           e.preventDefault();
+          const name = document.getElementById('contactFirstName').value + ' ' + document.getElementById('contactLastName').value;
+          const email = document.getElementById('contactEmail').value;
+          const phone = document.getElementById('contactPhone').value;
+          const service = document.getElementById('contactService').value;
+          const message = document.getElementById('contactMessage').value;
+
+          const isSupabaseConfigured = window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id");
+
+          if (isSupabaseConfigured) {
+            try {
+              const { error } = await supabase.from('leads').insert([{
+                name, email, phone, service, message, status: 'New'
+              }]);
+              if (error) console.error("Error saving lead to Supabase:", error);
+            } catch (err) {
+              console.error("Supabase insert failed:", err);
+            }
+          }
+
           alert('Thank you for contacting Orion Fx! We will get back to you within 24 hours.');
           contactForm.reset();
         });
