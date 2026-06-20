@@ -264,7 +264,8 @@
     .project-thumb {
       width: 100%;
       height: 180px;
-      object-fit: contain;
+      object-fit: cover;
+      object-position: center;
       background-color: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
       margin-bottom: 14px;
@@ -392,7 +393,7 @@
 
   <main class="container portfolio-content">
     <h1 class="reveal">Our Projects</h1>
-    <p class="lead reveal">A comprehensive archive of websites, platforms, and designs crafted by OrionFx.</p>
+    <p class="lead reveal">A comprehensive archive of websites, platforms, and designs crafted by Orion Fx.</p>
 
     <div id="projectsGrid" class="grid grid-3">
       <!-- Loaded dynamically via JavaScript -->
@@ -408,7 +409,7 @@
         <a href="../pages/cookie-policy.html">Cookie Policy</a>
         <a href="../pages/disclaimer.html">Disclaimer</a>
       </div>
-      <p>&copy; 2026 OrionFx. All rights reserved.</p>
+      <p>&copy; 2026 Orion Fx. All rights reserved.</p>
     </div>
   </footer>
 
@@ -426,20 +427,48 @@
       }
 
       function renderList(projectsList) {
-        grid.innerHTML = projectsList.map((project, idx) => `
+        grid.innerHTML = projectsList.map((project, idx) => {
+          let title = project.project_name || project.title || "Project";
+          let image = project.featured_image || project.image || "";
+          let link = project.project_url || project.link || "#";
+          let description = project.description || "";
+
+          // Resolve absolute URLs to local relative paths for testing
+          if (image.startsWith("https://orionfxservis.github.io/Orion-Fx/")) {
+            image = image.replace("https://orionfxservis.github.io/Orion-Fx/", "");
+          }
+          // Redirect stale filenames to updated files
+          if (image.includes("cbpmms.jpeg")) {
+            image = "assets/project images/building-management.JPG";
+          }
+          if (image.includes("baji-g.jpeg") || title.toLowerCase().includes("baji")) {
+            image = "assets/project images/bajig.JPG";
+          }
+          if (image.includes("ghar-ka-khana.jpeg") && title.toLowerCase().includes("stopbuy")) {
+            image = "assets/project images/stopbuy-logo.png";
+          }
+
+          // Prepend parent path for subpages directory
+          let imgPath = image;
+          if (imgPath && !imgPath.startsWith("http") && !imgPath.startsWith("/")) {
+            imgPath = "../" + imgPath;
+          }
+
+          return `
           <article class="card reveal" style="transition-delay: ${idx * 100}ms;">
             <div>
-              <a href="${project.link}" target="_blank" rel="noopener" style="display:block; overflow:hidden; border-radius:16px;">
-                <img src="${project.image}" alt="${project.title}" class="project-thumb">
+              <a href="${link}" target="_blank" rel="noopener" style="display:block; overflow:hidden; border-radius:16px;">
+                <img src="${imgPath}" alt="${title}" class="project-thumb">
               </a>
-              <h3>${project.title}</h3>
-              <p class="muted">${project.description}</p>
+              <h3>${title}</h3>
+              <p class="muted">${description}</p>
             </div>
             <div>
-              <a href="${project.link}" target="_blank" class="project-link">Visit Website</a>
+              <a href="${link}" target="_blank" class="project-link">Visit Website</a>
             </div>
           </article>
-        `).join("");
+        `;
+        }).join("");
         
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
