@@ -650,145 +650,158 @@
       transform: translateX(5px);
     }
 
-    /* --- Work Slider --- */
-    .work-slider {
+    .live-projects-container {
       position: relative;
-      height: 580px;
+      height: 490px;
       overflow: hidden;
-      border-radius: var(--radius);
+      border-radius: 32px;
       border: 1px solid var(--card-border);
-      background: var(--card-bg);
-      backdrop-filter: var(--glass);
       box-shadow: var(--shadow);
     }
 
-    .slide {
+    .project {
       position: absolute;
       inset: 0;
       opacity: 0;
       transition: opacity 0.8s ease;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 60px;
       z-index: 1;
     }
 
-    .slide.active {
+    .project.active {
       opacity: 1;
       z-index: 2;
     }
 
-    .slide img.slide-bg {
+    .project img {
       position: absolute;
-      right: 60px;
-      top: 40px;
-      bottom: 40px;
-      width: calc(100% - 700px);
-      height: calc(100% - 80px);
-      object-fit: contain;
-      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
     }
 
-    .slide .content {
-      max-width: 540px;
-      position: relative;
-      z-index: 10;
-      transform: translateY(30px);
+    .live-projects-container .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), transparent 55%),
+                  linear-gradient(0deg, rgba(0, 0, 0, 0.55), transparent);
+      z-index: -1;
+    }
+
+    .live-projects-container .content {
+      position: absolute;
+      left: 60px;
+      bottom: 70px;
+      max-width: 520px;
+      z-index: 5;
+      transform: translateY(20px);
       opacity: 0;
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
-      background: rgba(3, 5, 8, 0.75);
-      backdrop-filter: var(--glass);
-      padding: 40px;
-      border-radius: 20px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
     }
 
-    .slide.active .content {
+    .project.active .content {
       transform: translateY(0);
       opacity: 1;
     }
 
-    .slide .content h2 {
-      font-size: clamp(24px, 3.5vw, 36px);
+    .live-projects-container .content h2 {
+      font-size: clamp(32px, 5vw, 64px);
+      color: white;
+      margin-bottom: 14px;
       font-weight: 700;
-      color: #fff;
-      margin-bottom: 12px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      line-height: 1.1;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
 
-    .slide .content p {
-      font-size: clamp(14px, 1.5vw, 16px);
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 24px;
+    .live-projects-container .content p {
+      color: #ddd;
+      font-size: 18px;
+      line-height: 1.8;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
-    .work-slider .cards {
-      display: none;
+    .live-projects-container .content a {
+      display: inline-block;
+      margin-top: 28px;
+      color: #FFD23F;
+      font-weight: 600;
+      font-size: 16px;
+      transition: 0.3s;
     }
 
-    .work-slider .cards .card {
-      width: 80px;
-      height: 120px;
-      border-radius: 20px;
-      opacity: 0.5;
-      padding: 0;
+    .live-projects-container .content a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px #FFD23F;
+    }
+
+    .thumbs {
+      position: absolute;
+      right: 60px;
+      bottom: 60px;
+      display: flex;
+      gap: 14px;
+      z-index: 10;
+    }
+
+    .thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: white;
       cursor: pointer;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-      background-size: cover;
-      background-position: center;
-      transform: none;
-      backdrop-filter: none;
+      font-weight: 600;
+      font-family: var(--font-display);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .work-slider .cards .card::before {
-      display: none;
+    .thumb:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .work-slider .cards .card:hover {
-      opacity: 0.8;
-      border-color: var(--primary);
-      transform: translateY(-5px);
-    }
-
-    .work-slider .cards .card.active {
-      width: 160px;
-      opacity: 1;
-      border-color: var(--primary);
-      box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-      transform: none;
+    .thumb.active {
+      width: 84px;
+      background: #FFD23F;
+      color: black;
+      border-color: #FFD23F;
+      box-shadow: 0 0 20px rgba(255, 210, 63, 0.4);
     }
 
     @media (max-width: 768px) {
-      .work-slider {
-        height: auto;
-        min-height: 520px;
+      .live-projects-container {
+        height: 540px;
       }
-      .slide {
-        position: relative;
-        flex-direction: column-reverse;
-        justify-content: flex-end;
-        align-items: stretch;
-        padding: 20px;
-        height: auto;
+      .live-projects-container .content {
+        left: 30px;
+        bottom: 120px;
+        max-width: calc(100% - 60px);
       }
-      .slide img.slide-bg {
-        position: relative;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-        height: 200px;
-        margin-bottom: 16px;
-        object-fit: contain;
+      .live-projects-container .content h2 {
+        font-size: 28px;
       }
-      .slide .content {
-        max-width: 100%;
-        padding: 20px;
+      .live-projects-container .content p {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .thumbs {
+        right: 30px;
+        bottom: 30px;
+        gap: 8px;
+      }
+      .thumb {
+        width: 45px;
+        height: 45px;
+        font-size: 14px;
+      }
+      .thumb.active {
+        width: 65px;
       }
     }
 
@@ -1187,8 +1200,47 @@
         text-align: center;
       }
 
-      .footer {
-        padding: 40px 0 20px;
+    }
+
+
+    /* Newsletter Box */
+    .newsletter {
+      margin-top: 40px;
+      padding: 50px;
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.05), rgba(123, 97, 255, 0.08));
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .newsletter input {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      width: 280px;
+      margin-right: 10px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .newsletter input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .newsletter input {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 16px;
       }
     }
   </style>
@@ -1366,7 +1418,7 @@
       <h2 id="projects-title" class="reveal">🎯 Live Projects</h2>
       <p class="lead muted reveal">Websites and digital solutions already launched and serving businesses.</p>
 
-      <div id="workSlider" class="work-slider reveal" style="margin-top:40px">
+      <div id="liveProjectsSlider" class="live-projects-container reveal" style="margin-top:40px">
         <!-- Projects loaded dynamically from projects-data.js or Supabase -->
       </div>
       <div style="text-align:center;margin-top:40px;">
@@ -1385,32 +1437,39 @@
             Insights on web design, SEO and digital marketing.
         </p>
 
-        <div class="grid grid-3">
-
-            <article class="card">
+        <div class="grid grid-3" style="margin-top:40px">
+            <article class="card reveal" tabindex="0">
+                <div class="blog-thumb-placeholder" style="background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(123, 97, 255, 0.15)); border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);">
+                    <i class="fas fa-laptop-code" style="font-size: 44px; color: var(--primary); text-shadow: 0 0 15px var(--primary);"></i>
+                </div>
                 <h3>Why Every Business Needs a Website in 2026</h3>
-                <p>
+                <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
                     Discover how a professional website builds trust and increases sales.
                 </p>
-                <a href="pages/blog.html">Read More →</a>
+                <a href="pages/blog.html" class="project-link">Read More</a>
             </article>
 
-            <article class="card">
+            <article class="card reveal" tabindex="0">
+                <div class="blog-thumb-placeholder" style="background: linear-gradient(135deg, rgba(123, 97, 255, 0.1), rgba(255, 46, 126, 0.15)); border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(123, 97, 255, 0.05);">
+                    <i class="fas fa-search" style="font-size: 44px; color: var(--accent); text-shadow: 0 0 15px var(--accent);"></i>
+                </div>
                 <h3>SEO Tips for Small Businesses</h3>
-                <p>
+                <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
                     Practical strategies to improve your Google rankings.
                 </p>
-                <a href="pages/blog.html">Read More →</a>
+                <a href="pages/blog.html" class="project-link">Read More</a>
             </article>
 
-            <article class="card">
+            <article class="card reveal" tabindex="0">
+                <div class="blog-thumb-placeholder" style="background: linear-gradient(135deg, rgba(255, 46, 126, 0.1), rgba(0, 229, 255, 0.15)); border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(255, 46, 126, 0.05);">
+                    <i class="fas fa-mobile-screen-button" style="font-size: 44px; color: var(--tertiary); text-shadow: 0 0 15px var(--tertiary);"></i>
+                </div>
                 <h3>Mobile Responsive Design Matters</h3>
-                <p>
+                <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
                     Learn why mobile-first websites perform better.
                 </p>
-                <a href="pages/blog.html">Read More →</a>
+                <a href="pages/blog.html" class="project-link">Read More</a>
             </article>
-
         </div>
 
         <div style="text-align:center;margin-top:30px;">
@@ -1522,13 +1581,26 @@
           <div class="info-card flex-col">
             <h4>Follow Us</h4>
             <div class="social-row">
-              <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-              <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-              <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.facebook.com/profile.php?id=100089816852155" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-icon" aria-label="GitHub"><i class="fab fa-github"></i></a>
+              <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             </div>
           </div>
         </div>
+      </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="container" style="padding-top: 0; padding-bottom: 80px;">
+    <!-- Stay Updated -->
+    <div class="newsletter reveal">
+      <h2>Stay Updated</h2>
+      <p class="muted">Get the latest articles and performance optimization tricks directly in your inbox.</p>
+      <div style="margin-top: 24px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;">
+        <input type="email" placeholder="Enter your email address" aria-label="Email address">
+        <button class="btn-primary">Subscribe</button>
       </div>
     </div>
   </section>
@@ -1623,8 +1695,8 @@
 
     // Scroll Spy & Smooth Scroll Event Listeners
     document.addEventListener("DOMContentLoaded", () => {
-      // Render Latest 3 Projects dynamically inside Work Slider
-      const sliderContainer = document.getElementById("workSlider");
+      // Render Latest 3 Projects dynamically inside Live Projects Slider
+      const sliderContainer = document.getElementById("liveProjectsSlider");
       let autoSlideInterval;
       let currentSlideIndex = 0;
 
@@ -1656,40 +1728,40 @@
           return { title, image, link, description };
         });
 
-        // Render slides HTML
+        // Render slides HTML with overlay and layout specs
         let slidesHtml = normalizedProjects.map((project, idx) => `
-          <div class="slide ${idx === 0 ? 'active' : ''}">
-            <img src="${project.image}" alt="${project.title}" class="slide-bg">
+          <div class="project ${idx === 0 ? 'active' : ''}">
+            <img src="${project.image}" alt="${project.title}">
+            <div class="overlay"></div>
             <div class="content">
-              <h2>${project.title}</h2>
               <p>${project.description}</p>
-              <a href="${project.link}" target="_blank" rel="noopener" class="btn btn-primary">
-                Visit Website <i class="fas fa-external-link-alt" style="margin-left: 6px;"></i>
-              </a>
+              <a href="${project.link}" target="_blank" rel="noopener">View Project <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></a>
             </div>
           </div>
         `).join("");
 
-        // Render card indicators
-        let cardsHtml = `
-          <div class="cards">
+        // Render thumbs indicators
+        let thumbsHtml = `
+          <div class="thumbs">
             ${normalizedProjects.map((project, idx) => `
-              <div class="card ${idx === 0 ? 'active' : ''}" style="background-image: url('${project.image}');" data-index="${idx}"></div>
+              <div class="thumb ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+                ${String(idx + 1).padStart(2, '0')}
+              </div>
             `).join("")}
           </div>
         `;
 
-        sliderContainer.innerHTML = slidesHtml + cardsHtml;
+        sliderContainer.innerHTML = slidesHtml + thumbsHtml;
 
-        const slides = sliderContainer.querySelectorAll(".slide");
-        const cards = sliderContainer.querySelectorAll(".cards .card");
+        const slides = sliderContainer.querySelectorAll(".project");
+        const thumbs = sliderContainer.querySelectorAll(".thumbs .thumb");
 
         function goToSlide(index) {
           slides.forEach(s => s.classList.remove("active"));
-          cards.forEach(c => c.classList.remove("active"));
+          thumbs.forEach(t => t.classList.remove("active"));
 
           slides[index].classList.add("active");
-          cards[index].classList.add("active");
+          thumbs[index].classList.add("active");
           currentSlideIndex = index;
         }
 
@@ -1698,7 +1770,7 @@
           autoSlideInterval = setInterval(() => {
             let nextIndex = (currentSlideIndex + 1) % slides.length;
             goToSlide(nextIndex);
-          }, 4000);
+          }, 5000); // 5s loop
         }
 
         function stopAutoSlide() {
@@ -1707,15 +1779,15 @@
           }
         }
 
-        // Add Click Trigger to Cards
-        cards.forEach((card, idx) => {
-          card.addEventListener("click", () => {
+        // Add Click Trigger to Thumbs
+        thumbs.forEach((thumb, idx) => {
+          thumb.addEventListener("click", () => {
             goToSlide(idx);
             startAutoSlide(); // Reset auto slide timer on interaction
           });
         });
 
-        // Hover functionality (Optional Improvement)
+        // Hover pause/resume functionality
         sliderContainer.addEventListener("mouseenter", stopAutoSlide);
         sliderContainer.addEventListener("mouseleave", startAutoSlide);
 
@@ -1733,7 +1805,6 @@
 
       if (sliderContainer) {
         if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
-          // If Supabase projects table completed_date or completion_date exists, sort by it. Default to created_at.
           supabase.from('projects')
             .select('*')
             .order('completion_date', { ascending: false })
