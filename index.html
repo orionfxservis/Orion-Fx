@@ -154,6 +154,14 @@
       scroll-margin-top: 80px;
     }
 
+    section {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero {
+      border-top: none;
+    }
+
     section::before {
       content: "";
       position: absolute;
@@ -168,6 +176,107 @@
       );
       pointer-events: none;
       z-index: -1;
+    }
+
+    /* Floating background elements */
+    .floating-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(0, 229, 255, 0.12);
+      border-radius: 50%;
+      filter: blur(1px);
+      animation: floatUp 35s linear infinite;
+    }
+
+    .floating-dot {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(123, 97, 255, 0.15);
+      border-radius: 50%;
+      animation: floatUp 45s linear infinite;
+    }
+
+    .floating-line {
+      position: absolute;
+      width: 1px;
+      height: 120px;
+      background: linear-gradient(to bottom, rgba(0, 229, 255, 0), rgba(0, 229, 255, 0.05), rgba(0, 229, 255, 0));
+      animation: floatDown 50s linear infinite;
+    }
+
+    /* Specific coordinates and delays */
+    .particle-1 { left: 15%; top: 80%; animation-duration: 30s; }
+    .particle-2 { left: 55%; top: 90%; animation-duration: 40s; animation-delay: -5s; }
+    .particle-3 { left: 85%; top: 75%; animation-duration: 35s; animation-delay: -10s; }
+
+    .dot-1 { left: 30%; top: 85%; animation-duration: 45s; animation-delay: -3s; }
+    .dot-2 { left: 70%; top: 95%; animation-duration: 50s; animation-delay: -15s; }
+
+    .line-1 { left: 25%; top: 60%; transform: rotate(15deg); animation-duration: 55s; }
+    .line-2 { left: 75%; top: 50%; transform: rotate(-15deg); animation-duration: 48s; animation-delay: -8s; }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatDown {
+      0% {
+        transform: translateY(-20vh) rotate(15deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(110vh) rotate(15deg);
+        opacity: 0;
+      }
+    }
+
+    /* Service Benefits */
+    .service-benefits {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0 0;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .service-benefits li {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .container {
@@ -269,7 +378,6 @@
       height: 12px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      box-shadow: 0 0 15px var(--primary);
     }
 
     nav ul {
@@ -304,7 +412,7 @@
     nav a:hover,
     nav a.active {
       transform: translateY(-2px);
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
       text-shadow: none;
       color: #000;
       background: var(--primary);
@@ -323,7 +431,7 @@
       font-weight: 600;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       color: #fff;
-      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+      box-shadow: 0 3px 10px rgba(0, 229, 255, 0.2);
     }
 
     /* Mobile Menu Container - Hidden by default */
@@ -365,7 +473,7 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       transform: rotate(0deg) scale(0.9);
       z-index: 1;
-      animation: pulseBack 15s ease-in-out infinite alternate;
+      animation: pulseBack 20s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
     }
 
@@ -376,8 +484,8 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-top: 1px solid rgba(255, 255, 255, 0.5);
       z-index: 2;
-      animation: rotateFront 20s ease-in-out infinite alternate;
-      box-shadow: 0 0 50px rgba(0, 229, 255, 0.2);
+      animation: rotateFront 26s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     }
 
     /* Glowing Blobs */
@@ -395,14 +503,14 @@
       background: var(--primary);
       top: 25%;
       right: 25%;
-      animation: moveBlob1 20s ease-in-out infinite alternate;
+      animation: moveBlob1 26s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
     }
 
     .blob-2 {
       background: var(--accent);
       bottom: 25%;
       left: 25%;
-      animation: moveBlob2 20s ease-in-out infinite alternate;
+      animation: moveBlob2 26s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
     }
 
     @keyframes pulseBack {
@@ -444,6 +552,42 @@
 
       to {
         transform: translate(20px, -20px);
+      }
+    }
+
+    /* Hero Checklist Features */
+    .hero-features {
+      list-style: none;
+      padding: 0;
+      margin: 28px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      text-align: left;
+      max-width: 600px;
+    }
+
+    .hero-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(14px, 1.8vw, 16px);
+      color: #f8fafc;
+      font-weight: 500;
+    }
+
+    .hero-features li i {
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-features {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
@@ -522,7 +666,7 @@
     .menu-btn:hover,
     .contact-form button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.42);
       background: var(--primary);
       border-color: var(--primary);
       color: #000;
@@ -771,7 +915,7 @@
       background: #FFD23F;
       color: black;
       border-color: #FFD23F;
-      box-shadow: 0 0 20px rgba(255, 210, 63, 0.4);
+      box-shadow: 0 0 14px rgba(255, 210, 63, 0.28);
     }
 
     @media (max-width: 768px) {
@@ -1071,13 +1215,13 @@
       font-size: 24px;
       color: #fff;
       z-index: 999;
-      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      box-shadow: 0 3px 10px rgba(37, 211, 102, 0.2);
       transition: all 0.3s ease;
     }
 
     .whatsapp-float:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
       color: #fff;
     }
 
@@ -1249,6 +1393,17 @@
 <body>
   <div class="app-bg"></div>
   <div class="bg-overlay"></div>
+  
+  <!-- Subtle Floating Background Effects -->
+  <div class="floating-container" aria-hidden="true">
+    <div class="floating-particle particle-1"></div>
+    <div class="floating-particle particle-2"></div>
+    <div class="floating-particle particle-3"></div>
+    <div class="floating-dot dot-1"></div>
+    <div class="floating-dot dot-2"></div>
+    <div class="floating-line line-1"></div>
+    <div class="floating-line line-2"></div>
+  </div>
 
   <header id="header">
     <div class="container nav">
@@ -1263,6 +1418,7 @@
           <li><a href="#home" class="active">Home</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#process">Process</a></li>
+          <li><a href="#pricing">Pricing</a></li>
           <li><a href="#projects">Our Projects</a></li>
           <li><a href="#blogs">Blog</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -1282,6 +1438,7 @@
     <a href="#home" onclick="toggleMobileMenu()">Home</a>
     <a href="#services" onclick="toggleMobileMenu()">Services</a>
     <a href="#process" onclick="toggleMobileMenu()">Process</a>
+    <a href="#pricing" onclick="toggleMobileMenu()">Pricing</a>
     <a href="#projects" onclick="toggleMobileMenu()">Our Projects</a>
     <a href="#blogs" onclick="toggleMobileMenu()">Blog</a>
     <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
@@ -1292,10 +1449,16 @@
     <section class="hero" aria-labelledby="hero-title">
       <div>
         <h1 id="hero-title" class="reveal">
-          Design that Speaks.<br>
-          <span class="glow">Performance that Scales.</span>
+          Professional Websites, SEO &<br>
+          <span class="glow">Digital Marketing</span>
         </h1>
-        <p class="lead reveal">We build websites that convert visitors into clients, fast, secure & SEO-optimized.</p>
+        <p class="lead reveal">That Help Businesses Generate More Leads & Sales.</p>
+        <ul class="hero-features reveal">
+          <li><i class="fas fa-check-circle"></i> Fast Loading Websites</li>
+          <li><i class="fas fa-check-circle"></i> Mobile Responsive Design</li>
+          <li><i class="fas fa-check-circle"></i> SEO Optimized</li>
+          <li><i class="fas fa-check-circle"></i> Ongoing Support</li>
+        </ul>
         <div class="cta">
           <a class="btn btn-primary" href="#contact">Get Your Free Quote</a>
           <a class="btn btn-ghost" href="#services">Explore Services</a>
@@ -1306,6 +1469,28 @@
         <div class="layer-box box-front"></div>
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats reveal" style="padding: 40px 0;">
+      <div class="grid grid-4">
+        <div class="card stat-card" style="text-align: center; padding: 24px;">
+          <h3 style="font-size: 40px; color: var(--primary); margin-bottom: 8px;">50+</h3>
+          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Projects Completed</p>
+        </div>
+        <div class="card stat-card" style="text-align: center; padding: 24px;">
+          <h3 style="font-size: 40px; color: var(--accent); margin-bottom: 8px;">30+</h3>
+          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Satisfied Clients</p>
+        </div>
+        <div class="card stat-card" style="text-align: center; padding: 24px;">
+          <h3 style="font-size: 40px; color: var(--tertiary); margin-bottom: 8px;">5+</h3>
+          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Years Experience</p>
+        </div>
+        <div class="card stat-card" style="text-align: center; padding: 24px;">
+          <h3 style="font-size: 40px; color: #FFCC66; margin-bottom: 8px;">24/7</h3>
+          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Support</p>
+        </div>
       </div>
     </section>
 
@@ -1322,6 +1507,11 @@
           <h3>Web Design & Dev</h3>
           <p class="muted">Custom, hand-coded websites that load instantly. No bloat, just pure performance and
             best-in-class UX/UI.</p>
+          <ul class="service-benefits">
+            <li>✓ Responsive</li>
+            <li>✓ SEO Ready</li>
+            <li>✓ Fast Loading</li>
+          </ul>
         </article>
 
         <article class="card service reveal" tabindex="0">
@@ -1362,28 +1552,6 @@
       <!-- Container end removed -->
     </section>
 
-    <!-- Statistics Section -->
-    <section class="stats reveal" style="padding: 40px 0;">
-      <div class="grid grid-4">
-        <div class="card stat-card" style="text-align: center; padding: 24px;">
-          <h3 style="font-size: 40px; color: var(--primary); margin-bottom: 8px;">50+</h3>
-          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Projects Completed</p>
-        </div>
-        <div class="card stat-card" style="text-align: center; padding: 24px;">
-          <h3 style="font-size: 40px; color: var(--accent); margin-bottom: 8px;">30+</h3>
-          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Satisfied Clients</p>
-        </div>
-        <div class="card stat-card" style="text-align: center; padding: 24px;">
-          <h3 style="font-size: 40px; color: var(--tertiary); margin-bottom: 8px;">5+</h3>
-          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Years Experience</p>
-        </div>
-        <div class="card stat-card" style="text-align: center; padding: 24px;">
-          <h3 style="font-size: 40px; color: #FFCC66; margin-bottom: 8px;">24/7</h3>
-          <p class="muted" style="margin: 0; font-size: 14px; font-weight: 500;">Support</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Process Section -->
     <section id="process" aria-labelledby="process-title">
       <h2 id="process-title" class="reveal">Our Process</h2>
@@ -1406,6 +1574,63 @@
           <h3>Launch</h3>
           <p class="muted">Rigorous testing, SEO setup, and final launch. We ensure everything is perfect for day one.
           </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" aria-labelledby="pricing-title">
+      <h2 id="pricing-title" class="reveal">Flexible Pricing Plans</h2>
+      <p class="lead muted reveal">Premium quality, transparent pricing. No hidden fees.</p>
+
+      <div class="grid grid-3" style="margin-top:32px">
+        <!-- Plan 1 -->
+        <article class="card pricing-card reveal" tabindex="0" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 style="color: var(--primary); margin-bottom: 8px;">Starter Website</h3>
+            <div style="font-size: 32px; font-weight: 700; font-family: var(--font-display); color: #fff; margin-bottom: 12px;">Rs. 10,000<span style="font-size: 16px; font-weight: 500; color: var(--muted);">+</span></div>
+            <p class="muted" style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">Perfect for startups and small local businesses wanting a high-performance single page website.</p>
+            <ul style="list-style: none; padding: 0; margin: 0 0 32px 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> 1 Page Design</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Mobile Responsive</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Standard SEO Ready</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Domain & Hosting Setup</li>
+            </ul>
+          </div>
+          <a href="#contact" class="btn btn-ghost" style="width: 100%; text-align: center;">Get Started</a>
+        </article>
+
+        <!-- Plan 2 (Highlighted) -->
+        <article class="card pricing-card reveal popular" tabindex="0" style="display: flex; flex-direction: column; justify-content: space-between; border-color: var(--primary);">
+          <div>
+            <div style="background: var(--primary); color: #000; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 12px; border-radius: 12px; display: inline-block; margin-bottom: 12px;">Popular</div>
+            <h3 style="color: var(--primary); margin-bottom: 8px;">Business Website</h3>
+            <div style="font-size: 32px; font-weight: 700; font-family: var(--font-display); color: #fff; margin-bottom: 12px;">Rs. 30,000<span style="font-size: 16px; font-weight: 500; color: var(--muted);">+</span></div>
+            <p class="muted" style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">Complete professional multi-page solution optimized for lead generation, speed, and ranking.</p>
+            <ul style="list-style: none; padding: 0; margin: 0 0 32px 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Up to 5 Pages</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Premium Custom Layout</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Full SEO Optimization</li>
+              <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> 1 Month Support</li>
+            </ul>
+          </div>
+          <a href="#contact" class="btn btn-primary" style="width: 100%; text-align: center;">Get Started</a>
+        </article>
+
+        <!-- Plan 3 -->
+        <article class="card pricing-card reveal" tabindex="0" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 style="color: var(--accent); margin-bottom: 8px;">Custom Solution</h3>
+            <div style="font-size: 32px; font-weight: 700; font-family: var(--font-display); color: #fff; margin-bottom: 12px;">Custom Quote</div>
+            <p class="muted" style="font-size: 14px; line-height: 1.6; margin-bottom: 24px;">Tailored enterprise platforms, advanced web apps, multi-vendor e-commerce, and custom business systems.</p>
+            <ul style="list-style: none; padding: 0; margin: 0 0 32px 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+              <li><i class="fas fa-check" style="color: var(--accent); margin-right: 8px;"></i> Custom Web Applications</li>
+              <li><i class="fas fa-check" style="color: var(--accent); margin-right: 8px;"></i> Supabase / DB Integration</li>
+              <li><i class="fas fa-check" style="color: var(--accent); margin-right: 8px;"></i> Advanced Integrations</li>
+              <li><i class="fas fa-check" style="color: var(--accent); margin-right: 8px;"></i> Priority 24/7 Support</li>
+            </ul>
+          </div>
+          <a href="#contact" class="btn btn-ghost" style="width: 100%; text-align: center;">Consult Us</a>
         </article>
       </div>
     </section>
