@@ -192,7 +192,6 @@
       height: 12px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      box-shadow: 0 0 15px var(--primary);
     }
 
     nav ul {
@@ -218,7 +217,7 @@
 
     nav a:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
       color: #000;
       background: var(--primary);
       border-color: var(--primary);
@@ -257,7 +256,7 @@
     .card:hover {
       transform: translateY(-8px) scale(1.02);
       border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
       background: rgba(30, 35, 45, 0.8);
     }
 
@@ -270,7 +269,7 @@
       border-radius: 12px;
       margin-bottom: 14px;
       transition: transform 0.5s ease;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
 
     .card:hover .project-thumb {
@@ -329,7 +328,6 @@
 
     .footer-links a:hover {
       color: #fff;
-      text-shadow: 0 0 10px var(--primary);
     }
 
     .footer p {
@@ -364,6 +362,26 @@
         display: none;
       }
     }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      color: var(--muted);
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+    }
   </style>
 </head>
 
@@ -395,6 +413,15 @@
     <h1 class="reveal">Our Projects</h1>
     <p class="lead reveal">A comprehensive archive of websites, platforms, and designs crafted by Orion Fx.</p>
 
+    <!-- Category Filters -->
+    <div class="category-filters reveal" style="display: flex; justify-content: center; gap: 10px; margin-top: -10px; margin-bottom: 40px; flex-wrap: wrap;">
+      <button class="filter-btn active" onclick="filterProjects('All')">All</button>
+      <button class="filter-btn" onclick="filterProjects('Websites')">Websites</button>
+      <button class="filter-btn" onclick="filterProjects('E-Commerce')">E-Commerce</button>
+      <button class="filter-btn" onclick="filterProjects('Business Systems')">Business Systems</button>
+      <button class="filter-btn" onclick="filterProjects('Landing Pages')">Landing Pages</button>
+    </div>
+
     <div id="projectsGrid" class="grid grid-3">
       <!-- Loaded dynamically via JavaScript -->
     </div>
@@ -419,12 +446,37 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const grid = document.getElementById("projectsGrid");
+      let allProjects = [];
       
       function renderLocalProjects() {
-        const projects = window.orionProjects || [];
-        projects.sort((a, b) => new Date(b.date) - new Date(a.date));
-        renderList(projects);
+        allProjects = window.orionProjects || [];
+        allProjects.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderList(allProjects);
       }
+
+      window.filterProjects = function(category) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          if (btn.getAttribute('onclick').includes(`'${category}'`)) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        if (category === 'All') {
+          renderList(allProjects);
+        } else {
+          const filtered = allProjects.filter(project => {
+            const cat = project.category || project.project_category || '';
+            // Match singular/plural websites category
+            if (category === 'Websites') {
+              return cat.toLowerCase() === 'websites' || cat.toLowerCase() === 'website';
+            }
+            return cat.toLowerCase() === category.toLowerCase();
+          });
+          renderList(filtered);
+        }
+      };
 
       function renderList(projectsList) {
         grid.innerHTML = projectsList.map((project, idx) => {
@@ -455,7 +507,7 @@
           }
 
           return `
-          <article class="card reveal" style="transition-delay: ${idx * 100}ms;">
+          <article class="card reveal" style="transition-delay: ${idx * 50}ms;">
             <div>
               <a href="${link}" target="_blank" rel="noopener" style="display:block; overflow:hidden; border-radius:16px;">
                 <img src="${imgPath}" alt="${title}" class="project-thumb">
@@ -490,6 +542,7 @@
             if (error || !projects || projects.length === 0) {
               renderLocalProjects();
             } else {
+              allProjects = projects;
               renderList(projects);
             }
           }).catch(() => {
