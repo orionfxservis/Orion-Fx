@@ -1388,6 +1388,113 @@
         margin-bottom: 16px;
       }
     }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 90px 0;
+      position: relative;
+    }
+    .faq-outer-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius);
+      padding: 60px 40px;
+      backdrop-filter: var(--glass);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .faq-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .faq-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .faq-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .faq-footer-item {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .faq-footer-item .faq-item {
+      width: 100%;
+      max-width: 580px;
+    }
+    @media (max-width: 992px) {
+      .faq-columns {
+        grid-template-columns: 1fr;
+      }
+      .faq-outer-box {
+        padding: 40px 20px;
+      }
+      .faq-footer-item .faq-item {
+        max-width: 100%;
+      }
+    }
+    .faq-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .faq-question {
+      width: 100%;
+      padding: 20px 24px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: color 0.3s;
+    }
+    .faq-question:hover {
+      color: var(--primary);
+    }
+    .faq-icon {
+      font-size: 14px;
+      color: var(--primary);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+    .faq-answer-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+    .faq-item.active .faq-answer-wrapper {
+      grid-template-rows: 1fr;
+    }
+    .faq-answer {
+      overflow: hidden;
+    }
+    .faq-answer-content {
+      padding: 0 24px 20px 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 
@@ -1422,6 +1529,7 @@
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#projects">Our Projects</a></li>
           <li><a href="#blogs">Blog</a></li>
+          <li><a href="#faq">FAQ</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
@@ -1442,6 +1550,7 @@
     <a href="#pricing" onclick="toggleMobileMenu()">Pricing</a>
     <a href="#projects" onclick="toggleMobileMenu()">Our Projects</a>
     <a href="#blogs" onclick="toggleMobileMenu()">Blog</a>
+    <a href="#faq" onclick="toggleMobileMenu()">FAQ</a>
     <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
   </div>
 
@@ -1704,6 +1813,194 @@
             </a>
         </div>
     </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="faq-section">
+  <div class="container">
+    <div class="faq-outer-box reveal" tabindex="0">
+      <div class="faq-header">
+        <h2 class="glow">Frequently Asked Questions</h2>
+        <p class="lead muted" style="margin: 0 auto;">Everything you need to know about our services, process, and deliverables.</p>
+      </div>
+
+      <div class="faq-columns">
+        <!-- Left Column (Questions 1-5) -->
+        <div class="faq-column">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>1. How much does a website cost?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  The cost depends on your requirements, number of pages, features, and design complexity. We offer affordable solutions for startups, SMEs & growing businesses. Contact us for a free quotation.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>2. How long does it take to build a website?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Most business websites are completed within 7–15 working days, while larger or custom projects may require additional time depending on the scope.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>3. Will my website work on mobile phones and tablets?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. Every website we build is fully responsive & optimized to work smoothly on desktops, tablets & mobile devices.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 4 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>4. Do you provide website maintenance and support?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. We offer ongoing maintenance, updates, security checks & technical support to keep your website running efficiently.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 5 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>5. Can you redesign my existing website?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Absolutely. We can modernize your current website, improve performance, enhance user experience & make it more SEO-friendly.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column (Questions 6-10) -->
+        <div class="faq-column">
+          <!-- FAQ Item 6 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>6. Do you provide SEO services?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. Our SEO services include technical optimization, keyword research, on-page SEO, local SEO & performance improvements to help your website rank higher on search engines.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 7 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>7. Do you offer digital marketing services?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. We help businesses grow online through social media marketing, content marketing, lead generation campaigns, and digital advertising strategies.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 8 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>8. Will I be able to update my website myself?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. Depending on the platform and project type, we can provide an easy-to-manage system that allows you to update content, blogs, products & images without technical knowledge.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 9 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>9. Do you provide Hosting & Domain Registration?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Yes. We can assist with domain registration, web hosting setup, email configuration & complete website deployment.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 10 -->
+          <div class="faq-item reveal" tabindex="0">
+            <button class="faq-question">
+              <span>10. How do I get started with Orion Fx?</span>
+              <i class="fas fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer-wrapper">
+              <div class="faq-answer">
+                <div class="faq-answer-content">
+                  Simply contact us through our website, email, or WhatsApp. We'll discuss your requirements, provide recommendations, & share a customized proposal for your project.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Footer Centered Item -->
+      <div class="faq-footer-item reveal">
+        <!-- FAQ Item 11 -->
+        <div class="faq-item" tabindex="0" style="width: 100%;">
+          <button class="faq-question">
+            <span>Why should I choose Orion Fx?</span>
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              <div class="faq-answer-content">
+                Orion Fx combines modern design, responsive development, SEO best practices & digital marketing expertise to create solutions that help businesses establish a strong online presence & achieve measurable growth.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
   <!-- Contact Us Section -->
@@ -2149,7 +2446,40 @@
           contactForm.reset();
         });
       }
+
+      // FAQ Accordion Toggle
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const questionBtn = item.querySelector('.faq-question');
+        questionBtn.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          faqItems.forEach(i => i.classList.remove('active'));
+          if (!isActive) {
+            item.classList.add('active');
+          }
+        });
+      });
     });
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ProfessionalService",
+    "name":"OrionFx",
+    "url":"https://www.orionfx.net",
+    "telephone":"+92-333-0360487",
+    "email":"info@orionfx.com.pk",
+    "description":"Website Development, SEO and Digital Marketing Services",
+    "address":{
+      "@type":"PostalAddress",
+      "addressLocality":"Karachi",
+      "addressCountry":"PK"
+    },
+    "sameAs":[
+      "https://facebook.com/yourpage",
+      "https://linkedin.com/company/yourcompany"
+    ]
+  }
   </script>
 </body>
 
