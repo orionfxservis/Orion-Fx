@@ -525,6 +525,12 @@
       background: rgba(255, 255, 255, 0.01);
     }
 
+    #blogsList tr:hover td {
+      background: transparent !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
     /* Status Tags */
     .tag {
       display: inline-block;
@@ -963,25 +969,74 @@
               <h4 id="blogFormTitle" style="margin-top:0;">Add New Blog Post</h4>
               <form id="blogForm">
                 <div class="form-group">
-                  <label for="bTitle">Title</label>
-                  <input type="text" id="bTitle" required placeholder="Smart Shopping Tips">
+                  <label for="bTitle">Blog Title</label>
+                  <input type="text" id="bTitle" required placeholder="Why SEO Matters for Small Businesses">
                 </div>
                 <div class="form-group">
-                  <label for="bDescription">Excerpt / Body Preview</label>
-                  <textarea id="bDescription" rows="3" required placeholder="A brief preview of the content..."></textarea>
+                  <label for="bSlug">Slug</label>
+                  <input type="text" id="bSlug" required placeholder="why-seo-matters-for-small-businesses">
                 </div>
                 <div class="form-group">
-                  <label for="bImage">Featured Image URL</label>
-                  <input type="url" id="bImage" required placeholder="https://domain.com/image.jpg">
+                  <label for="bSeoTitle">SEO Title</label>
+                  <input type="text" id="bSeoTitle" required placeholder="Why SEO Matters for Small Businesses | Orion Fx">
                 </div>
                 <div class="form-group">
-                  <label for="bCategory">Category Tag</label>
-                  <input type="text" id="bCategory" required placeholder="SEO">
+                  <label for="bMetaDescription">Meta Description</label>
+                  <textarea id="bMetaDescription" rows="2" required placeholder="Learn why search engine optimization is crucial for small businesses to grow..."></textarea>
                 </div>
                 <div class="form-group">
-                  <label for="bDate">Publish Date</label>
-                  <input type="date" id="bDate" required>
+                  <label for="bShortDescription">Short Description (Excerpt)</label>
+                  <textarea id="bShortDescription" rows="2" required placeholder="A brief summary of the blog post..."></textarea>
                 </div>
+                <div class="form-group">
+                  <label for="bArticle">Article Content</label>
+                  <textarea id="bArticle" rows="6" required placeholder="Write the main body of the article here..."></textarea>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
+                  <h5 style="margin: 0 0 12px 0; color: var(--primary);">Custom Editorial Section</h5>
+                  <div class="form-group">
+                    <label for="bSectionHeading">Section Heading</label>
+                    <input type="text" id="bSectionHeading" required value="Why SEO Matters for Small Businesses">
+                  </div>
+                  <div class="form-group">
+                    <label for="bSectionContent">Section Content</label>
+                    <textarea id="bSectionContent" rows="4" required placeholder="Write the content for this section..."></textarea>
+                  </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
+                  <h5 style="margin: 0 0 12px 0; color: var(--primary);">Conclusion</h5>
+                  <div class="form-group">
+                    <label>Heading</label>
+                    <input type="text" value="Conclusion" disabled style="opacity: 0.7; background: rgba(0,0,0,0.2)">
+                  </div>
+                  <div class="form-group">
+                    <label for="bConclusion">Conclusion Content</label>
+                    <textarea id="bConclusion" rows="3" required placeholder="Write the concluding thoughts..."></textarea>
+                  </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
+                  <h5 style="margin: 0 0 12px 0; color: var(--primary);">Additional SEO Details</h5>
+                  <div class="form-group">
+                    <label for="bCategory">Category</label>
+                    <input type="text" id="bCategory" required placeholder="SEO">
+                  </div>
+                  <div class="form-group">
+                    <label for="bTags">Tags</label>
+                    <input type="text" id="bTags" placeholder="seo, local search, ranking">
+                  </div>
+                  <div class="form-group">
+                    <label for="bImage">Featured Image URL</label>
+                    <input type="url" id="bImage" required placeholder="https://domain.com/image.jpg">
+                  </div>
+                  <div class="form-group">
+                    <label for="bFocusKeyword">Focus Keyword</label>
+                    <input type="text" id="bFocusKeyword" placeholder="seo for small businesses">
+                  </div>
+                </div>
+
                 <div class="form-group">
                   <label for="bStatus">Status</label>
                   <select id="bStatus">
@@ -989,6 +1044,7 @@
                     <option value="Draft">Draft</option>
                   </select>
                 </div>
+                
                 <div style="display: flex; gap: 10px;">
                   <button type="submit" id="blogSubmitBtn" class="btn" style="width:50%;">Save Post <i class="fas fa-check"></i></button>
                   <button type="button" class="btn btn-secondary" onclick="closeBlogForm()" style="width:50%;">Cancel</button>
@@ -1470,22 +1526,43 @@
 
     document.getElementById("blogForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      
       const blogData = {
         title: document.getElementById("bTitle").value,
-        description: document.getElementById("bDescription").value,
-        image: document.getElementById("bImage").value,
+        slug: document.getElementById("bSlug").value,
+        seo_title: document.getElementById("bSeoTitle").value,
+        meta_description: document.getElementById("bMetaDescription").value,
+        short_description: document.getElementById("bShortDescription").value,
+        article: document.getElementById("bArticle").value,
+        section_heading: document.getElementById("bSectionHeading").value,
+        section_content: document.getElementById("bSectionContent").value,
+        conclusion: document.getElementById("bConclusion").value,
         category: document.getElementById("bCategory").value,
-        date: document.getElementById("bDate").value,
+        tags: document.getElementById("bTags").value,
+        image: document.getElementById("bImage").value,
+        focus_keyword: document.getElementById("bFocusKeyword").value,
         status: document.getElementById("bStatus").value,
+        date: editingBlogIndex !== null && localBlogs[editingBlogIndex].date 
+          ? localBlogs[editingBlogIndex].date 
+          : new Date().toLocaleDateString("en-GB", {day:'2-digit', month:'short', year:'2-digit'}).replace(/ /g, '-'),
         views: editingBlogIndex !== null ? (localBlogs[editingBlogIndex].views || 0) : 0
       };
 
       // Strip fields that are not in the Supabase blogs schema
       const dbBlogData = {
         title: blogData.title,
-        description: blogData.description,
-        image: blogData.image,
+        slug: blogData.slug,
+        seo_title: blogData.seo_title,
+        meta_description: blogData.meta_description,
+        short_description: blogData.short_description,
+        article: blogData.article,
+        section_heading: blogData.section_heading,
+        section_content: blogData.section_content,
+        conclusion: blogData.conclusion,
         category: blogData.category,
+        tags: blogData.tags,
+        image: blogData.image,
+        focus_keyword: blogData.focus_keyword,
         date: blogData.date
       };
 
@@ -1568,22 +1645,19 @@
       editingBlogIndex = index;
       const blog = localBlogs[index];
 
-      document.getElementById("bTitle").value = blog.title;
-      document.getElementById("bDescription").value = blog.description;
-      document.getElementById("bImage").value = blog.image;
-      document.getElementById("bCategory").value = blog.category;
-      
-      // Simple date normalization
-      let formattedDate = "";
-      if (blog.date) {
-        const parts = blog.date.split('-');
-        if (parts.length === 3) {
-          formattedDate = `20${parts[2]}-${parts[1] === 'Jun' ? '06' : '05'}-${parts[0]}`;
-        } else {
-          formattedDate = blog.date;
-        }
-      }
-      document.getElementById("bDate").value = formattedDate;
+      document.getElementById("bTitle").value = blog.title || "";
+      document.getElementById("bSlug").value = blog.slug || "";
+      document.getElementById("bSeoTitle").value = blog.seo_title || "";
+      document.getElementById("bMetaDescription").value = blog.meta_description || "";
+      document.getElementById("bShortDescription").value = blog.short_description || "";
+      document.getElementById("bArticle").value = blog.article || "";
+      document.getElementById("bSectionHeading").value = blog.section_heading || "Why SEO Matters for Small Businesses";
+      document.getElementById("bSectionContent").value = blog.section_content || "";
+      document.getElementById("bConclusion").value = blog.conclusion || "";
+      document.getElementById("bCategory").value = blog.category || "";
+      document.getElementById("bTags").value = blog.tags || "";
+      document.getElementById("bImage").value = blog.image || "";
+      document.getElementById("bFocusKeyword").value = blog.focus_keyword || "";
       document.getElementById("bStatus").value = blog.status || "Published";
 
       document.getElementById("blogFormTitle").textContent = "Edit Blog Post";
