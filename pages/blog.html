@@ -552,6 +552,9 @@
     </div>
   </footer>
 
+  <!-- Supabase & Data Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       // Reveal observer
@@ -565,6 +568,71 @@
       }, { threshold: 0.1 });
 
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Render Blogs dynamically from Supabase
+      const blogsGridContainer = document.getElementById("blogsGrid");
+      if (blogsGridContainer) {
+        if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
+          supabase.from('blogs')
+            .select('*')
+            .order('date', { ascending: false })
+            .then(({ data: blogs, error }) => {
+              if (!error && blogs && blogs.length > 0) {
+                renderDynamicBlogs(blogs);
+              }
+            }).catch((err) => {
+              console.error("Supabase blogs fetch error:", err);
+            });
+        }
+      }
+
+      function renderDynamicBlogs(blogs) {
+        if (!blogsGridContainer) return;
+        blogsGridContainer.innerHTML = blogs.map(b => {
+          let icon = "fa-file-alt";
+          let gradient = "linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(123, 97, 255, 0.15))";
+          let color = "var(--primary)";
+          
+          const cat = (b.category || "").toLowerCase();
+          if (cat.includes("design") || cat.includes("code") || cat.includes("web")) {
+            icon = "fa-laptop-code";
+            gradient = "linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(123, 97, 255, 0.15))";
+            color = "var(--primary)";
+          } else if (cat.includes("seo") || cat.includes("search")) {
+            icon = "fa-search";
+            gradient = "linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 46, 126, 0.15))";
+            color = "var(--accent)";
+          } else if (cat.includes("market") || cat.includes("mobile") || cat.includes("phone")) {
+            icon = "fa-mobile-screen-button";
+            gradient = "linear-gradient(135deg, rgba(255, 46, 126, 0.1), rgba(0, 229, 255, 0.15))";
+            color = "var(--tertiary)";
+          }
+
+          const mediaHtml = b.image 
+            ? `<div class="blog-thumb-placeholder" style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;"><img src="${b.image}" alt="${b.title}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
+            : `<div class="blog-thumb-placeholder" style="background: ${gradient}; border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);"><i class="fas ${icon}" style="font-size: 44px; color: ${color}; text-shadow: 0 0 15px ${color};"></i></div>`;
+
+          const dateStr = b.date ? b.date : "";
+          const metaHtml = b.category ? `<div class="blog-meta">${b.category} ${dateStr ? '• ' + dateStr : ''}</div>` : '';
+
+          return `
+            <article class="card reveal" tabindex="0">
+              ${mediaHtml}
+              <div>
+                ${metaHtml}
+                <h3 style="margin-top: 10px;">${b.title}</h3>
+                <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                  ${b.description || ""}
+                </p>
+              </div>
+              <a href="#" class="project-link">Read Article</a>
+            </article>
+          `;
+        }).join("");
+
+        // Re-observe dynamic cards
+        blogsGridContainer.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      }
     });
   </script>
 </body>
