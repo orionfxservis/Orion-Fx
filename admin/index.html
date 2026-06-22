@@ -1307,7 +1307,7 @@
             localProjects = projects;
           }
           
-          const { data: blogs, error: blogErr } = await supabase.from('blogs').select('*').order('date', { ascending: false });
+          const { data: blogs, error: blogErr } = await supabase.from('blogs').select('*').order('id', { ascending: true });
           if (blogErr) {
             console.error("Supabase Blogs fetch error:", blogErr.message);
           } else if (blogs && blogs.length > 0) {
@@ -1624,9 +1624,9 @@
               return;
             }
             if (data && data[0]) {
-              localBlogs.unshift({ ...blogData, id: data[0].id });
+              localBlogs.push({ ...blogData, id: data[0].id });
             } else {
-              localBlogs.unshift(blogData);
+              localBlogs.push(blogData);
             }
           } catch(e) {
             console.error("Supabase blog insert exception:", e);
@@ -1635,7 +1635,7 @@
           }
         } else {
           console.warn("Supabase not configured, saving only to local memory");
-          localBlogs.unshift(blogData);
+          localBlogs.push(blogData);
         }
       }
 
