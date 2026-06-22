@@ -143,18 +143,14 @@
       border-radius: 18px;
       padding: 24px;
       transition: 0.3s;
-      box-shadow:
-          0 0 10px rgba(0, 195, 255, 0.25),
-          0 0 25px rgba(178, 108, 255, 0.20);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(20px);
     }
 
     .dashboard-card:hover {
       transform: translateY(-4px);
       border-color: #00E5FF;
-      box-shadow:
-          0 0 20px rgba(0, 195, 255, 0.5),
-          0 0 35px rgba(178, 108, 255, 0.4);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
     }
 
     /* Base Form styling */
@@ -188,7 +184,7 @@
     input:focus, textarea:focus, select:focus {
       border-color: var(--primary);
       background: rgba(0, 0, 0, 0.65);
-      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+      box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.1);
     }
 
     /* Premium Buttons */
@@ -208,12 +204,12 @@
       border-radius: var(--radius-md);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+      box-shadow: 0 3px 10px rgba(0, 229, 255, 0.2);
     }
 
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5), 0 0 15px rgba(123, 97, 255, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 229, 255, 0.35), 0 0 10px rgba(123, 97, 255, 0.28);
       filter: brightness(1.1);
     }
 
@@ -264,7 +260,6 @@
       height: 10px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      box-shadow: 0 0 10px var(--primary);
     }
 
     .top-menu {
@@ -919,7 +914,7 @@
                   <textarea id="pDescription" rows="3" required placeholder="A brief description of the project..."></textarea>
                 </div>
                 <div class="form-group">
-                  <label for="pImage">Featured Image URL</label>
+                  <label for="pImage">Project Image URL</label>
                   <input type="url" id="pImage" required placeholder="https://domain.com/image.jpg">
                 </div>
                 <div class="form-group">
@@ -1122,7 +1117,7 @@
 
   <!-- Supabase & Data Scripts -->
   <script src="../js/projects-data.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/supabase-config.js"></script>
 
   <script>
@@ -1221,18 +1216,29 @@
     // Sync database lists
     async function syncDatabase() {
       const isConfigured = window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id");
+      console.log("syncDatabase isConfigured:", isConfigured);
       
       // Projects
       if (isConfigured) {
         try {
-          const { data: projects } = await supabase.from('projects').select('*').order('date', { ascending: false });
-          if (projects && projects.length > 0) localProjects = projects;
+          const { data: projects, error: projErr } = await supabase.from('projects').select('*').order('date', { ascending: false });
+          if (projErr) {
+            console.error("Supabase Projects fetch error:", projErr.message);
+          } else if (projects && projects.length > 0) {
+            localProjects = projects;
+          }
           
-          const { data: blogs } = await supabase.from('blogs').select('*').order('date', { ascending: false });
-          if (blogs && blogs.length > 0) localBlogs = blogs;
+          const { data: blogs, error: blogErr } = await supabase.from('blogs').select('*').order('date', { ascending: false });
+          if (blogErr) {
+            console.error("Supabase Blogs fetch error:", blogErr.message);
+          } else if (blogs && blogs.length > 0) {
+            localBlogs = blogs;
+          }
 
-          const { data: leads } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
-          if (leads && leads.length > 0) {
+          const { data: leads, error: leadErr } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
+          if (leadErr) {
+            console.error("Supabase Leads fetch error (Note: leads table may not exist yet):", leadErr.message);
+          } else if (leads && leads.length > 0) {
             localLeads = leads.map(l => ({
               id: l.id,
               name: l.name,
@@ -1243,7 +1249,7 @@
             }));
           }
         } catch (e) {
-          console.error("Supabase live sync error:", e);
+          console.error("Supabase live sync exception:", e);
         }
       }
     }
@@ -1362,18 +1368,34 @@
         const project = localProjects[editingProjectIndex];
         if (isConfigured && project.id) {
           try {
-            await supabase.from('projects').update(projectData).eq('id', project.id);
-          } catch(e) {}
+            const { error } = await supabase.from('projects').update(projectData).eq('id', project.id);
+            if (error) {
+              alert("Supabase Update Error: " + error.message);
+              return;
+            }
+            localProjects[editingProjectIndex] = { ...project, ...projectData };
+          } catch(e) {
+            console.error("Supabase project update error:", e);
+            alert("Failed to sync project update with Supabase: " + e.message);
+            return;
+          }
+        } else {
+          localProjects[editingProjectIndex] = { ...project, ...projectData };
         }
-        localProjects[editingProjectIndex] = { ...project, ...projectData };
         editingProjectIndex = null;
       } else {
         if (isConfigured) {
           try {
-            const { data } = await supabase.from('projects').insert([projectData]).select();
+            const { data, error } = await supabase.from('projects').insert([projectData]).select();
+            if (error) {
+              alert("Supabase Insert Error: " + error.message);
+              return;
+            }
             if (data && data[0]) localProjects.unshift(data[0]);
           } catch(e) {
-            localProjects.unshift(projectData);
+            console.error("Supabase project insert error:", e);
+            alert("Failed to insert project into Supabase: " + e.message);
+            return;
           }
         } else {
           localProjects.unshift(projectData);
@@ -1455,29 +1477,62 @@
         category: document.getElementById("bCategory").value,
         date: document.getElementById("bDate").value,
         status: document.getElementById("bStatus").value,
-        views: editingBlogIndex !== null ? localBlogs[editingBlogIndex].views : 0
+        views: editingBlogIndex !== null ? (localBlogs[editingBlogIndex].views || 0) : 0
+      };
+
+      // Strip fields that are not in the Supabase blogs schema
+      const dbBlogData = {
+        title: blogData.title,
+        description: blogData.description,
+        image: blogData.image,
+        category: blogData.category,
+        date: blogData.date
       };
 
       const isConfigured = isSupabaseConfigured();
+      console.log("Submit Blog Form - isConfigured:", isConfigured);
+      console.log("Payload to save:", dbBlogData);
 
       if (editingBlogIndex !== null) {
         const blog = localBlogs[editingBlogIndex];
+        console.log("Editing existing blog with ID:", blog.id);
         if (isConfigured && blog.id) {
           try {
-            await supabase.from('blogs').update(blogData).eq('id', blog.id);
-          } catch(e) {}
+            const { data, error } = await supabase.from('blogs').update(dbBlogData).eq('id', blog.id).select();
+            console.log("Supabase Update response:", { data, error });
+            if (error) {
+              alert("Supabase Update Error: " + error.message);
+              return;
+            }
+          } catch(e) {
+            console.error("Supabase blog update exception:", e);
+            alert("Failed to sync blog update with Supabase: " + e.message);
+            return;
+          }
         }
         localBlogs[editingBlogIndex] = { ...blog, ...blogData };
         editingBlogIndex = null;
       } else {
         if (isConfigured) {
           try {
-            const { data } = await supabase.from('blogs').insert([blogData]).select();
-            if (data && data[0]) localBlogs.unshift(data[0]);
+            const { data, error } = await supabase.from('blogs').insert([dbBlogData]).select();
+            console.log("Supabase Insert response:", { data, error });
+            if (error) {
+              alert("Supabase Insert Error: " + error.message);
+              return;
+            }
+            if (data && data[0]) {
+              localBlogs.unshift({ ...blogData, id: data[0].id });
+            } else {
+              localBlogs.unshift(blogData);
+            }
           } catch(e) {
-            localBlogs.unshift(blogData);
+            console.error("Supabase blog insert exception:", e);
+            alert("Failed to insert blog into Supabase: " + e.message);
+            return;
           }
         } else {
+          console.warn("Supabase not configured, saving only to local memory");
           localBlogs.unshift(blogData);
         }
       }
@@ -1499,10 +1554,10 @@
           <td style="font-weight:600;">${b.title}</td>
           <td>${b.date}</td>
           <td>${b.views || 0}</td>
-          <td><span class="tag ${b.status.toLowerCase()}">${b.status}</span></td>
+          <td><span class="tag ${(b.status || 'Published').toLowerCase()}">${b.status || 'Published'}</span></td>
           <td class="table-actions">
             <button onclick="editBlog(${idx})" title="Edit"><i class="fas fa-edit"></i></button>
-            <button onclick="togglePublishBlog(${idx})" title="Publish/Draft"><i class="fas fa-rotate"></i></button>
+            <button onclick="togglePublishBlog(${idx})" title="Publish/Draft" disabled style="opacity: 0.5; cursor: not-allowed;"></button>
             <button class="delete-btn" onclick="deleteBlog(${idx})" title="Delete"><i class="fas fa-trash"></i></button>
           </td>
         </tr>
@@ -1524,10 +1579,12 @@
         const parts = blog.date.split('-');
         if (parts.length === 3) {
           formattedDate = `20${parts[2]}-${parts[1] === 'Jun' ? '06' : '05'}-${parts[0]}`;
+        } else {
+          formattedDate = blog.date;
         }
       }
       document.getElementById("bDate").value = formattedDate;
-      document.getElementById("bStatus").value = blog.status;
+      document.getElementById("bStatus").value = blog.status || "Published";
 
       document.getElementById("blogFormTitle").textContent = "Edit Blog Post";
       document.getElementById("blogSubmitBtn").innerHTML = 'Update Post <i class="fas fa-save"></i>';
@@ -1536,13 +1593,9 @@
     }
 
     async function togglePublishBlog(index) {
+      // Disabled since status column is not present in Supabase table
       const blog = localBlogs[index];
       blog.status = blog.status === "Published" ? "Draft" : "Published";
-      
-      if (isSupabaseConfigured() && blog.id) {
-        try { await supabase.from('blogs').update({ status: blog.status }).eq('id', blog.id); } catch(e){}
-      }
-
       renderBlogs();
       renderDashboard();
     }
@@ -1551,7 +1604,17 @@
       if (confirm("Delete this blog post?")) {
         const blog = localBlogs[index];
         if (isSupabaseConfigured() && blog.id) {
-          try { await supabase.from('blogs').delete().eq('id', blog.id); } catch(e){}
+          try {
+            const { error } = await supabase.from('blogs').delete().eq('id', blog.id);
+            if (error) {
+              alert("Supabase Delete Error: " + error.message);
+              return;
+            }
+          } catch(e){
+            console.error("Supabase blog delete error:", e);
+            alert("Failed to delete blog from Supabase: " + e.message);
+            return;
+          }
         }
         localBlogs.splice(index, 1);
         renderBlogs();
