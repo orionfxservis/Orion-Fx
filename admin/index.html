@@ -298,6 +298,8 @@
 
     /* Sidebar Navigation Menu */
     .sidebar-menu {
+      position: sticky;
+      top: 24px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -306,6 +308,7 @@
       border-radius: var(--radius-lg);
       padding: 16px;
       backdrop-filter: blur(20px);
+      z-index: 10;
     }
 
     .sidebar-menu button {
@@ -979,6 +982,10 @@
                   <input type="text" id="bTitle" required placeholder="Why SEO Matters for Small Businesses">
                 </div>
                 <div class="form-group">
+                  <label for="bAuthor">Author</label>
+                  <input type="text" id="bAuthor" required placeholder="Orion Fx" value="Orion Fx">
+                </div>
+                <div class="form-group">
                   <label for="bSlug">Slug</label>
                   <input type="text" id="bSlug" required placeholder="why-seo-matters-for-small-businesses">
                 </div>
@@ -1063,6 +1070,7 @@
                 <thead>
                   <tr>
                     <th>Title</th>
+                    <th>Author</th>
                     <th>Date</th>
                     <th>Views</th>
                     <th>Status</th>
@@ -1535,6 +1543,7 @@
       
       const blogData = {
         title: document.getElementById("bTitle").value,
+        author: document.getElementById("bAuthor").value,
         slug: document.getElementById("bSlug").value,
         seo_title: document.getElementById("bSeoTitle").value,
         meta_description: document.getElementById("bMetaDescription").value,
@@ -1557,6 +1566,7 @@
       // Strip fields that are not in the Supabase blogs schema
       const dbBlogData = {
         title: blogData.title,
+        author: blogData.author,
         slug: blogData.slug,
         seo_title: blogData.seo_title,
         meta_description: blogData.meta_description,
@@ -1628,13 +1638,14 @@
     function renderBlogs() {
       const container = document.getElementById("blogsList");
       if (localBlogs.length === 0) {
-        container.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted)">No blog posts written.</td></tr>`;
+        container.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted)">No blog posts written.</td></tr>`;
         return;
       }
 
       container.innerHTML = localBlogs.map((b, idx) => `
         <tr>
           <td style="font-weight:600;">${b.title}</td>
+          <td>${b.author || 'Orion Fx'}</td>
           <td>${b.date}</td>
           <td>${b.views || 0}</td>
           <td><span class="tag ${(b.status || 'Published').toLowerCase()}">${b.status || 'Published'}</span></td>
@@ -1652,6 +1663,7 @@
       const blog = localBlogs[index];
 
       document.getElementById("bTitle").value = blog.title || "";
+      document.getElementById("bAuthor").value = blog.author || "";
       document.getElementById("bSlug").value = blog.slug || "";
       document.getElementById("bSeoTitle").value = blog.seo_title || "";
       document.getElementById("bMetaDescription").value = blog.meta_description || "";
