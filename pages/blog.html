@@ -253,9 +253,8 @@
     }
 
     .card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
       background: rgba(30, 35, 45, 0.8);
     }
 
@@ -271,8 +270,59 @@
       transition: all 0.4s;
     }
 
-    .card:hover .blog-thumb-placeholder {
-      transform: scale(1.03);
+    /* Modal Popup styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 5, 8, 0.85);
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: rgba(10, 15, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 229, 255, 0.25);
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      color: var(--text);
     }
 
     .blog-meta {
@@ -553,7 +603,7 @@
   </footer>
 
   <!-- Supabase & Data Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/supabase-config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -586,7 +636,10 @@
         }
       }
 
+      let fetchedBlogs = [];
+
       function renderDynamicBlogs(blogs) {
+        fetchedBlogs = blogs;
         if (!blogsGridContainer) return;
         blogsGridContainer.innerHTML = blogs.map(b => {
           let icon = "fa-file-alt";
@@ -622,10 +675,10 @@
                 ${metaHtml}
                 <h3 style="margin-top: 10px;">${b.title}</h3>
                 <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
-                  ${b.description || ""}
+                  ${b.short_description || b.description || ""}
                 </p>
               </div>
-              <a href="#" class="project-link">Read Article</a>
+              <a href="#" class="project-link" onclick="event.preventDefault(); openBlogModal(${b.id})">Read Article</a>
             </article>
           `;
         }).join("");
@@ -633,8 +686,82 @@
         // Re-observe dynamic cards
         blogsGridContainer.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       }
+
+      window.openBlogModal = function(id) {
+        const blog = fetchedBlogs.find(b => b.id === id);
+        if (!blog) return;
+
+        const modal = document.getElementById("blogModal");
+        const modalBody = document.getElementById("modalBody");
+
+        const dateStr = blog.date ? blog.date : "";
+        const tagsHtml = blog.tags ? `<div style="margin-top: 15px; font-size:12px; color: var(--muted)"><strong>Tags:</strong> ${blog.tags}</div>` : '';
+        const focusKeywordHtml = blog.focus_keyword ? `<div style="font-size:12px; color: var(--muted)"><strong>Focus Keyword:</strong> ${blog.focus_keyword}</div>` : '';
+        const categoryHtml = blog.category ? `<span style="color: var(--primary); font-size: 11px; text-transform: uppercase; font-weight: 600;">${blog.category}</span>` : '';
+
+        const imageHtml = blog.image 
+          ? `<div style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; max-height: 350px;"><img src="${blog.image}" alt="${blog.title}" style="width: 100%; height: auto; object-fit: cover;"></div>`
+          : '';
+
+        modalBody.innerHTML = `
+          ${imageHtml}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            ${categoryHtml}
+            <span style="font-size: 12px; color: var(--muted);">${dateStr}</span>
+          </div>
+          <h2 style="font-size: 28px; color: #fff; line-height: 1.3; margin: 0 0 16px 0; border-left: none; padding-left: 0;">${blog.title}</h2>
+          
+          <div style="font-size: 15px; line-height: 1.8; color: var(--text);">
+            <p style="font-weight: 500; font-size: 16px; color: #fff; margin-bottom: 20px; line-height: 1.6;">${blog.short_description || ""}</p>
+            <div style="margin-bottom: 30px; white-space: pre-wrap;">${blog.article || ""}</div>
+            
+            ${blog.section_heading && blog.section_content ? `
+              <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 24px; padding-top: 20px;">
+                <h3 style="font-size: 20px; color: var(--primary); margin: 0 0 12px 0;">${blog.section_heading}</h3>
+                <p style="white-space: pre-wrap;">${blog.section_content}</p>
+              </div>
+            ` : ''}
+
+            ${blog.conclusion ? `
+              <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 24px; padding-top: 20px;">
+                <h3 style="font-size: 20px; color: var(--primary); margin: 0 0 12px 0;">Conclusion</h3>
+                <p style="white-space: pre-wrap;">${blog.conclusion}</p>
+              </div>
+            ` : ''}
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 30px; padding-top: 15px; display: flex; flex-direction: column; gap: 6px;">
+            ${tagsHtml}
+            ${focusKeywordHtml}
+          </div>
+        `;
+
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      window.closeBlogModal = function() {
+        document.getElementById("blogModal").style.display = "none";
+        document.body.style.overflow = "";
+      }
+
+      document.getElementById("blogModal").addEventListener("click", (e) => {
+        if (e.target.id === "blogModal") {
+          closeBlogModal();
+        }
+      });
     });
   </script>
+
+  <!-- Blog Article Modal -->
+  <div id="blogModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+      <div id="modalBody" class="modal-body">
+        <!-- Content injected dynamically -->
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
