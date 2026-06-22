@@ -1495,6 +1495,70 @@
       font-size: 14px;
       line-height: 1.6;
     }
+
+    /* Modal Popup styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 5, 8, 0.85);
+      backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: rgba(10, 15, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 229, 255, 0.25);
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      color: var(--text);
+    }
+
+    .blog-meta {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 
@@ -2359,6 +2423,8 @@
 
       // Render Blogs dynamically from Supabase
       const blogsGridContainer = document.getElementById("blogsGrid");
+      let fetchedBlogs = [];
+
       if (blogsGridContainer) {
         if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
           supabase.from('blogs')
@@ -2376,6 +2442,7 @@
       }
 
       function renderDynamicBlogs(blogs) {
+        fetchedBlogs = blogs;
         if (!blogsGridContainer) return;
         blogsGridContainer.innerHTML = blogs.map(b => {
           let icon = "fa-file-alt";
@@ -2389,7 +2456,7 @@
             color = "var(--primary)";
           } else if (cat.includes("seo") || cat.includes("search")) {
             icon = "fa-search";
-            gradient = "linear-gradient(135deg, rgba(123, 97, 255, 0.1), rgba(255, 46, 126, 0.15))";
+            gradient = "linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 46, 126, 0.15))";
             color = "var(--accent)";
           } else if (cat.includes("market") || cat.includes("mobile") || cat.includes("phone")) {
             icon = "fa-mobile-screen-button";
@@ -2411,10 +2478,10 @@
                 ${metaHtml}
                 <h3 style="margin-top: 10px;">${b.title}</h3>
                 <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
-                  ${b.description || ""}
+                  ${b.short_description || b.description || ""}
                 </p>
               </div>
-              <a href="pages/blog.html" class="project-link">Read More</a>
+              <a href="#" class="project-link" onclick="event.preventDefault(); openBlogModal(${b.id})">Read More</a>
             </article>
           `;
         }).join("");
@@ -2424,6 +2491,74 @@
           blogsGridContainer.querySelectorAll('.reveal').forEach(el => window.observer.observe(el));
         }
       }
+
+      window.openBlogModal = function(id) {
+        const blog = fetchedBlogs.find(b => b.id === id);
+        if (!blog) return;
+
+        const modal = document.getElementById("blogModal");
+        const modalBody = document.getElementById("modalBody");
+
+        const dateStr = blog.date ? blog.date : "";
+        const tagsHtml = blog.tags ? `<div style="margin-top: 15px; font-size:12px; color: var(--muted)"><strong>Tags:</strong> ${blog.tags}</div>` : '';
+        const focusKeywordHtml = blog.focus_keyword ? `<div style="font-size:12px; color: var(--muted)"><strong>Focus Keyword:</strong> ${blog.focus_keyword}</div>` : '';
+        const categoryHtml = blog.category ? `<span style="color: var(--primary); font-size: 11px; text-transform: uppercase; font-weight: 600;">${blog.category}</span>` : '';
+        const authorHtml = `<span style="color: var(--muted); font-size: 12px; font-weight: 500;">By ${blog.author || 'Orion Fx'}</span>`;
+
+        const imageHtml = blog.image 
+          ? `<div style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; display: flex; justify-content: center; background: rgba(0,0,0,0.2);"><img src="${blog.image}" alt="${blog.title}" style="max-width: 100%; max-height: 450px; object-fit: contain;"></div>`
+          : '';
+
+        modalBody.innerHTML = `
+          ${imageHtml}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${categoryHtml}
+              ${authorHtml}
+            </div>
+            <span style="font-size: 12px; color: var(--muted);">${dateStr}</span>
+          </div>
+          <h2 style="font-size: 28px; color: #fff; line-height: 1.3; margin: 0 0 16px 0; border-left: none; padding-left: 0;">${blog.title}</h2>
+          
+          <div style="font-size: 15px; line-height: 1.8; color: var(--text);">
+            <p style="font-weight: 500; font-size: 16px; color: #fff; margin-bottom: 20px; line-height: 1.6;">${blog.short_description || ""}</p>
+            <div style="margin-bottom: 30px; white-space: pre-wrap;">${blog.article || ""}</div>
+            
+            ${blog.section_heading && blog.section_content ? `
+              <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 24px; padding-top: 20px;">
+                <h3 style="font-size: 20px; color: var(--primary); margin: 0 0 12px 0;">${blog.section_heading}</h3>
+                <p style="white-space: pre-wrap;">${blog.section_content}</p>
+              </div>
+            ` : ''}
+
+            ${blog.conclusion ? `
+              <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 24px; padding-top: 20px;">
+                <h3 style="font-size: 20px; color: var(--primary); margin: 0 0 12px 0;">Conclusion</h3>
+                <p style="white-space: pre-wrap;">${blog.conclusion}</p>
+              </div>
+            ` : ''}
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 30px; padding-top: 15px; display: flex; flex-direction: column; gap: 6px;">
+            ${tagsHtml}
+            ${focusKeywordHtml}
+          </div>
+        `;
+
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      window.closeBlogModal = function() {
+        document.getElementById("blogModal").style.display = "none";
+        document.body.style.overflow = "";
+      }
+
+      document.getElementById("blogModal").addEventListener("click", (e) => {
+        if (e.target.id === "blogModal") {
+          closeBlogModal();
+        }
+      });
 
       const sections = document.querySelectorAll('main[id], section[id]');
       const navLinks = document.querySelectorAll('nav ul li a, .mobile-menu-container a');
@@ -2549,6 +2684,16 @@
     ]
   }
   </script>
+
+  <!-- Blog Article Modal -->
+  <div id="blogModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+      <div id="modalBody" class="modal-body">
+        <!-- Content injected dynamically -->
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
