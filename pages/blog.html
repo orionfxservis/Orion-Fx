@@ -662,8 +662,8 @@
           }
 
           const mediaHtml = b.image 
-            ? `<div class="blog-thumb-placeholder" style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;"><img src="${b.image}" alt="${b.title}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
-            : `<div class="blog-thumb-placeholder" style="background: ${gradient}; border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);"><i class="fas ${icon}" style="font-size: 44px; color: ${color}; text-shadow: 0 0 15px ${color};"></i></div>`;
+            ? `<div class="blog-thumb-placeholder" style="overflow: hidden;"><img src="${b.image}" alt="${b.title}" style="width: 100%; height: 100%; object-fit: cover;"></div>`
+            : `<div class="blog-thumb-placeholder" style="background: ${gradient}; box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05);"><i class="fas ${icon}" style="font-size: 44px; color: ${color}; text-shadow: 0 0 15px ${color};"></i></div>`;
 
           const dateStr = b.date ? b.date : "";
           const metaHtml = b.category ? `<div class="blog-meta">${b.category} ${dateStr ? '• ' + dateStr : ''}</div>` : '';
