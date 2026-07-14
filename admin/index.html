@@ -706,6 +706,7 @@
         <li><a href="#" class="active" onclick="switchSection('dashboard')">Dashboard</a></li>
         <li><a href="#" onclick="switchSection('projects')">Selected Work</a></li>
         <li><a href="#" onclick="switchSection('blogs')">Blogs</a></li>
+        <li><a href="#" onclick="switchSection('mobileApps')">Mobile Apps</a></li>
         <li><a href="#" onclick="switchSection('leads')">Leads</a></li>
         <li><a href="#" onclick="switchSection('settings')">Settings</a></li>
       </ul>
@@ -740,6 +741,7 @@
         <button id="navDashboard" class="active" onclick="switchSection('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</button>
         <button id="navProjects" onclick="switchSection('projects')"><i class="fas fa-briefcase"></i> Selected Work</button>
         <button id="navBlogs" onclick="switchSection('blogs')"><i class="fas fa-blog"></i> Blogs</button>
+        <button id="navMobileApps" onclick="switchSection('mobileApps')"><i class="fas fa-mobile-alt"></i> Mobile Apps</button>
         <button onclick="alert('Categories module configuration is locked by default.')"><i class="fas fa-tags"></i> Categories</button>
         <button id="navLeads" onclick="switchSection('leads')"><i class="fas fa-envelope-open-text"></i> Leads</button>
         <button onclick="switchSection('leads')"><i class="fas fa-comment-dots"></i> Messages</button>
@@ -1096,6 +1098,59 @@
           </div>
         </div>
 
+        <!-- MOBILE APPS SECTION TAB -->
+        <div id="mobileAppsSection" class="tab-content">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3>Mobile Applications Registry</h3>
+              <button class="btn" onclick="openNewMobileAppForm()" style="width: auto;"><i class="fas fa-plus"></i> New Mobile App</button>
+            </div>
+
+            <!-- Mobile App Creator Form Panel -->
+            <div id="mobileAppFormPanel" class="dashboard-card" style="display: none; margin-bottom: 20px; background: rgba(0,0,0,0.4)">
+              <h4 id="mobileAppFormTitle" style="margin-top:0;">Add New Mobile App</h4>
+              <form id="mobileAppForm">
+                <div class="form-group">
+                  <label for="mTitle">App Title</label>
+                  <input type="text" id="mTitle" required placeholder="School Management System">
+                </div>
+                <div class="form-group">
+                  <label for="mDescription">Description</label>
+                  <textarea id="mDescription" rows="3" required placeholder="A brief description of the mobile app..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="mImage">Image Path / URL</label>
+                  <input type="text" id="mImage" required placeholder="assets/project images/sms-app.png">
+                </div>
+                <div class="form-group">
+                  <label for="mLink">App Store / Web Link</label>
+                  <input type="text" id="mLink" required placeholder="#">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                  <button type="submit" id="mobileAppSubmitBtn" class="btn" style="width:50%;">Save App <i class="fas fa-check"></i></button>
+                  <button type="button" class="btn btn-secondary" onclick="closeMobileAppForm()" style="width:50%;">Cancel</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="data-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Image Path</th>
+                    <th>Link</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mobileAppsList">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- LEADS SECTION TAB -->
         <div id="leadsSection" class="tab-content">
           <div class="dashboard-card">
@@ -1215,6 +1270,40 @@
       { id: 1, name: "Ahmed", email: "abc@gmail.com", service: "Website Design", date: "Today", status: "New" },
       { id: 2, name: "Ali", email: "xyz@gmail.com", service: "SEO Optimization", date: "Today", status: "Contacted" }
     ];
+    let localMobileApps = [
+      {
+        id: 1,
+        title: "School Management System",
+        description: "Complete digital solution for schools including student management, attendance, fee collection, examinations and parent portal.",
+        image: "assets/project images/sms-app.png",
+        link: "#",
+        category: "Mobile Application"
+      },
+      {
+        id: 2,
+        title: "Inventory Management System",
+        description: "Smart inventory application for wholesalers and retailers with stock control, purchases, sales and reporting.",
+        image: "assets/project images/inventory-app.png",
+        link: "#",
+        category: "Mobile Application"
+      },
+      {
+        id: 3,
+        title: "StopBuy Pakistan",
+        description: "Compare grocery prices, discover nearby stores, view promotions and save money with Pakistan's smart shopping assistant.",
+        image: "assets/project images/stopbuy-app.png",
+        link: "#",
+        category: "Mobile Application"
+      },
+      {
+        id: 4,
+        title: "Hisaab Kitab Ledger",
+        description: "Digital bookkeeping and bookkeeping ledger application for small merchants in Pakistan, with offline support and automated SMS alerts.",
+        image: "assets/project images/hisaab-kitab.png",
+        link: "#",
+        category: "Mobile Application"
+      }
+    ];
 
     let editingProjectIndex = null;
     let editingBlogIndex = null;
@@ -1262,6 +1351,7 @@
       renderProjects();
       renderBlogs();
       renderLeads();
+      renderMobileApps();
     }
 
     function logout() {
@@ -1286,10 +1376,19 @@
       const topLinks = document.querySelectorAll(".top-menu a");
       topLinks.forEach(link => {
         const text = link.textContent.toLowerCase();
-        if (text === tabId.toLowerCase() || (tabId === 'projects' && text === 'selected work')) {
+        if (text === tabId.toLowerCase() || (tabId === 'projects' && text === 'selected work') || (tabId === 'mobileapps' && text === 'mobile apps')) {
           link.classList.add("active");
         }
       });
+
+      // Fix layout shift / jump by scrolling viewport to top of dashboard panel
+      const panel = document.getElementById("dashboardPanel");
+      if (panel) {
+        window.scrollTo({
+          top: panel.offsetTop - 100,
+          behavior: 'instant'
+        });
+      }
     }
 
     // Sync database lists
@@ -1872,6 +1971,85 @@
         localLeads.splice(index, 1);
         renderLeads();
         renderDashboard();
+      }
+    }
+
+    let editingMobileAppIndex = null;
+
+    function openNewMobileAppForm() {
+      editingMobileAppIndex = null;
+      document.getElementById("mobileAppForm").reset();
+      document.getElementById("mobileAppFormTitle").textContent = "Add New Mobile App";
+      document.getElementById("mobileAppSubmitBtn").innerHTML = 'Save App <i class="fas fa-check"></i>';
+      document.getElementById("mobileAppFormPanel").style.display = "block";
+      document.getElementById("mobileAppFormPanel").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeMobileAppForm() {
+      document.getElementById("mobileAppFormPanel").style.display = "none";
+    }
+
+    document.getElementById("mobileAppForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const appData = {
+        title: document.getElementById("mTitle").value,
+        description: document.getElementById("mDescription").value,
+        image: document.getElementById("mImage").value,
+        link: document.getElementById("mLink").value,
+        category: "Mobile Application"
+      };
+
+      if (editingMobileAppIndex !== null) {
+        localMobileApps[editingMobileAppIndex] = { ...localMobileApps[editingMobileAppIndex], ...appData };
+        editingMobileAppIndex = null;
+      } else {
+        localMobileApps.unshift(appData);
+      }
+
+      renderMobileApps();
+      closeMobileAppForm();
+    });
+
+    function renderMobileApps() {
+      const container = document.getElementById("mobileAppsList");
+      if (!container) return;
+      if (localMobileApps.length === 0) {
+        container.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted)">No mobile apps added.</td></tr>`;
+        return;
+      }
+
+      container.innerHTML = localMobileApps.map((m, idx) => `
+        <tr>
+          <td style="font-weight:600;">${m.title}</td>
+          <td>${m.image}</td>
+          <td><a href="${m.link}" target="_blank" style="color: var(--primary); text-decoration: none;">Link <i class="fas fa-external-link-alt" style="font-size: 10px;"></i></a></td>
+          <td class="table-actions">
+            <button onclick="editMobileApp(${idx})" title="Edit"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn" onclick="deleteMobileApp(${idx})" title="Delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function editMobileApp(index) {
+      editingMobileAppIndex = index;
+      const app = localMobileApps[index];
+
+      document.getElementById("mTitle").value = app.title;
+      document.getElementById("mDescription").value = app.description;
+      document.getElementById("mImage").value = app.image;
+      document.getElementById("mLink").value = app.link;
+
+      document.getElementById("mobileAppFormTitle").textContent = "Edit Mobile App";
+      document.getElementById("mobileAppSubmitBtn").innerHTML = 'Update App <i class="fas fa-save"></i>';
+      document.getElementById("mobileAppFormPanel").style.display = "block";
+      document.getElementById("mobileAppFormPanel").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deleteMobileApp(index) {
+      if (confirm("Delete this mobile app?")) {
+        localMobileApps.splice(index, 1);
+        renderMobileApps();
       }
     }
 
