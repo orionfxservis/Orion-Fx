@@ -746,6 +746,10 @@
 
     .card.project {
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
     }
 
     .project-thumb {
@@ -1592,6 +1596,7 @@
           <li><a href="#process">Process</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#projects">Our Projects</a></li>
+          <li><a href="#mobile-projects">Mobile Apps</a></li>
           <li><a href="#blogs">Blog</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -1613,6 +1618,7 @@
     <a href="#process" onclick="toggleMobileMenu()">Process</a>
     <a href="#pricing" onclick="toggleMobileMenu()">Pricing</a>
     <a href="#projects" onclick="toggleMobileMenu()">Our Projects</a>
+    <a href="#mobile-projects" onclick="toggleMobileMenu()">Mobile Apps</a>
     <a href="#blogs" onclick="toggleMobileMenu()">Blog</a>
     <a href="#faq" onclick="toggleMobileMenu()">FAQ</a>
     <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
@@ -1824,6 +1830,72 @@
           <a href="pages/projects.html" class="btn btn-primary reveal">
               Check More Work <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
           </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile Applications -->
+  <section id="mobile-projects" aria-labelledby="mobile-projects-title" style="padding-top: 50px;">
+    <div class="container">
+      <div>
+          <h2 id="mobile-projects-title" class="reveal" style="display: flex; align-items: center; gap: 10px;">
+              <span>📱</span> Mobile Applications
+          </h2>
+          <p class="lead muted reveal" style="margin-bottom: 30px;">
+              Modern Android & iOS applications developed to simplify business operations and improve customer experience.
+          </p>
+
+          <div class="grid grid-4" style="margin-top:40px;">
+
+              <!-- App 1 -->
+              <article class="card reveal" tabindex="0">
+                  <div style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;">
+                      <img src="assets/project images/sms-app.png" alt="School Management System" class="project-thumb" style="width: 100%; height: 100%; object-fit: cover; margin-bottom: 0;">
+                  </div>
+                  <h3>School Management System</h3>
+                  <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                      Complete digital solution for schools including student management, attendance, fee collection, examinations and parent portal.
+                  </p>
+                  <a href="#" class="project-link">Web Link</a>
+              </article>
+
+              <!-- App 2 -->
+              <article class="card reveal" tabindex="0">
+                  <div style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;">
+                      <img src="assets/project images/inventory-app.png" alt="Inventory Management System" class="project-thumb" style="width: 100%; height: 100%; object-fit: cover; margin-bottom: 0;">
+                  </div>
+                  <h3>Inventory Management System</h3>
+                  <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                      Smart inventory application for wholesalers and retailers with stock control, purchases, sales and reporting.
+                  </p>
+                  <a href="#" class="project-link">Web Link</a>
+              </article>
+
+              <!-- App 3 -->
+              <article class="card reveal" tabindex="0">
+                  <div style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;">
+                      <img src="assets/project images/stopbuy-app.png" alt="StopBuy Pakistan" class="project-thumb" style="width: 100%; height: 100%; object-fit: cover; margin-bottom: 0;">
+                  </div>
+                  <h3>StopBuy Pakistan</h3>
+                  <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                      Compare grocery prices, discover nearby stores, view promotions and save money with Pakistan's smart shopping assistant.
+                  </p>
+                  <a href="#" class="project-link">Web Link</a>
+              </article>
+
+              <!-- App 4 -->
+              <article class="card reveal" tabindex="0">
+                  <div style="border-radius: 16px; height: 160px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden;">
+                      <img src="assets/project images/hisaab-kitab.png" alt="Hisaab Kitab Ledger" class="project-thumb" style="width: 100%; height: 100%; object-fit: cover; margin-bottom: 0;">
+                  </div>
+                  <h3>Hisaab Kitab Ledger</h3>
+                  <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+                      Digital bookkeeping and bookkeeping ledger application for small merchants in Pakistan, with offline support and automated SMS alerts.
+                  </p>
+                  <a href="#" class="project-link">Web Link</a>
+              </article>
+
+          </div>
       </div>
     </div>
   </section>
