@@ -536,6 +536,7 @@
           <li><a href="../index.html#services">Services</a></li>
           <li><a href="../index.html#process">Process</a></li>
           <li><a href="../index.html#projects">Our Projects</a></li>
+          <li><a href="../index.html#mobile-projects">Mobile Apps</a></li>
           <li><a href="blog.html" class="active">Blog</a></li>
           <li><a href="../index.html#contact">Contact</a></li>
         </ul>
@@ -698,15 +699,19 @@
         const tagsHtml = blog.tags ? `<div style="margin-top: 15px; font-size:12px; color: var(--muted)"><strong>Tags:</strong> ${blog.tags}</div>` : '';
         const focusKeywordHtml = blog.focus_keyword ? `<div style="font-size:12px; color: var(--muted)"><strong>Focus Keyword:</strong> ${blog.focus_keyword}</div>` : '';
         const categoryHtml = blog.category ? `<span style="color: var(--primary); font-size: 11px; text-transform: uppercase; font-weight: 600;">${blog.category}</span>` : '';
+        const authorHtml = `<span style="color: var(--muted); font-size: 12px; font-weight: 500;">By ${blog.author || 'Orion Fx'}</span>`;
 
         const imageHtml = blog.image 
-          ? `<div style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; max-height: 350px;"><img src="${blog.image}" alt="${blog.title}" style="width: 100%; height: auto; object-fit: cover;"></div>`
+          ? `<div style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; display: flex; justify-content: center; background: rgba(0,0,0,0.2);"><img src="${blog.image}" alt="${blog.title}" style="max-width: 100%; max-height: 450px; object-fit: contain;"></div>`
           : '';
 
         modalBody.innerHTML = `
           ${imageHtml}
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            ${categoryHtml}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              ${categoryHtml}
+              ${authorHtml}
+            </div>
             <span style="font-size: 12px; color: var(--muted);">${dateStr}</span>
           </div>
           <h2 style="font-size: 28px; color: #fff; line-height: 1.3; margin: 0 0 16px 0; border-left: none; padding-left: 0;">${blog.title}</h2>
