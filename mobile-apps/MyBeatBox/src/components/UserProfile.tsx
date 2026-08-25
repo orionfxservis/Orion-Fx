@@ -20,7 +20,10 @@ import {
   ShieldCheck, 
   Smartphone, 
   Sparkles,
-  Sliders
+  Sliders,
+  Download,
+  ArrowLeft,
+  ChevronLeft
 } from 'lucide-react';
 import { UserAccount, ThemeConfig, Song, Playlist } from '../types';
 import { saveUserDataToSupabase, registerOrionFxProject } from '../services/orionfxSupabase';
@@ -479,11 +482,23 @@ export default function UserProfile({
           </button>
         </div>
 
-        {/* 5. Centered Log Out Button */}
-        <div className="mt-8 pt-4 border-t border-white/10 flex justify-center">
+        {/* 5. Action Buttons: Back & Log Out */}
+        <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-center gap-3">
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="flex items-center justify-center gap-1.5 text-white/80 hover:text-white hover:bg-white/10 font-semibold text-xs sm:text-sm py-2 px-5 rounded-xl border border-white/15 transition active:scale-95 cursor-pointer"
+              id="btn-profile-back"
+              title="Back to previous page"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
+          )}
           <button
             onClick={handleLogOut}
-            className="flex items-center justify-center gap-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 font-semibold text-xs sm:text-sm py-2 px-6 rounded-xl border border-rose-500/20 transition active:scale-95 cursor-pointer"
+            className="flex items-center justify-center gap-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 font-semibold text-xs sm:text-sm py-2 px-5 rounded-xl border border-rose-500/20 transition active:scale-95 cursor-pointer"
+            id="btn-profile-logout"
           >
             <LogOut className="w-4 h-4" />
             <span>Log Out</span>
@@ -941,15 +956,35 @@ export default function UserProfile({
               </button>
             </div>
 
-            <div className="flex flex-col items-center gap-2 py-2">
-              <div className="w-12 h-12 rounded-2xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-300">
-                <Music2 className="w-6 h-6" />
+            <div className="flex flex-col items-center gap-3 py-2">
+              <div className="w-20 h-20 rounded-2xl border border-cyan-400/30 overflow-hidden shadow-xl shadow-cyan-500/20 shrink-0 bg-slate-950">
+                <img 
+                  src="/src/assets/images/mybeatbox_icon_logo_1787687263089.jpg" 
+                  alt="MyBeatBox Studio Logo"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
-              <h4 className="text-base font-bold text-white">MyBeatBox Studio</h4>
-              <p className="text-xs text-white/50 font-mono">Version 2.5.0 (Build 2026.08)</p>
-              <p className="text-[11px] text-white/60 leading-relaxed max-w-xs mt-1">
-                Acoustic personal playlist builder, equalizer, AI recommendation curation, and real-time audio playback workstation.
+              <div>
+                <h4 className="text-base font-bold text-white">MyBeatBox Studio</h4>
+                <p className="text-xs text-cyan-400 font-mono">YOUR MUSIC. YOUR VIBE.</p>
+                <p className="text-[10.5px] text-white/50 font-mono mt-0.5">Version 2.5.0 • Orion FX Mobile</p>
+              </div>
+              <p className="text-[11px] text-white/60 leading-relaxed max-w-xs">
+                Acoustic personal playlist builder, 7-band parametric equalizer, AI recommendation curation, and real-time audio workstation.
               </p>
+
+              {/* Logo Asset Download / Reference */}
+              <a
+                href="/src/assets/images/mybeatbox_icon_logo_1787687263089.jpg"
+                download="mybeatbox_logo.jpg"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-[11px] text-cyan-300 font-medium transition cursor-pointer"
+              >
+                <Download className="w-3 h-3" />
+                <span>Save High-Res Logo</span>
+              </a>
             </div>
 
             <div className="pt-3 border-t border-white/10 text-[10px] text-white/40 font-mono">

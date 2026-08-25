@@ -300,34 +300,32 @@ export default function SelectSongsCatalog({
   return (
     <div
       id="select-songs-catalog"
-      className="p-4 sm:p-6 rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-[#04241a]/95 via-[#021711]/95 to-[#020608]/95 shadow-xl shadow-emerald-950/25 relative overflow-hidden"
+      className="p-4 sm:p-5 rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-[#04241a]/95 via-[#021711]/95 to-[#020608]/95 shadow-xl shadow-emerald-950/25 relative overflow-hidden flex flex-col gap-4"
     >
       {/* Background ambient element */}
-      <div className="absolute right-0 top-0 w-48 h-48 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute right-0 top-0 w-44 h-44 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Header with requested exact wording: "Your search results are here" */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.06] pb-3 mb-4 sm:mb-5 gap-2">
-        <div className="flex items-start sm:items-center gap-2.5">
-          <span className="px-1.5 py-0.5 rounded text-[9px] uppercase font-mono font-bold tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 shrink-0 mt-0.5 sm:mt-0">
-            STAGE 02
-          </span>
-          <div>
-            <h2 className="font-bold text-sm sm:text-base tracking-tight text-white flex items-center gap-1.5">
-              <Disc className="w-4 h-4 text-emerald-400 animate-spin-slow shrink-0" />
-              Your search results are here
-            </h2>
-            <p className="text-[11px] sm:text-xs text-emerald-200/60 mt-0.5">
-              {searchResult
-                ? `Showing authentic tracks for "${searchResult.title}". Click Play to start streaming this particular song, or + to add to playlist.`
-                : 'Search any singer or song in Stage 01 above to see live grounded tracks here with instant Play / Stop and + Add.'}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 uppercase tracking-wider">
-            {tracksToDisplay.length} Tracks Ready
-          </span>
-        </div>
+      {/* 1. STAGE 02 Badge */}
+      <div className="flex items-center justify-between">
+        <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          STAGE 02
+        </span>
+        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300/80 border border-emerald-500/20 uppercase tracking-wider">
+          {tracksToDisplay.length} Tracks Ready
+        </span>
+      </div>
+
+      {/* 2. Main Title: 💿 Your search results are here */}
+      <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3">
+        <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2.5 min-h-[28px]">
+          <Disc className="w-5 h-5 text-emerald-400 shrink-0 self-center" />
+          <span className="leading-tight self-center">Your search results are here</span>
+        </h2>
+        <p className="text-xs sm:text-[13px] text-emerald-200/60 leading-snug">
+          {searchResult
+            ? `Showing authentic tracks for "${searchResult.title}". Click Play to start streaming this particular song, or + to add to playlist.`
+            : 'Search any singer or song in Stage 01 above to see live grounded tracks here with instant Play / Stop and + Add.'}
+        </p>
       </div>
 
       {/* Search Result Banner when search result is active */}

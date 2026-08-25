@@ -16,10 +16,10 @@ interface StageItem {
 }
 
 const STAGES: StageItem[] = [
-  { id: 'search', num: '01', label: 'Search', targetId: 'step-google-search', description: 'Google Music Grounding' },
-  { id: 'build', num: '02', label: 'Build', targetId: 'step-select-songs', description: 'Select & Queue Songs' },
-  { id: 'review', num: '03', label: 'Review', targetId: 'stage-03-playlist-section', description: 'Playlist Workspace' },
-  { id: 'save', num: '04', label: 'Save', description: 'Cloud Sync & Studio' },
+  { id: 'search', num: '01', label: 'Search', targetId: 'step-google-search', description: 'Google Music Grounding Search' },
+  { id: 'build', num: '02', label: 'Build', targetId: 'step-select-songs', description: 'Your search results are here' },
+  { id: 'review', num: '03', label: 'Review', targetId: 'stage-03-playlist-section', description: 'Playlist' },
+  { id: 'save', num: '04', label: 'Save', targetId: 'stage-04-save-section', description: 'Save & Studio Mastering' },
 ];
 
 export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: WorkflowProgressProps) {
@@ -31,10 +31,13 @@ export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: Wor
       const searchEl = document.getElementById('step-google-search');
       const buildEl = document.getElementById('step-select-songs');
       const reviewEl = document.getElementById('stage-03-playlist-section');
+      const saveEl = document.getElementById('stage-04-save-section');
 
-      const scrollPos = window.scrollY + 200;
+      const scrollPos = window.scrollY + 250;
 
-      if (reviewEl && scrollPos >= reviewEl.offsetTop - 100) {
+      if (saveEl && scrollPos >= saveEl.offsetTop - 100) {
+        setActiveStage('save');
+      } else if (reviewEl && scrollPos >= reviewEl.offsetTop - 100) {
         setActiveStage('review');
       } else if (buildEl && scrollPos >= buildEl.offsetTop - 100) {
         setActiveStage('build');
@@ -50,21 +53,16 @@ export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: Wor
   const handleStageClick = (stage: StageItem) => {
     setActiveStage(stage.id);
 
-    if (stage.id === 'save') {
-      if (onOpenSave) {
-        onOpenSave();
-      } else {
-        const el = document.getElementById('stage-03-playlist-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-
     if (stage.targetId) {
       const el = document.getElementById(stage.targetId);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
+        return;
       }
+    }
+
+    if (stage.id === 'save' && onOpenSave) {
+      onOpenSave();
     }
   };
 
@@ -127,8 +125,10 @@ export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: Wor
 
       {/* Prominent Stage Name Below */}
       <div className="px-1 pt-1 flex items-center justify-between">
-        <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <span>{currentStageObj.label}</span>
+        <h1 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          <span className="text-amber-400 font-mono text-xs sm:text-sm">STAGE {currentStageObj.num}</span>
+          <span className="text-white/40">•</span>
+          <span>{currentStageObj.description}</span>
         </h1>
         <span className="text-[11px] font-mono text-white/40">
           Stage {currentStageObj.num} of 04

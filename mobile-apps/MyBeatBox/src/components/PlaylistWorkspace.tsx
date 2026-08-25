@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Plus, Search, Users, MessageSquare, Send, Share2, Music, Trash2, Globe, Sparkles, Check, ChevronRight, Edit3, X, AlertTriangle, Menu, MoreVertical, ArrowRight, Clock } from 'lucide-react';
+import { Play, Plus, Search, Users, MessageSquare, Send, Share2, Music, Trash2, Globe, Sparkles, Check, ChevronRight, ChevronDown, Edit3, X, AlertTriangle, Menu, MoreVertical, ArrowRight, Clock } from 'lucide-react';
 import { Song, Playlist, ChatMessage, UserAccount, ThemeConfig } from '../types';
 
 interface PlaylistWorkspaceProps {
@@ -535,37 +535,68 @@ export default function PlaylistWorkspace({
     handleDeletePlaylist(id);
   };
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-      {/* LEFT: Playlists Sidebar List */}
-      <div id="playlists-sidebar" className="lg:col-span-4 p-4 sm:p-5 rounded-2xl border border-amber-500/25 bg-gradient-to-b from-[#241203]/95 via-[#180901]/95 to-[#080200]/95 flex flex-col gap-3.5 shadow-xl shadow-amber-950/25 relative overflow-hidden">
-        {/* Gmail Cloud Account Status Banner */}
-        <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <div className="min-w-0">
-              <p className="text-[10px] text-amber-300 font-bold uppercase tracking-wider font-mono">
-                Saved in Google Account
-              </p>
-              <p className="text-[11px] font-medium text-white/90 truncate">
-                {user.email || 'iMFaisalHussain@gmail.com'}
-              </p>
-            </div>
-          </div>
-          <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 font-bold">
-            SYNCED
-          </span>
-        </div>
+  const totalTracksCount = playlists.reduce((acc, p) => acc + (p.songs?.length || 0), 0);
 
-        <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
-          <h2 className="font-bold text-sm sm:text-base flex items-center gap-1.5 text-white">
-            <Music className="w-4 h-4 text-amber-400 shrink-0" />
-            Playlist Library
-          </h2>
-          <span className="text-[9px] uppercase tracking-wider font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/20">
-            {playlists.length} Lists
-          </span>
-        </div>
+  return (
+    <div
+      id="stage-03-playlist-section-wrapper"
+      className="p-4 sm:p-5 rounded-2xl border border-amber-500/25 bg-gradient-to-b from-[#241203]/95 via-[#180901]/95 to-[#080200]/95 shadow-xl shadow-amber-950/25 relative overflow-hidden flex flex-col gap-4"
+    >
+      {/* Background ambient element */}
+      <div className="absolute right-0 top-0 w-44 h-44 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
+
+      {/* 1. STAGE 03 Badge */}
+      <div className="flex items-center justify-between">
+        <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30">
+          STAGE 03
+        </span>
+        <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300/80 border border-amber-500/20 uppercase tracking-wider">
+          {playlists.length} Lists • {totalTracksCount} Tracks Ready
+        </span>
+      </div>
+
+      {/* 2. Main Title: 🎵 Playlist */}
+      <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3">
+        <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2.5 min-h-[28px]">
+          <Music className="w-5 h-5 text-amber-400 shrink-0 self-center" />
+          <span className="leading-tight self-center">Playlist</span>
+        </h2>
+        <p className="text-xs sm:text-[13px] text-amber-200/60 leading-snug">
+          Organize, customize and collaborate on your personal and shared mixes.
+        </p>
+      </div>
+
+      {/* Inner Workspace Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* LEFT: Playlists Sidebar List */}
+        <div id="playlists-sidebar" className="lg:col-span-4 p-4 sm:p-5 rounded-2xl border border-amber-500/20 bg-black/40 backdrop-blur-md flex flex-col gap-3.5 shadow-lg relative overflow-hidden">
+          {/* Gmail Cloud Account Status Banner */}
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[10px] text-amber-300 font-bold uppercase tracking-wider font-mono">
+                  Saved in Google Account
+                </p>
+                <p className="text-[11px] font-medium text-white/90 truncate">
+                  {user.email || 'iMFaisalHussain@gmail.com'}
+                </p>
+              </div>
+            </div>
+            <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 font-bold">
+              SYNCED
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
+            <h2 className="font-bold text-sm sm:text-base flex items-center gap-1.5 text-white">
+              <Music className="w-4 h-4 text-amber-400 shrink-0" />
+              Playlist Library
+            </h2>
+            <span className="text-[9px] uppercase tracking-wider font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/20">
+              {playlists.length} Lists
+            </span>
+          </div>
 
         {/* Create Playlists Buttons */}
         <div className="grid grid-cols-2 gap-2">
@@ -664,15 +695,35 @@ export default function PlaylistWorkspace({
                     {playlist.songs.length} track{playlist.songs.length === 1 ? '' : 's'} • by {playlist.createdByName}
                   </p>
                 </div>
-                {/* Action Buttons: Rename, Delete & Close (X) */}
+                {/* Action Buttons: Rename, Dropdown Close & Delete */}
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={(e) => handleStartRename(playlist, e)}
                     className="p-1.5 rounded-lg text-white/60 hover:text-amber-300 hover:bg-amber-500/15 border border-white/5 hover:border-amber-500/30 transition-all"
-                    title="Rename Group"
+                    title="Rename Playlist"
                     aria-label={`Rename ${playlist.name}`}
                   >
                     <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+                  {/* Dropdown Close Playlist Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isActive) {
+                        onSetActivePlaylistId(null);
+                      } else {
+                        onSetActivePlaylistId(playlist.id);
+                      }
+                    }}
+                    className={`p-1.5 rounded-lg border transition-all ${
+                      isActive
+                        ? 'text-amber-300 hover:text-white bg-amber-500/25 hover:bg-amber-500/40 border-amber-500/40'
+                        : 'text-white/50 hover:text-white hover:bg-white/10 border-white/5 hover:border-white/20'
+                    }`}
+                    title={isActive ? "Close / Collapse this playlist" : "Open playlist"}
+                    aria-label={isActive ? `Close ${playlist.name}` : `Open ${playlist.name}`}
+                  >
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isActive ? 'rotate-180 text-amber-300' : ''}`} />
                   </button>
                   <button
                     onClick={(e) => {
@@ -680,31 +731,10 @@ export default function PlaylistWorkspace({
                       setPlaylistToDelete(playlist);
                     }}
                     className="p-1.5 rounded-lg text-white/60 hover:text-red-400 hover:bg-red-500/15 border border-white/5 hover:border-red-500/30 transition-all"
-                    title="Delete Group"
+                    title="Delete Playlist"
                     aria-label={`Delete ${playlist.name}`}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                  {/* Close "X" button on every listing */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isActive) {
-                        onSetActivePlaylistId(null);
-                      } else {
-                        // Close / Deselect
-                        onSetActivePlaylistId(null);
-                      }
-                    }}
-                    className={`p-1.5 rounded-lg border transition-all ${
-                      isActive
-                        ? 'text-amber-300 hover:text-white bg-amber-500/25 hover:bg-amber-500/40 border-amber-500/40'
-                        : 'text-white/40 hover:text-white hover:bg-white/10 border-white/5 hover:border-white/20'
-                    }`}
-                    title={isActive ? "Close this playlist" : "Close list"}
-                    aria-label={`Close ${playlist.name}`}
-                  >
-                    <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -769,12 +799,24 @@ export default function PlaylistWorkspace({
                     <button
                       onClick={() => handleStartRename(activePlaylist)}
                       className="flex items-center gap-1 min-h-[32px] px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 transition active:scale-95 cursor-pointer"
-                      title="Rename Group"
+                      title="Rename Playlist"
                       id="btn-rename-active-group"
-                      aria-label="Rename Group"
+                      aria-label="Rename Playlist"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       <span className="hidden sm:inline">Rename</span>
+                    </button>
+
+                    {/* Dropdown Button to Close the Playlist */}
+                    <button
+                      onClick={() => onSetActivePlaylistId(null)}
+                      className="flex items-center gap-1 min-h-[32px] px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 hover:text-white border border-amber-500/20 hover:border-amber-400/40 transition active:scale-95 cursor-pointer group/closedropdown"
+                      title="Close this Playlist"
+                      id="btn-dropdown-close-playlist"
+                      aria-label="Close Playlist"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5 group-hover/closedropdown:translate-y-0.5 transition-transform" />
+                      <span>Close</span>
                     </button>
 
                     {/* Delete Button */}
@@ -1086,6 +1128,7 @@ export default function PlaylistWorkspace({
 
           </div>
         )}
+      </div>
       </div>
 
       {/* Group Box Delete Confirmation Modal */}

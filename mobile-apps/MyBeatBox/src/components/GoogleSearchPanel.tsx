@@ -329,13 +329,13 @@ export default function GoogleSearchPanel({
       </div>
 
       {/* 2. Main Title: 🌐 Google Music Grounding Search */}
-      <div className="flex flex-col gap-1">
-        <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2">
-          <Globe className="w-5 h-5 text-blue-400 shrink-0" />
-          <span>Google Music Grounding Search</span>
+      <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3">
+        <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2.5 min-h-[28px]">
+          <Globe className="w-5 h-5 text-blue-400 shrink-0 self-center" />
+          <span className="leading-tight self-center">Google Music Grounding Search</span>
         </h2>
         {/* 3. Subtitle: Search artists, albums and tracks with AI. */}
-        <p className="text-xs sm:text-[13px] text-white/60 leading-snug">
+        <p className="text-xs sm:text-[13px] text-blue-200/60 leading-snug">
           Search artists, albums and tracks with AI.
         </p>
       </div>

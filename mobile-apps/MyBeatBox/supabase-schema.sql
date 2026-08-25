@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS public.projects (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Ensure all required columns exist even if 'projects' was created previously
+-- Ensure all common naming columns exist to satisfy any existing schema variations (title, name, project_name)
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS name TEXT;
 ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS project_name TEXT;
 ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS client_name TEXT;
 ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS category TEXT;
@@ -30,25 +32,31 @@ ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Comple
 ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT true;
 ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
+-- If existing table has project_name NULL, populate it from title or name
+UPDATE public.projects 
+SET project_name = COALESCE(project_name, title, name, 'project-' || id::text)
+WHERE project_name IS NULL;
+
 -- Ensure unique constraint or index on project_name for upsert support
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint WHERE conname = 'projects_project_name_unique'
   ) THEN
-    -- Check if project_name has a unique constraint or create unique index
     BEGIN
       ALTER TABLE public.projects ADD CONSTRAINT projects_project_name_unique UNIQUE (project_name);
     EXCEPTION
       WHEN others THEN
-        -- If duplicate or cannot add constraint directly, create unique index
         CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_project_name ON public.projects(project_name);
     END;
   END IF;
 END $$;
 
 -- Insert or Update MyBeatBox Mobile Application in Orion FX Showcase
+-- Fulfills 'title', 'name', and 'project_name' to satisfy all schema constraints
 INSERT INTO public.projects (
+  title,
+  name,
   project_name,
   client_name,
   category,
@@ -61,6 +69,8 @@ INSERT INTO public.projects (
   featured
 ) VALUES (
   'MyBeatBox Studio',
+  'MyBeatBox Studio',
+  'MyBeatBox Studio',
   'Orion FX',
   'Mobile Application',
   'Acoustic mobile audio workstation featuring real-time 7-band parametric EQ, personalized playlists, AI recommendations, and offline caching.',
@@ -72,6 +82,8 @@ INSERT INTO public.projects (
   true
 )
 ON CONFLICT (project_name) DO UPDATE SET
+  title = EXCLUDED.title,
+  name = EXCLUDED.name,
   category = EXCLUDED.category,
   description = EXCLUDED.description,
   technologies = EXCLUDED.technologies,

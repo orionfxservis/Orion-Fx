@@ -3,6 +3,8 @@ import { Playlist, Song, ThemeId } from '../types';
 
 export interface OrionFxProjectRecord {
   id?: string;
+  title?: string;
+  name?: string;
   project_name: string;
   client_name: string;
   category: string;
@@ -38,6 +40,8 @@ export async function registerOrionFxProject(): Promise<{ success: boolean; data
 
   try {
     const projectPayload: OrionFxProjectRecord = {
+      title: 'MyBeatBox Studio',
+      name: 'MyBeatBox Studio',
       project_name: 'MyBeatBox Studio',
       client_name: 'Orion FX',
       category: APP_CATEGORY,
