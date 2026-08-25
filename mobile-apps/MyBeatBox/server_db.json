@@ -1,0 +1,172 @@
+{
+  "playlists": [
+    {
+      "id": "stage03-playlist",
+      "name": "Stage 03 — My Curated Playlist",
+      "description": "Stage 03 Curated Master Playlist with 12 Tracks (48 min) featuring Nusrat, Rahat, Atif and global classics.",
+      "createdBy": "user-faisal",
+      "createdByName": "Faisal Hussain",
+      "userEmail": "iMFaisalHussain@gmail.com",
+      "isCollaborative": true,
+      "songs": [
+        {
+          "id": "nusrat-tumhe-dillagi-master",
+          "title": "Tumhe Dillagi",
+          "artist": "Ustad Nusrat Fateh Ali Khan",
+          "album": "Greatest Sufi Masterpieces",
+          "duration": "05:32",
+          "durationSec": 332,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAllahHoo_20150602%2FAllah%2520Hoo.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
+          "genre": "Sufi Qawwali / Ghazal"
+        },
+        {
+          "id": "rahat-afreen-afreen-master",
+          "title": "Afreen Afreen (Coke Studio)",
+          "artist": "Rahat Fateh Ali Khan & Momina Mustehsan",
+          "album": "Coke Studio Season 9",
+          "duration": "06:12",
+          "durationSec": 372,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAfreenAfreenRahatFatehAliKhanMominaMustehsanLyricalVideoWithTranslation240p%2FAfreen%2520Afreen%2520%2520%2520Rahat%2520Fateh%2520Ali%2520Khan%2520%2526%2520Momina%2520Mustehsan%2520%2520%2520Lyrical%2520Video%2520With%2520Translation%2520%255B240p%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
+          "genre": "Sufi Pop Duet"
+        },
+        {
+          "id": "atif-tajdar-e-haram-master",
+          "title": "Tajdar-e-Haram (Coke Studio)",
+          "artist": "Atif Aslam",
+          "album": "Coke Studio Season 8",
+          "duration": "07:01",
+          "durationSec": 421,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslamTajdarEHaramCokeStudioSeason8Episode1_201806%2FAtif%2520Aslam%2520Tajdar-e-Haram%2520Coke%2520Studio%2520Season%25208%2520Episode%25201.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
+          "genre": "Sufi Qawwali / Devotional"
+        },
+        {
+          "id": "atif-tere-liye-master",
+          "title": "Tere Liye",
+          "artist": "Atif Aslam & Shreya Ghoshal",
+          "album": "Prince (Soundtrack)",
+          "duration": "04:40",
+          "durationSec": 280,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FTereLiyeAtifAslambyKhiladi786%2F01%2520-%2520Tere%2520Liye%2520(320%2520Kbps)%2520-%2520.mp3",
+          "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/9b/ec/8a/9bec8a34-2e6f-ef8e-0b0b-68e1b0cefcbe/8902894350106_cover.jpg/600x600bb.jpg",
+          "genre": "Romantic Bollywood / Pop"
+        },
+        {
+          "id": "atif-aadat-master",
+          "title": "Aadat (Original)",
+          "artist": "Atif Aslam & Goher Mumtaz",
+          "album": "Jal Pari",
+          "duration": "04:28",
+          "durationSec": 268,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslam_201801%2FAadat_(Original)%2520%255Bwww.MusicPool.com%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600&auto=format&fit=crop",
+          "genre": "Pop Rock / Acoustic"
+        },
+        {
+          "id": "arijit-agar-tum-saath-ho-master",
+          "title": "Agar Tum Saath Ho",
+          "artist": "Arijit Singh & Alka Yagnik",
+          "album": "Tamasha",
+          "duration": "05:41",
+          "durationSec": 341,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslamNewSadSong2013PainfulHeartTouchingWordsMustSeeItsBeautifulFLV%2FAgar%2520Tum%2520Saath%2520Ho%2520FULL%2520AUDIO%2520Song%2520_%2520Tamasha%2520_%2520Ranbir%2520Kapoor%252C%2520Deepika%2520Padukone%2520_%2520T-Series.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&auto=format&fit=crop",
+          "genre": "A.R. Rahman Collaboration / Ballad"
+        },
+        {
+          "id": "nusrat-allah-hoo-master",
+          "title": "Allah Hoo Allah Hoo",
+          "artist": "Ustad Nusrat Fateh Ali Khan",
+          "album": "Sufi Qawwali Masters",
+          "duration": "04:45",
+          "durationSec": 285,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAllahHoo_20150602%2FAllah%2520Hoo.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
+          "genre": "Sufi Qawwali / Devotional"
+        },
+        {
+          "id": "atif-woh-lamhe-master",
+          "title": "Woh Lamhe / Bheegi Yaadein",
+          "artist": "Atif Aslam",
+          "album": "Zeher / Jal Pari",
+          "duration": "03:18",
+          "durationSec": 198,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslam_201801%2FBeeghi_Yaadein%2520%255Bwww.MusicPool.com%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+          "genre": "Pop Rock / Ballad"
+        },
+        {
+          "id": "atif-jeena-jeena-master",
+          "title": "Jeena Jeena",
+          "artist": "Atif Aslam & Sachin-Jigar",
+          "album": "Badlapur",
+          "duration": "03:49",
+          "durationSec": 229,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslam_201801%2FJeena_Jeena%2520%255Bwww.MusicPool.com%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&auto=format&fit=crop",
+          "genre": "Acoustic Soul / Ballad"
+        },
+        {
+          "id": "atif-tere-sang-yaara-master",
+          "title": "Tere Sang Yaara",
+          "artist": "Atif Aslam & Arko",
+          "album": "Rustom",
+          "duration": "04:58",
+          "durationSec": 298,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2Fy-2mate.com-tere-sang-yaara-full-audio-rustom-akshay-kumar-ileana-dcruz-arko-atif-aslam-manoj-m%2Fy2mate.com%2520-%2520Tere%2520Sang%2520Yaara%2520%2520Full%2520Audio%2520%2520Rustom%2520%2520Akshay%2520Kumar%2520%2520Ileana%2520Dcruz%2520%2520Arko%2520%2520Atif%2520Aslam%2520%2520Manoj%2520M.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
+          "genre": "Romantic Ballad"
+        },
+        {
+          "id": "atif-bakhuda-master",
+          "title": "Bakhuda Tumhi Ho",
+          "artist": "Atif Aslam & Alka Yagnik",
+          "album": "Kismat Konnection",
+          "duration": "04:52",
+          "durationSec": 292,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslam_201801%2FBakhuda%2520%255Bwww.MusicPool.com%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1516280440614-37939bbacd6a?q=80&w=600&auto=format&fit=crop",
+          "genre": "Romantic Duet"
+        },
+        {
+          "id": "atif-jal-pari-master",
+          "title": "Jal Pari",
+          "artist": "Atif Aslam",
+          "album": "Jal Pari",
+          "duration": "03:59",
+          "durationSec": 239,
+          "url": "/api/audio/stream?url=https%3A%2F%2Farchive.org%2Fdownload%2FAtifAslam_201801%2FJal_Pari%2520%255Bwww.MusicPool.com%255D.mp3",
+          "coverUrl": "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=600&auto=format&fit=crop",
+          "genre": "Pop Rock"
+        }
+      ],
+      "members": ["Faisal Hussain", "Rahat Fan", "Atif Fan"],
+      "createdAt": 1771780000000
+    }
+  ],
+  "chats": {
+    "stage03-playlist": [
+      {
+        "id": "m0",
+        "playlistId": "stage03-playlist",
+        "senderId": "sys",
+        "senderName": "Stage 03 Architect",
+        "text": "Welcome to Stage 03 Playlist Builder! 12 Tracks loaded and synced to Google Cloud iMFaisalHussain@gmail.com.",
+        "timestamp": 1771780000000
+      }
+    ]
+  },
+  "userCount": 1,
+  "users": {
+    "user-faisal": {
+      "uid": "user-faisal",
+      "name": "Faisal Hussain",
+      "email": "iMFaisalHussain@gmail.com",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=120&auto=format&fit=crop",
+      "favoriteGenres": ["Synthwave", "Cyberpunk", "Lofi Jazz"],
+      "bio": "Premium acoustic curator. Passionate about retro-futuristic audio architectures and high-fidelity soundscapes."
+    }
+  }
+}
