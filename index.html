@@ -2774,7 +2774,49 @@
         <!-- Content injected dynamically -->
       </div>
     </div>
+    </div>
   </div>
-</body>
 
+  <style>
+    @media (max-width: 1080px) {
+      #mobile-projects .card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      /* Hide everything except the image div by default on mobile */
+      #mobile-projects .card > *:not(div:first-of-type) {
+        display: none;
+      }
+      /* Remove bottom margin from image div when collapsed */
+      #mobile-projects .card:not(.expanded) > div:first-of-type {
+        margin-bottom: 0 !important;
+      }
+      /* Show them when expanded */
+      #mobile-projects .card.expanded > h3,
+      #mobile-projects .card.expanded > p,
+      #mobile-projects .card.expanded > div:nth-of-type(2) {
+        display: block;
+      }
+      #mobile-projects .card.expanded > a {
+        display: inline-flex;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Add tap interactions to mobile projects for smaller screens
+      document.querySelectorAll('#mobile-projects .card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (window.innerWidth <= 1080) {
+            // Don't toggle if the user is clicking the actual link button
+            if (e.target.tagName !== 'A' && !e.target.closest('a')) {
+              this.classList.toggle('expanded');
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
 </html>
