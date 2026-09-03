@@ -69,7 +69,7 @@ export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: Wor
   const currentStageObj = STAGES.find((s) => s.id === activeStage) || STAGES[0];
 
   return (
-    <div id="workflow-stage-progress" className="flex flex-col gap-3 pt-1 pb-2">
+    <div id="workflow-stage-progress" className="flex flex-col gap-3 pt-1 pb-1">
       {/* Container with subtle dark card framing */}
       <div className="p-3.5 sm:p-4 rounded-2xl bg-black/40 border border-white/[0.08] backdrop-blur-md">
         <div className="text-[10px] font-mono font-bold tracking-wider uppercase text-white/40 mb-2.5">
@@ -121,18 +121,6 @@ export default function WorkflowProgress({ onOpenSave, playlistCount = 12 }: Wor
             );
           })}
         </div>
-      </div>
-
-      {/* Prominent Stage Name Below */}
-      <div className="px-1 pt-1 flex items-center justify-between">
-        <h1 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-          <span className="text-amber-400 font-mono text-xs sm:text-sm">STAGE {currentStageObj.num}</span>
-          <span className="text-white/40">•</span>
-          <span>{currentStageObj.description}</span>
-        </h1>
-        <span className="text-[11px] font-mono text-white/40">
-          Stage {currentStageObj.num} of 04
-        </span>
       </div>
     </div>
   );

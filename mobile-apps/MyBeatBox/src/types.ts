@@ -24,12 +24,15 @@ export interface Playlist {
   createdAt: number;
 }
 
+export type AppTab = 'home' | 'discover' | 'library' | 'studio' | 'ai';
+
 export interface UserAccount {
   uid: string;
   name: string;
   email: string;
   avatar: string;
   favoriteGenres: string[];
+  packageTier?: 'free' | 'pro';
 }
 
 export interface RecommendationResponse {

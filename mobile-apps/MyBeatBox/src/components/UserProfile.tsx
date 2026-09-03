@@ -23,11 +23,17 @@ import {
   Sliders,
   Download,
   ArrowLeft,
-  ChevronLeft
+  ChevronLeft,
+  Gift,
+  Crown,
+  Star,
+  Zap,
+  Tag
 } from 'lucide-react';
 import { UserAccount, ThemeConfig, Song, Playlist } from '../types';
 import { saveUserDataToSupabase, registerOrionFxProject } from '../services/orionfxSupabase';
 import { isSupabaseConfigured, APP_PROJECT_NAME } from '../lib/supabase';
+import { SUBSCRIPTION_PACKAGES, getPackageById } from '../data/packagesData';
 
 interface UserProfileProps {
   currentUser: UserAccount & { bio?: string };
@@ -89,6 +95,10 @@ export default function UserProfile({
   const [cachedSize, setCachedSize] = useState('38.4 MB');
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncSuccessMsg, setSyncSuccessMsg] = useState<string | null>(null);
+
+  // Derived active package
+  const activePackageId = currentUser.packageTier || (typeof window !== 'undefined' && localStorage.getItem('mybeatbox_vip_offer_claimed') === 'true' ? 'pro-launch' : 'free');
+  const activePkg = getPackageById(activePackageId);
 
   // Favorites state (derived from current playlists or sample favorites)
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>(() => {
@@ -320,6 +330,16 @@ export default function UserProfile({
           <p className="text-xs text-white/50 font-medium mt-0.5">
             MyBeatBox User
           </p>
+
+          {/* Active Package Badge Button */}
+          <button
+            onClick={() => setActiveModal('packages')}
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-[11px] font-mono font-bold text-amber-300 hover:bg-amber-500/30 transition cursor-pointer shadow-sm"
+            title="Click to view or switch package"
+          >
+            <span>{activePkg.badge}</span>
+            <span className="text-[10px] text-white/60 font-sans font-semibold">({activePkg.name})</span>
+          </button>
         </div>
 
         {/* 3. Clean Divider ──────────────────── */}
@@ -328,6 +348,25 @@ export default function UserProfile({
         {/* 4. Menu Items List */}
         <div className="flex flex-col divide-y divide-white/[0.06]">
           
+          {/* 🏷️ Package & Badges */}
+          <button
+            onClick={() => setActiveModal('packages')}
+            className="w-full flex items-center justify-between py-3.5 px-2 hover:bg-white/[0.04] rounded-xl transition text-left cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <Tag className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-white/90 group-hover:text-white">
+                Packages & Badges
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-400 text-black">
+                {activePkg.badge}
+              </span>
+              <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition" />
+            </div>
+          </button>
+
           {/* ♡ Favorites */}
           <button
             onClick={() => setActiveModal('favorites')}
@@ -989,6 +1028,125 @@ export default function UserProfile({
 
             <div className="pt-3 border-t border-white/10 text-[10px] text-white/40 font-mono">
               Designed for Faisal • © 2026 MyBeatBox
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. Packages & Badges Modal */}
+      {activeModal === 'packages' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-4 animate-fade-in">
+          <div className="w-full max-w-lg bg-[#111827] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col gap-4 max-h-[88vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <Tag className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-white">🏷️ Package & Badge System</h3>
+              </div>
+              <button onClick={() => setActiveModal(null)} className="p-1 rounded-lg text-white/40 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Active Status Pill */}
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-mono text-amber-300 uppercase">Your Active Subscription</p>
+                <p className="text-sm font-bold text-white mt-0.5">{activePkg.name} Package</p>
+              </div>
+              <div className="px-2.5 py-1 rounded-full bg-amber-400 text-black font-mono font-extrabold text-xs shadow-md">
+                {activePkg.badge}
+              </div>
+            </div>
+
+            {/* All Packages Grid */}
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[11px] font-mono text-white/50 uppercase font-semibold">Available Packages:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {SUBSCRIPTION_PACKAGES.map((pkg) => {
+                  const isActive = activePackageId === pkg.id;
+                  return (
+                    <div
+                      key={pkg.id}
+                      className={`p-3.5 rounded-2xl border flex flex-col justify-between transition relative ${
+                        isActive
+                          ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/50'
+                          : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex flex-col gap-1.5">
+                        {/* Package Badge */}
+                        <div className="flex items-center justify-between">
+                          <div className={`px-2 py-0.5 rounded text-[10px] font-mono font-extrabold tracking-tight truncate self-start ${
+                            isActive ? 'bg-amber-400 text-black' : 'bg-white/10 text-white/90'
+                          }`}>
+                            {pkg.badge}
+                          </div>
+                          {pkg.id === 'pro' && (
+                            <span className="text-[10px] text-amber-300 font-mono font-bold">
+                              🎁 100 USERS OFFER
+                            </span>
+                          )}
+                        </div>
+
+                        <h4 className="text-sm font-extrabold text-white mt-1">{pkg.name}</h4>
+                        <p className="text-[10.5px] text-white/60 leading-tight">{pkg.tagline}</p>
+
+                        {/* Launch offer callout inside Pro */}
+                        {pkg.id === 'pro' && (
+                          <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-400/50 text-[10px] font-mono text-amber-200 text-center my-1">
+                            🎁 First 100 Users → <strong className="text-white font-extrabold">1 Year FREE</strong>
+                          </div>
+                        )}
+
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="text-base font-mono font-bold text-amber-300">{pkg.price}</span>
+                          <span className="text-[10px] text-white/50">{pkg.period}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 mt-2 border-t border-white/10 flex flex-col gap-2">
+                        <ul className="text-[10px] text-white/70 space-y-1">
+                          {pkg.features.map((f, idx) => (
+                            <li key={idx} className="flex items-center gap-1.5">
+                              <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                              <span>{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onUpdateUser({
+                              ...currentUser,
+                              packageTier: pkg.id as 'free' | 'pro',
+                              bio: (currentUser.bio ? currentUser.bio.replace(/•.*Subscriber.*/, '').trim() : '') + ` • ${pkg.badge} Subscriber (${pkg.name})`
+                            });
+                            try {
+                              localStorage.setItem('mybeatbox_vip_package', pkg.id);
+                              if (pkg.id === 'pro') {
+                                localStorage.setItem('mybeatbox_vip_offer_claimed', 'true');
+                              }
+                            } catch (e) {}
+                          }}
+                          disabled={isActive}
+                          className={`w-full py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                            isActive
+                              ? 'bg-amber-400 text-black shadow cursor-default font-extrabold'
+                              : 'bg-white/10 hover:bg-white/20 text-white'
+                          }`}
+                        >
+                          {isActive ? '✓ Active Plan' : `[ ${pkg.ctaText} ]`}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-[11px] text-white/60 leading-relaxed font-mono">
+              💡 <strong>Monetisation Structure:</strong> FREE (Rs. 0/mo) → PRO (Rs. 499/mo). Early access launch offer gives 1 year free Pro subscription to the first 100 registered users.
             </div>
           </div>
         </div>

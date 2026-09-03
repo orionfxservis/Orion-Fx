@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CloudCheck, Download, Radio, Sparkles, Check, Share2, Volume2, ShieldCheck, HardDrive, RefreshCw } from 'lucide-react';
 import { Playlist, Song, ThemeConfig, UserAccount } from '../types';
+import SharePlaylistModal from './SharePlaylistModal';
 
 interface Stage04SavePanelProps {
   playlists: Playlist[];
@@ -24,6 +25,7 @@ export default function Stage04SavePanel({
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const activePlaylist = playlists.find((p) => p.id === activePlaylistId) || playlists[0];
   const totalTracks = activePlaylist?.songs?.length || 0;
@@ -50,9 +52,7 @@ export default function Stage04SavePanel({
   };
 
   const handleShareLink = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
+    setIsShareModalOpen(true);
   };
 
   return (
@@ -145,18 +145,10 @@ export default function Stage04SavePanel({
               onClick={handleShareLink}
               className="flex-1 py-2 px-2.5 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center justify-center gap-1.5 transition cursor-pointer"
               id="btn-stage04-share-link"
+              title="Share to installed apps (WhatsApp, Telegram, etc.)"
             >
-              {copiedLink ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-emerald-300">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Share</span>
-                </>
-              )}
+              <Share2 className="w-3.5 h-3.5 text-purple-400" />
+              <span>Share</span>
             </button>
           </div>
         </div>
@@ -182,6 +174,13 @@ export default function Stage04SavePanel({
           </button>
         </div>
       </div>
+
+      {/* Share Playlist Modal */}
+      <SharePlaylistModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        playlist={activePlaylist}
+      />
     </div>
   );
 }

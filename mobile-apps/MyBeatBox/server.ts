@@ -1042,6 +1042,156 @@ app.post('/api/recommendations', async (req, res) => {
   }
 });
 
+// Gemini Intelligent Music AI Assistant Endpoint
+app.post('/api/ai-assistant', async (req, res) => {
+  const { prompt, history, userContext } = req.body;
+  const userPrompt = (prompt || '').trim();
+
+  if (!userPrompt) {
+    return res.status(400).json({ error: 'Prompt is required' });
+  }
+
+  if (!ai) {
+    // Intelligent procedural fallback assistant when Gemini API key is offline or in local simulation
+    const pLower = userPrompt.toLowerCase();
+    let reply = `I'm your intelligent MyBeatBox music assistant! You asked: "${userPrompt}".`;
+    let suggestedTracks: any[] = [];
+    let tips: string[] = [];
+
+    if (pLower.includes('nusrat') || pLower.includes('qawwali') || pLower.includes('sufi')) {
+      reply = `Ustad Nusrat Fateh Ali Khan is the pinnacle of Sufi acoustic transcendence. His mastery of intricate vocal taans and ecstatic harmonium progressions creates unparalleled emotional resonance. I recommend listening to "Dil E Umeed", "Afreen Afreen", and "Tajdar-e-Haram".`;
+      suggestedTracks = PRELOADED_SONGS.filter(s => s.artist.toLowerCase().includes('nusrat') || s.genre.toLowerCase().includes('sufi')).slice(0, 3);
+      tips = ['Boost 1kHz to 2.4kHz in the Studio EQ for vocal harmonics', 'Use the Obsidian or Midnight Gold theme for midnight listening'];
+    } else if (pLower.includes('atif') || pLower.includes('rock') || pLower.includes('pop')) {
+      reply = `Atif Aslam's signature vocal belting and warm acoustic textures defined modern pop-rock. Tracks like "Tere Liye", "Aadat", and "Woh Lamhe" capture powerful nostalgic melancholy combined with driving guitars.`;
+      suggestedTracks = PRELOADED_SONGS.filter(s => s.artist.toLowerCase().includes('atif')).slice(0, 3);
+      tips = ['Add a subtle Bass Boost in Studio to elevate rhythmic punch', 'Try our 1-Year Free Pro pass for 320kbps master streaming'];
+    } else if (pLower.includes('relax') || pLower.includes('sleep') || pLower.includes('chill') || pLower.includes('lofi') || pLower.includes('ambient')) {
+      reply = `For deep relaxation and focused coding, ambient and downtempo soundscapes lower cortisol and stimulate alpha brainwaves. Here are calming acoustic picks to soothe your vibe.`;
+      suggestedTracks = PRELOADED_SONGS.filter(s => s.genre.toLowerCase().includes('chill') || s.genre.toLowerCase().includes('ambient') || s.genre.toLowerCase().includes('lofi')).slice(0, 3);
+      tips = ['Lower high frequencies at 6kHz-15kHz to reduce ear fatigue', 'Set the player to repeat-one for seamless flow'];
+    } else if (pLower.includes('eq') || pLower.includes('equalizer') || pLower.includes('bass') || pLower.includes('sound')) {
+      reply = `Here is our recommended Studio Equalizer tuning: for heavy electronic & hip-hop, boost 60Hz (+4dB) and 150Hz (+2dB); for crystal-clear vocals, boost 2.4kHz (+3dB) and slightly dip 400Hz (-2dB) to remove muddiness.`;
+      tips = ['Open the Studio tab to adjust all 7 frequency bands in real-time', 'Toggle the Spatial Virtualizer for a wider stereo soundstage'];
+    } else {
+      reply = `Here is custom musical intelligence for "${userPrompt}": Exploring eclectic harmonic rhythms, rich instrumentation, and pristine sonic fidelity tailored to your MyBeatBox profile.`;
+      suggestedTracks = PRELOADED_SONGS.slice(0, 3);
+      tips = ['Explore the 4-Stage Discover pipeline to search & save custom playlists', 'Record your own voice beatbox tracks in the Studio'];
+    }
+
+    return res.json({
+      reply,
+      suggestedTracks: suggestedTracks.map(s => ({
+        id: s.id,
+        title: s.title,
+        artist: s.artist,
+        genre: s.genre,
+        duration: s.duration,
+        url: s.url,
+        coverUrl: s.coverUrl
+      })),
+      tips,
+      modelUsed: 'MyBeatBox Music Intelligence (Procedural Core)'
+    });
+  }
+
+  try {
+    const systemPrompt = `You are the intelligent MyBeatBox AI assistant — an ultra-knowledgeable music companion, producer, audio engineer, and acoustic philosopher.
+The user's query is: "${userPrompt}".
+Available songs in the current system catalog: ${JSON.stringify(PRELOADED_SONGS.map(s => ({ id: s.id, title: s.title, artist: s.artist, genre: s.genre, duration: s.duration })))}.
+
+Provide:
+1. "reply": A warm, deeply insightful, engaging, and articulate response about their question, music genres, artists, theory, or vibe.
+2. "suggestedTracks": An array of recommended songs from the available catalog (or creative suggestions) with "title", "artist", "reason".
+3. "tips": 2-3 short, actionable audio or playlist tips (e.g. Studio EQ settings, listening vibe, recording ideas).
+
+Return strictly JSON matching this structure:
+{
+  "reply": "...",
+  "suggestedTracks": [
+    { "id": "...", "title": "...", "artist": "...", "genre": "...", "reason": "..." }
+  ],
+  "tips": ["...", "..."]
+}`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.7-flash',
+      contents: systemPrompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            reply: { type: Type.STRING },
+            suggestedTracks: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  artist: { type: Type.STRING },
+                  genre: { type: Type.STRING },
+                  reason: { type: Type.STRING }
+                },
+                required: ['title', 'artist']
+              }
+            },
+            tips: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ['reply']
+        }
+      }
+    });
+
+    const text = response.text || '{}';
+    const jsonResult = JSON.parse(text.trim());
+
+    // Enrich suggested tracks with real stream urls if they match preloaded songs
+    if (Array.isArray(jsonResult.suggestedTracks)) {
+      jsonResult.suggestedTracks = jsonResult.suggestedTracks.map((st: any) => {
+        const match = PRELOADED_SONGS.find(p => 
+          p.title.toLowerCase().includes((st.title || '').toLowerCase()) || 
+          (st.title || '').toLowerCase().includes(p.title.toLowerCase())
+        );
+        if (match) {
+          return {
+            ...match,
+            reason: st.reason || `Recommended based on your query`
+          };
+        }
+        return {
+          id: `ai-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          title: st.title,
+          artist: st.artist,
+          genre: st.genre || 'AI Curated',
+          duration: '3:45',
+          durationSec: 225,
+          url: PRELOADED_SONGS[0].url,
+          coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop',
+          reason: st.reason
+        };
+      });
+    }
+
+    res.json({
+      ...jsonResult,
+      modelUsed: 'Gemini 3.7 Flash'
+    });
+  } catch (err) {
+    console.error('Gemini AI Assistant Error:', err);
+    res.json({
+      reply: `I analyzed your music request for "${userPrompt}". Here are top tracks and acoustic suggestions to explore!`,
+      suggestedTracks: PRELOADED_SONGS.slice(0, 3),
+      tips: ['Use Studio EQ to fine-tune your listening experience', 'Save your favorite tracks into custom playlists in Library'],
+      modelUsed: 'MyBeatBox Music Intelligence (Offline Resilience)'
+    });
+  }
+});
+
 // Helper to generate elegant simulated search reports when offline or Gemini API keys have exceeded quota
 async function getSimulatedSearch(query: string, searchType: string, isQuotaError: boolean = false) {
   const normalizedQuery = query.toLowerCase().trim();
@@ -1108,7 +1258,9 @@ async function getSimulatedSearch(query: string, searchType: string, isQuotaErro
       topTracksOrAlbums: [
         { title: 'Dil E Umeed (Original Master)', releaseYear: '1992', description: 'The timeless studio recording featuring raw acoustic harmonium and tabla.' },
         { title: 'Dil E Umeed Toda Hai Kisi Ne (Live)', releaseYear: '1993', description: 'Electrifying live concert version with legendary extended vocal improvisations.' },
-        { title: 'Afreen Afreen', releaseYear: '1996', description: 'Companion Qawwali masterpiece composed by Nusrat Fateh Ali Khan.' }
+        { title: 'Tumhe Dillagi', releaseYear: '1992', description: 'Evergreen classical Qawwali with soulful vocals.' },
+        { title: 'Afreen Afreen', releaseYear: '1996', description: 'Companion Qawwali masterpiece composed by Nusrat Fateh Ali Khan.' },
+        { title: 'Mustt Mustt', releaseYear: '1990', description: 'Groundbreaking world-fusion collaboration with Michael Brook.' }
       ],
       trivia: '"Dil E Umeed" has inspired countless covers, orchestral arrangements, and remixes across South Asia and global music festivals.',
       sources: [
@@ -1179,7 +1331,8 @@ async function getSimulatedSearch(query: string, searchType: string, isQuotaErro
         { title: 'O Re Piya', releaseYear: '2007', description: 'Soulful classical ballad blending Sufi longing with lush strings.' },
         { title: 'Zaroori Tha', releaseYear: '2014', description: 'Massive emotional hit album Back 2 Love with over 1 Billion views.' },
         { title: 'Afreen Afreen (Coke Studio)', releaseYear: '2016', description: 'Legendary Coke Studio rendition with Momina Mustehsan.' },
-        { title: 'Teri Ore', releaseYear: '2008', description: 'Evergreen romantic duet celebrating graceful melodic flow.' }
+        { title: 'Teri Ore', releaseYear: '2008', description: 'Evergreen romantic duet celebrating graceful melodic flow.' },
+        { title: 'Main Jahaan Rahoon', releaseYear: '2007', description: 'Poignant, timeless ballad cherished across South Asia.' }
       ],
       trivia: 'Rahat Fateh Ali Khan was personally trained from the age of seven by his uncle Nusrat Fateh Ali Khan and performed at the 2014 Nobel Peace Prize Concert.',
       sources: [
@@ -1200,7 +1353,9 @@ async function getSimulatedSearch(query: string, searchType: string, isQuotaErro
       topTracksOrAlbums: [
         { title: 'Sunn Raha Hai', releaseYear: '2013', description: 'Soul-stirring classical rock ballad showcasing unmatched vocal dynamism.' },
         { title: 'Deewani Mastani', releaseYear: '2015', description: 'Grand period-drama masterpiece with royal Indian classical flourishes.' },
-        { title: 'Teri Meri', releaseYear: '2011', description: 'Heartfelt, widely celebrated romantic duet.' }
+        { title: 'Teri Meri', releaseYear: '2011', description: 'Heartfelt, widely celebrated romantic duet.' },
+        { title: 'Ghoomar', releaseYear: '2018', description: 'Celebrated Rajasthani folk-classical composition with rapid vocal patterns.' },
+        { title: 'Manwa Laage', releaseYear: '2014', description: 'Sweet, tender acoustic melody celebrating pure affection.' }
       ],
       trivia: 'The Governor of Ohio, USA proclaimed June 26 as "Shreya Ghoshal Day" in honor of her exceptional contributions to global music.',
       sources: [
@@ -1221,7 +1376,9 @@ async function getSimulatedSearch(query: string, searchType: string, isQuotaErro
       topTracksOrAlbums: [
         { title: 'Channo', releaseYear: '2003', description: 'The breakout dance-pop anthem that made him an overnight superstar.' },
         { title: 'Jhoom', releaseYear: '2011', description: 'Acoustic Sufi masterpiece that went viral globally with timeless melodies.' },
-        { title: 'Rockstar (Coke Studio)', releaseYear: '2015', description: 'High-energy fusion of blues, rock and classical qawwali.' }
+        { title: 'Rockstar (Coke Studio)', releaseYear: '2015', description: 'High-energy fusion of blues, rock and classical qawwali.' },
+        { title: 'Madhubala', releaseYear: '2011', description: 'Catchy, buoyant pop anthem with lively acoustic guitars.' },
+        { title: 'Voh Dekhnay Mein', releaseYear: '2012', description: 'Charming romantic ballad with light acoustic percussion.' }
       ],
       trivia: 'Ali Zafar is also a skilled visual artist and painter who graduated from the prestigious National College of Arts (NCA) in Lahore.',
       sources: [
@@ -1241,7 +1398,10 @@ async function getSimulatedSearch(query: string, searchType: string, isQuotaErro
       ],
       topTracksOrAlbums: [
         { title: 'Discovery', releaseYear: '2001', description: 'The seminal synth-heavy album featuring One More Time and Harder, Better, Faster, Stronger.' },
-        { title: 'Random Access Memories', releaseYear: '2013', description: 'Grammy-winning masterpiece featuring Get Lucky and Instant Crush.' }
+        { title: 'Random Access Memories', releaseYear: '2013', description: 'Grammy-winning masterpiece featuring Get Lucky and Instant Crush.' },
+        { title: 'Around The World', releaseYear: '1997', description: 'Iconic hypnotic French house groove with vocoded bassline.' },
+        { title: 'One More Time', releaseYear: '2000', description: 'Legendary dance anthem with euphoric brass synths and autotuned vocals.' },
+        { title: 'Get Lucky', releaseYear: '2013', description: 'Funk-disco worldwide hit featuring Nile Rodgers and Pharrell Williams.' }
       ],
       trivia: 'Daft Punk rarely appeared in public without their signature futuristic robotic helmets.',
       sources: [
@@ -1407,6 +1567,103 @@ app.post('/api/google-search', async (req, res) => {
     console.warn('Google Music Search Grounding real-time error. Falling back gracefully to simulation:', error);
     const fallbackResult = await getSimulatedSearch(query, searchType, true);
     res.json(fallbackResult);
+  }
+});
+
+// Real-Time Intelligent Gemini AI Music Assistant API
+app.post('/api/ai-assistant', async (req, res) => {
+  const { prompt, userContext } = req.body;
+  if (!prompt) {
+    return res.status(400).json({ error: 'Prompt is required' });
+  }
+
+  // Pre-search tracks from authentic song catalog
+  const foundTracks = await searchMusicTracks(prompt, 6);
+
+  if (!ai) {
+    // Intelligent Fallback when API key is not configured
+    const matched = foundTracks.length > 0 ? foundTracks : PRELOADED_SONGS.slice(0, 4);
+    return res.json({
+      reply: `Here are intelligent recommendations and insights for "${prompt}". You can play them instantly, tweak their parametric EQ in the Studio, or save them directly to your playlists!`,
+      suggestedTracks: matched,
+      tips: [
+        'Boost +4dB at 60Hz in Studio Equalizer for richer sub-bass',
+        'Enable 3D Spatial Virtualizer for an expanded stereo soundstage',
+        'Save these tracks to Stage 03 Curated Playlist for Google Cloud sync'
+      ]
+    });
+  }
+
+  try {
+    const systemInstruction = `You are MyBeatBox AI, an intelligent, eloquent, and highly knowledgeable musicologist, curator, and acoustic sound engineering companion.
+    Current user context: Playing track: "${userContext?.currentSongTitle || 'None'}" by "${userContext?.currentSongArtist || 'None'}", total playlists: ${userContext?.playlistsCount || 0}.
+    
+    When responding:
+    1. Provide a warm, insightful, and expert response answering the user's music query, analyzing lyrics, discussing vocal delivery/taans, or recommending genres/EQ tips.
+    2. Give 2-3 concise, actionable audio engineering or discovery tips.
+    3. Suggest relevant track names or keywords.`;
+
+    const aiResponse = await ai.models.generateContent({
+      model: 'gemini-3.7-flash',
+      contents: prompt,
+      config: {
+        systemInstruction,
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            reply: { type: Type.STRING },
+            tips: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            searchKeywords: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ['reply', 'tips']
+        }
+      }
+    });
+
+    const parsed = JSON.parse(aiResponse.text || '{}');
+    
+    // Enrich with genuine playable tracks matching the query or keywords
+    let combinedTracks = [...foundTracks];
+    if (parsed.searchKeywords && Array.isArray(parsed.searchKeywords)) {
+      for (const kw of parsed.searchKeywords.slice(0, 3)) {
+        const kwTracks = await searchMusicTracks(kw, 3);
+        kwTracks.forEach(t => {
+          if (!combinedTracks.some(existing => existing.title.toLowerCase() === t.title.toLowerCase())) {
+            combinedTracks.push(t);
+          }
+        });
+      }
+    }
+
+    if (combinedTracks.length === 0) {
+      combinedTracks = PRELOADED_SONGS.slice(0, 4);
+    }
+
+    res.json({
+      reply: parsed.reply || 'Here is your custom musical insight from MyBeatBox AI.',
+      tips: parsed.tips || [
+        'Shape your tone with the 7-band Studio Parametric Equalizer',
+        'Add stem recordings in the Studio tab'
+      ],
+      suggestedTracks: combinedTracks.slice(0, 6)
+    });
+  } catch (err) {
+    console.error('Gemini AI Assistant error:', err);
+    res.json({
+      reply: `Here are intelligent recommendations synthesized for "${prompt}". You can play any track instantly or use the Studio to shape your audio tone.`,
+      suggestedTracks: foundTracks.length > 0 ? foundTracks : PRELOADED_SONGS.slice(0, 4),
+      tips: [
+        'Use Studio EQ to shape acoustic tone and boost vocal presence',
+        'Save curated tracks directly into your Library playlists'
+      ]
+    });
   }
 });
 

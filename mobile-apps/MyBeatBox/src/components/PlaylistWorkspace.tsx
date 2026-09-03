@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Play, Plus, Search, Users, MessageSquare, Send, Share2, Music, Trash2, Globe, Sparkles, Check, ChevronRight, ChevronDown, Edit3, X, AlertTriangle, Menu, MoreVertical, ArrowRight, Clock } from 'lucide-react';
 import { Song, Playlist, ChatMessage, UserAccount, ThemeConfig } from '../types';
+import SharePlaylistModal from './SharePlaylistModal';
 
 interface PlaylistWorkspaceProps {
   playlists: Playlist[];
@@ -44,6 +45,7 @@ export default function PlaylistWorkspace({
   const [editingName, setEditingName] = useState<string>('');
   const [playlistToDelete, setPlaylistToDelete] = useState<Playlist | null>(null);
   const [activeMenuSongId, setActiveMenuSongId] = useState<string | null>(null);
+  const [shareModalPlaylist, setShareModalPlaylist] = useState<Playlist | null>(null);
 
   // Helper to calculate total playlist duration in minutes
   const calculateTotalMinutes = (songs: Song[]): number => {
@@ -257,21 +259,20 @@ export default function PlaylistWorkspace({
             }
           }
         } catch (err) {
-          console.error('Error decoding incoming WebSocket payload:', err);
+          console.warn('Error decoding incoming WebSocket payload:', err);
         }
       };
 
       socket.onclose = () => {
-        console.log('Collaboration WebSocket closed.');
         setWsConnected(false);
       };
 
-      socket.onerror = (error) => {
-        console.error('Collaboration WebSocket experienced an error:', error);
+      socket.onerror = () => {
+        // In sandboxed environments or proxies without WS upgrade support, gracefully fallback to polling
         setWsConnected(false);
       };
     } catch (err) {
-      console.error('Failed to connect to WS:', err);
+      console.warn('WebSocket connection not available in current environment, using polling fallback:', err);
       setWsConnected(false);
     }
   };
@@ -399,15 +400,10 @@ export default function PlaylistWorkspace({
     setNewMessageText('');
   };
 
-  const handleSocialShare = () => {
-    if (!activePlaylist) return;
-
-    // Build real-looking sharing URL
-    const shareUrl = `${window.location.origin}/share/playlist/${activePlaylist.id}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopiedId(activePlaylist.id);
-      setTimeout(() => setCopiedId(null), 3000);
-    });
+  const handleSocialShare = (playlistToShare?: Playlist) => {
+    const pl = playlistToShare || activePlaylist;
+    if (!pl) return;
+    setShareModalPlaylist(pl);
   };
 
   const handleStartRename = (playlist: Playlist, e?: React.MouseEvent) => {
@@ -695,8 +691,66 @@ export default function PlaylistWorkspace({
                     {playlist.songs.length} track{playlist.songs.length === 1 ? '' : 's'} • by {playlist.createdByName}
                   </p>
                 </div>
-                {/* Action Buttons: Rename, Dropdown Close & Delete */}
+                {/* Action Buttons: Play All, Chat, Share, Rename, Dropdown Close & Delete */}
                 <div className="flex items-center gap-1 shrink-0">
+                  {/* Play All Button (before share button, matching theme) */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (playlist.songs.length > 0) {
+                        onSetActivePlaylistId(playlist.id);
+                        onPlayPlaylist(playlist.songs);
+                      }
+                    }}
+                    disabled={playlist.songs.length === 0}
+                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                      playlist.songs.length > 0
+                        ? 'text-amber-300 hover:text-black hover:bg-amber-400 bg-amber-500/20 border-amber-500/30 shadow-sm'
+                        : 'text-white/25 border-white/5 cursor-not-allowed'
+                    }`}
+                    title={playlist.songs.length > 0 ? "Play All Tracks" : "Playlist is empty"}
+                    aria-label={`Play all tracks in ${playlist.name}`}
+                    id={`btn-sidebar-play-${playlist.id}`}
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                  </button>
+
+                  {/* Chat Button (before share button, matching theme) */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isActive) {
+                        onSetActivePlaylistId(playlist.id);
+                        setShowChat(true);
+                      } else {
+                        setShowChat(!showChat);
+                      }
+                    }}
+                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                      isActive && showChat
+                        ? 'text-emerald-300 bg-emerald-500/25 border-emerald-400/50 shadow-sm'
+                        : 'text-white/60 hover:text-emerald-300 hover:bg-emerald-500/15 border-white/5 hover:border-emerald-500/30'
+                    }`}
+                    title="Live Room Chat"
+                    aria-label={`Chat in ${playlist.name}`}
+                    id={`btn-sidebar-chat-${playlist.id}`}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Share Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSocialShare(playlist);
+                    }}
+                    className="p-1.5 rounded-lg text-white/60 hover:text-amber-300 hover:bg-amber-500/15 border border-white/5 hover:border-amber-500/30 transition-all"
+                    title="Share Playlist"
+                    aria-label={`Share ${playlist.name}`}
+                    id={`btn-sidebar-share-${playlist.id}`}
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                  </button>
                   <button
                     onClick={(e) => handleStartRename(playlist, e)}
                     className="p-1.5 rounded-lg text-white/60 hover:text-amber-300 hover:bg-amber-500/15 border border-white/5 hover:border-amber-500/30 transition-all"
@@ -859,38 +913,30 @@ export default function PlaylistWorkspace({
                   Play All
                 </button>
 
+                {/* Share Button (Available for all playlists, opens installed apps share sheet) */}
+                <button
+                  onClick={() => handleSocialShare(activePlaylist)}
+                  className="flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-xl text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 hover:text-white border border-amber-500/30 hover:border-amber-400/50 transition active:scale-95 cursor-pointer shadow-sm"
+                  id="btn-share-active-playlist"
+                  title="Share to installed apps (WhatsApp, Telegram, System Share...)"
+                >
+                  <Share2 className="w-4 h-4 text-amber-400" />
+                  <span>Share</span>
+                </button>
+
                 {activePlaylist.isCollaborative && (
-                  <>
-                    <button
-                      onClick={handleSocialShare}
-                      className="flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-xl text-xs font-semibold border border-white/10 hover:border-white/20 hover:bg-white/5 transition text-white/90 active:scale-95 cursor-pointer"
-                      id="btn-share-collab"
-                    >
-                      {copiedId === activePlaylist.id ? (
-                        <>
-                          <Check className="w-4 h-4 text-emerald-400" />
-                          <span>Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Share2 className="w-4 h-4" />
-                          <span>Share</span>
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setShowChat(!showChat)}
-                      className={`flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-xl text-xs font-semibold border transition active:scale-95 cursor-pointer ${
-                        showChat
-                          ? `${theme.accentClass} ${theme.borderClass} text-white`
-                          : 'bg-black/30 border-white/5 text-white/70 hover:bg-white/5'
-                      }`}
-                      id="btn-toggle-chat"
-                    >
-                      <MessageSquare className="w-4 h-4" />
-                      <span>Chat ({chatMessages.length})</span>
-                    </button>
-                  </>
+                  <button
+                    onClick={() => setShowChat(!showChat)}
+                    className={`flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-xl text-xs font-semibold border transition active:scale-95 cursor-pointer ${
+                      showChat
+                        ? `${theme.accentClass} ${theme.borderClass} text-white`
+                        : 'bg-black/30 border-white/5 text-white/70 hover:bg-white/5'
+                    }`}
+                    id="btn-toggle-chat"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Chat ({chatMessages.length})</span>
+                  </button>
                 )}
 
                 {/* Close (X) Active Playlist Button */}
@@ -1166,6 +1212,12 @@ export default function PlaylistWorkspace({
           </div>
         </div>
       )}
+      {/* Share Playlist Modal (Installed Apps, System Share, WhatsApp, Telegram, etc.) */}
+      <SharePlaylistModal
+        isOpen={!!shareModalPlaylist}
+        onClose={() => setShareModalPlaylist(null)}
+        playlist={shareModalPlaylist}
+      />
     </div>
   );
 }

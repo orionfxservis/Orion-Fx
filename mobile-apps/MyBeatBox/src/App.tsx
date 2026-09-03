@@ -1,17 +1,32 @@
-import { useEffect, useState } from 'react';
-import { Wifi, WifiOff, Radio, Sparkles, Music, Volume2, User, Home, Library, Compass, Sliders, X, Maximize2, RotateCw, Check, Palette, Search, Play, ArrowRight, Disc } from 'lucide-react';
-import { Song, Playlist, UserAccount, ThemeId, ThemeConfig } from './types';
+import { useEffect, useState, lazy, Suspense } from 'react';
+import { Wifi, WifiOff, Radio, Sparkles, Music, Volume2, User, Home, Library, Compass, Sliders, X, Maximize2, RotateCw, Check, Palette, Search, Play, ArrowRight, Disc, Bot, Loader2 } from 'lucide-react';
+import { Song, Playlist, UserAccount, ThemeId, ThemeConfig, AppTab } from './types';
 import AudioPlayer from './components/AudioPlayer';
-import PlaylistWorkspace from './components/PlaylistWorkspace';
-import Recommendations from './components/Recommendations';
-import LocalFiles from './components/LocalFiles';
-import ThemeSelector from './components/ThemeSelector';
-import UserProfile from './components/UserProfile';
+import MiniPlayer from './components/MiniPlayer';
+import HomeWorkspace from './components/HomeWorkspace';
 import GoogleSearchPanel from './components/GoogleSearchPanel';
 import SelectSongsCatalog from './components/SelectSongsCatalog';
-import MiniPlayer from './components/MiniPlayer';
-import WorkflowProgress from './components/WorkflowProgress';
-import Stage04SavePanel from './components/Stage04SavePanel';
+import { ArtistDetailData } from './components/ArtistDetailView';
+import { getArtistProfileData } from './data/artistsData';
+
+// Code-split heavy workspaces and modals to drastically reduce initial mobile bundle size
+const PlaylistWorkspace = lazy(() => import('./components/PlaylistWorkspace'));
+const StudioWorkspace = lazy(() => import('./components/StudioWorkspace'));
+const AiAssistantWorkspace = lazy(() => import('./components/AiAssistantWorkspace'));
+const ArtistDetailView = lazy(() => import('./components/ArtistDetailView'));
+const LocalFiles = lazy(() => import('./components/LocalFiles'));
+const ThemeSelector = lazy(() => import('./components/ThemeSelector'));
+const UserProfile = lazy(() => import('./components/UserProfile'));
+
+// Lightweight fast loading skeleton for tab transitions
+function TabLoadingSkeleton() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[300px] w-full py-12 gap-3 animate-fade-in text-white/50">
+      <Loader2 className="w-7 h-7 animate-spin text-cyan-400" />
+      <span className="text-xs font-mono tracking-wider uppercase">Loading Workspace...</span>
+    </div>
+  );
+}
 
 const THEME_CONFIGS: { [key in ThemeId]?: ThemeConfig } = {
   obsidian: {
@@ -127,8 +142,9 @@ export default function App() {
   const [googleSearchResult, setGoogleSearchResult] = useState<any | null>(null);
 
   const [showThemeModal, setShowThemeModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'discover' | 'library'>('home');
+  const [activeTab, setActiveTab] = useState<AppTab>('home');
   const [showFullPlayerModal, setShowFullPlayerModal] = useState(false);
+  const [selectedArtistData, setSelectedArtistData] = useState<ArtistDetailData | null>(null);
 
   // Dynamic user account metadata
   const [currentUser, setCurrentUser] = useState<UserAccount & { bio?: string }>({
@@ -332,43 +348,40 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen ${activeTheme.bgClass} relative overflow-hidden transition-colors duration-500 flex flex-col font-sans`}>
-      {/* 🔮 Dynamic Premium Background Ambient Glowing Orbs */}
+    <div className={`min-h-screen ${activeTheme.bgClass} relative overflow-hidden transition-colors duration-300 flex flex-col font-sans`}>
+      {/* 🔮 Lightweight Hardware-Accelerated Ambient Glow Background */}
       <div 
-        className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.14] animate-float-1 transition-all duration-1000 pointer-events-none" 
+        className="absolute inset-0 pointer-events-none opacity-40 transition-all duration-700" 
         style={{ 
-          backgroundColor: 
+          background: `radial-gradient(ellipse 80% 50% at 50% -20%, ${
             activeTheme.customAccentHex || (
-              activeTheme.id === 'obsidian' ? '#10b981' : 
-              activeTheme.id === 'cyberpunk' ? '#ec4899' : 
-              activeTheme.id === 'midnight-gold' ? '#fbbf24' : 
-              activeTheme.id === 'crimson' ? '#ef4444' : 
-              activeTheme.id === 'arctic-azure' ? '#06b6d4' : 
-              activeTheme.id === 'solar-sunset' ? '#f97316' : '#8b5cf6'
+              activeTheme.id === 'obsidian' ? '#10b98125' : 
+              activeTheme.id === 'cyberpunk' ? '#ec489925' : 
+              activeTheme.id === 'midnight-gold' ? '#fbbf2425' : 
+              activeTheme.id === 'crimson' ? '#ef444425' : 
+              activeTheme.id === 'arctic-azure' ? '#06b6d425' : 
+              activeTheme.id === 'solar-sunset' ? '#f9731625' : '#8b5cf625'
             )
-        }} 
-      />
-      <div 
-        className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full mix-blend-screen filter blur-[150px] opacity-[0.11] animate-float-2 transition-all duration-1000 pointer-events-none" 
-        style={{ 
-          backgroundColor: 
-            activeTheme.id === 'obsidian' ? '#047857' : 
-            activeTheme.id === 'cyberpunk' ? '#be185d' : 
-            activeTheme.id === 'midnight-gold' ? '#b45309' : 
-            activeTheme.id === 'crimson' ? '#991b1b' : 
-            activeTheme.id === 'arctic-azure' ? '#0e7490' : 
-            activeTheme.id === 'solar-sunset' ? '#c2410c' : '#6d28d9' 
+          }, transparent 70%)`
         }} 
       />
 
       {/* Subtle grid pattern for texture */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none opacity-60" />
 
       {/* 1. Sleek Top Header (Calibrated for 390px mobile & desktop: 68-74px height, 16px padding) */}
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/[0.08] px-4 sm:px-6 h-[70px] flex items-center justify-between gap-3 shadow-lg shadow-black/40">
-        {/* Brand Section: Compact and balanced for mobile */}
-        <div className="flex items-center gap-2.5 text-left min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/90 border border-cyan-500/30 shadow-[0_0_15px_-2px_rgba(6,182,212,0.25)] relative overflow-hidden group flex items-center justify-center shrink-0">
+        {/* Brand Section: Click to go to Home */}
+        <button
+          onClick={() => {
+            setActiveTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="flex items-center gap-2.5 text-left min-w-0 cursor-pointer group bg-transparent border-0 p-0 text-inherit"
+          title="MyBeatBox Home"
+          id="btn-header-brand-home"
+        >
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/90 border border-cyan-500/30 shadow-[0_0_15px_-2px_rgba(6,182,212,0.25)] relative overflow-hidden group-hover:border-cyan-400 transition flex items-center justify-center shrink-0">
             <img 
               src="/src/assets/images/mybeatbox_badge_logo_1787687281522.jpg" 
               alt="MyBeatBox Logo" 
@@ -377,17 +390,17 @@ export default function App() {
             />
           </div>
           <div className="flex flex-col items-start min-w-0">
-            <h1 className="font-bold text-[15px] sm:text-[17px] leading-tight tracking-tight text-white flex items-center gap-1.5 truncate">
+            <h1 className="font-bold text-[15px] sm:text-[17px] leading-tight tracking-tight text-white flex items-center gap-1.5 truncate group-hover:text-cyan-300 transition-colors">
               MyBeatBox
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping-slow shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
             </h1>
             <p className="text-[8.5px] sm:text-[9.5px] font-mono uppercase tracking-wider text-cyan-300/60 leading-none mt-0.5 truncate">
               YOUR MUSIC. YOUR VIBE.
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Right Section: Compact Status Pill, Theme Picker & Profile Button */}
+        {/* Right Section: Theme Picker, Online Status Pill & Profile Button */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Theme Switcher Quick Button */}
           <button
@@ -467,223 +480,174 @@ export default function App() {
         </div>
       </header>
 
-      {/* 2. PAGE CONTENT - Dynamically controlled by Mobile-First Tabs (HOME | DISCOVER | LIBRARY) */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-4 pb-36 sm:pb-40 flex flex-col gap-4 sm:gap-6">
+      {/* 2. PAGE CONTENT - Dynamically controlled by Mobile-First Tabs (HOME | DISCOVER | LIBRARY | STUDIO | AI) */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-4 pb-48 sm:pb-52 flex flex-col gap-4 sm:gap-6">
         
-        {/* BRANCH 1: HOME (Dashboard, Quick Discovery Launch, AI Vibes & Catalog) */}
+        {/* BRANCH 1: HOME (User's Starting Workspace: What do you want to do?) */}
         {activeTab === 'home' && (
-          <div className="flex flex-col gap-6 animate-fade-in">
-            {/* Hero Quick-Launcher Banner */}
-            <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-blue-950/70 via-purple-950/50 to-slate-900/80 border border-white/10 shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex flex-col gap-1.5 z-10">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase tracking-wider">
-                    MYBEATBOX VIBE ENGINE
-                  </span>
-                </div>
-                <h2 className="text-lg sm:text-2xl font-extrabold tracking-tight text-white">
-                  Welcome back, {currentUser.name.split(' ')[0]}
-                </h2>
-                <p className="text-xs sm:text-sm text-white/60 max-w-lg leading-relaxed">
-                  Explore high-fidelity audio, generate grounded sets across 4 stages, and sync collaborative mixes to the cloud.
-                </p>
-              </div>
-
-              <button
-                onClick={() => {
-                  setActiveTab('discover');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-amber-400 via-pink-500 to-purple-500 hover:from-amber-300 hover:to-purple-400 text-black shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer transition active:scale-95 shrink-0 z-10"
-                id="btn-home-start-pipeline"
-              >
-                <Compass className="w-4 h-4 text-black" />
-                <span>Launch 4-Stage Discover</span>
-                <ArrowRight className="w-4 h-4 text-black" />
-              </button>
-            </div>
-
-            {/* AI Vibe & Recommendations Engine */}
-            <section id="home-recommendations-section">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-1.5 py-0.5 rounded text-[9px] uppercase font-mono font-bold tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/25 shrink-0">
-                    AI SYNTHESIS
-                  </span>
-                  <h3 className="font-bold text-sm sm:text-base tracking-tight text-white flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
-                    AI Vibe & Artist Discovery
-                  </h3>
-                </div>
-              </div>
-              <Recommendations
-                onSelectSong={handleSelectSong}
-                onAddPlaylist={handleAddPlaylist}
-                allSongs={allSongs}
-                theme={activeTheme}
-                isOffline={isOffline}
-              />
-            </section>
-
-            {/* Top Trending Music Catalog */}
-            <section id="home-curated-catalog">
-              <SelectSongsCatalog
-                allSongs={allSongs}
-                playlists={playlists}
-                activePlaylistId={activePlaylistId}
-                onSelectSong={handleSelectSong}
-                onPlayPause={(playing) => setIsPlaying(playing)}
-                onPlaylistChange={handlePlaylistChange}
-                theme={activeTheme}
-                isOffline={isOffline}
-                searchResult={googleSearchResult}
-                currentSong={currentSong}
-                isPlaying={isPlaying}
-                onNavigateToPlaylist={() => {
-                  setActiveTab('discover');
-                  setTimeout(() => {
-                    const el = document.getElementById('stage-03-playlist-section');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 100);
-                }}
-              />
-            </section>
-          </div>
+          <HomeWorkspace
+            user={currentUser}
+            playlists={playlists}
+            activePlaylistId={activePlaylistId}
+            allSongs={allSongs}
+            currentSong={currentSong}
+            isPlaying={isPlaying}
+            onSelectSong={handleSelectSong}
+            onPlayPause={(playing) => setIsPlaying(playing)}
+            onNavigateToTab={(tab) => {
+              setActiveTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenThemeModal={() => setShowThemeModal(true)}
+            onUpdateUser={(updated) => setCurrentUser(updated)}
+            onOpenProfile={() => setShowProfileModal(true)}
+            theme={activeTheme}
+            isOffline={isOffline}
+          />
         )}
 
-        {/* BRANCH 2: DISCOVER (The 4-Stage Sequential Architecture: Search -> Build -> Review -> Save) */}
+        {/* BRANCH 2: DISCOVER (Clean, Fast Search, AI Grounding & Song Exploration) */}
         {activeTab === 'discover' && (
-          <div className="flex flex-col gap-6 animate-fade-in">
-            {/* Workflow Stage Progress Tracker (01 Search -> 02 Build -> 03 Review -> 04 Save) */}
-            <WorkflowProgress
-              onOpenSave={() => {
-                const el = document.getElementById('stage-04-save-section');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              playlistCount={playlists.find((p) => p.id === activePlaylistId)?.songs.length || 12}
-            />
+          <div className="flex flex-col gap-5 animate-fade-in">
+            {selectedArtistData ? (
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <ArtistDetailView
+                  artistData={selectedArtistData}
+                  onBack={() => setSelectedArtistData(null)}
+                  playlists={playlists}
+                  onPlaylistChange={handlePlaylistChange}
+                  onSelectSong={handleSelectSong}
+                  onPlayPause={(playing) => setIsPlaying(playing)}
+                  currentSong={currentSong}
+                  isPlaying={isPlaying}
+                  theme={activeTheme}
+                  isOffline={isOffline}
+                />
+              </Suspense>
+            ) : (
+              <>
+                {/* Google Music Grounding Search */}
+                <section id="step-google-search">
+                  <GoogleSearchPanel
+                    playlists={playlists}
+                    allSongs={allSongs}
+                    onSelectSong={handleSelectSong}
+                    onPlaylistChange={handlePlaylistChange}
+                    onSearchResultChange={(res) => setGoogleSearchResult(res)}
+                    onSelectArtist={(artistName) => {
+                      const profile = getArtistProfileData(artistName, allSongs);
+                      setSelectedArtistData(profile);
+                    }}
+                    onSelectAlbum={(albumName, artistName) => {
+                      const profile = getArtistProfileData(artistName, allSongs);
+                      setSelectedArtistData(profile);
+                    }}
+                    theme={activeTheme}
+                    isOffline={isOffline}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                  />
+                </section>
 
-            {/* STAGE 01: Google Music Grounding Search */}
-            <section id="step-google-search">
-              <GoogleSearchPanel
-                playlists={playlists}
-                allSongs={allSongs}
-                onSelectSong={handleSelectSong}
-                onPlaylistChange={handlePlaylistChange}
-                onSearchResultChange={(res) => setGoogleSearchResult(res)}
-                theme={activeTheme}
-                isOffline={isOffline}
-                currentSong={currentSong}
-                isPlaying={isPlaying}
-              />
-            </section>
-
-            {/* STAGE 02: Build / Search Results & Catalog */}
-            <section id="step-select-songs">
-              <SelectSongsCatalog
-                allSongs={allSongs}
-                playlists={playlists}
-                activePlaylistId={activePlaylistId}
-                onSelectSong={handleSelectSong}
-                onPlayPause={(playing) => setIsPlaying(playing)}
-                onPlaylistChange={handlePlaylistChange}
-                theme={activeTheme}
-                isOffline={isOffline}
-                searchResult={googleSearchResult}
-                currentSong={currentSong}
-                isPlaying={isPlaying}
-                onNavigateToPlaylist={() => {
-                  const el = document.getElementById('stage-03-playlist-section');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-              />
-            </section>
-
-            {/* STAGE 03: Review / Playlist Workspace */}
-            <section id="stage-03-playlist-section">
-              <PlaylistWorkspace
-                playlists={playlists}
-                onSelectSong={handleSelectSong}
-                onPlaylistChange={handlePlaylistChange}
-                onPlayPlaylist={handlePlayPlaylist}
-                activePlaylistId={activePlaylistId}
-                onSetActivePlaylistId={setActivePlaylistId}
-                user={currentUser}
-                allSongs={allSongs}
-                theme={activeTheme}
-                isOffline={isOffline}
-                onRefreshPlaylists={fetchPlaylists}
-              />
-            </section>
-
-            {/* STAGE 04: Save & Studio Mastering */}
-            <section id="stage-04-save-section">
-              <Stage04SavePanel
-                playlists={playlists}
-                activePlaylistId={activePlaylistId}
-                user={currentUser}
-                onOpenFullPlayer={() => setShowFullPlayerModal(true)}
-                theme={activeTheme}
-                isOffline={isOffline}
-                currentSong={currentSong}
-              />
-            </section>
+                {/* Search Results & Curated Catalog */}
+                <section id="step-select-songs">
+                  <SelectSongsCatalog
+                    allSongs={allSongs}
+                    playlists={playlists}
+                    activePlaylistId={activePlaylistId}
+                    onSelectSong={handleSelectSong}
+                    onPlayPause={(playing) => setIsPlaying(playing)}
+                    onPlaylistChange={handlePlaylistChange}
+                    theme={activeTheme}
+                    isOffline={isOffline}
+                    searchResult={googleSearchResult}
+                    currentSong={currentSong}
+                    isPlaying={isPlaying}
+                    onNavigateToPlaylist={() => {
+                      setActiveTab('library');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                </section>
+              </>
+            )}
           </div>
         )}
 
         {/* BRANCH 3: LIBRARY (Master Playlists, Personal Lists & Local Audio Files) */}
         {activeTab === 'library' && (
-          <div className="flex flex-col gap-6 animate-fade-in">
-            {/* Library Overview Header */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-black to-slate-900/60 border border-amber-500/20 flex items-center justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                    LIBRARY HUB
-                  </span>
-                  <span className="text-[10px] font-mono text-white/50">
-                    {playlists.length} Playlists • {allSongs.length} Tracks
-                  </span>
-                </div>
-                <h2 className="text-base sm:text-xl font-bold text-white tracking-tight">
-                  Your Music & Collaborative Mixes
-                </h2>
-              </div>
-              <button
-                onClick={() => {
-                  setActiveTab('discover');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-400 hover:bg-amber-300 text-black flex items-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
-              >
-                <Compass className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Go to Discover</span>
-              </button>
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <div className="flex flex-col gap-6 animate-fade-in">
+              {/* Playlist Workspace Component */}
+              <section id="library-playlist-builder">
+                <PlaylistWorkspace
+                  playlists={playlists}
+                  onSelectSong={handleSelectSong}
+                  onPlaylistChange={handlePlaylistChange}
+                  onPlayPlaylist={handlePlayPlaylist}
+                  activePlaylistId={activePlaylistId}
+                  onSetActivePlaylistId={setActivePlaylistId}
+                  user={currentUser}
+                  allSongs={allSongs}
+                  theme={activeTheme}
+                  isOffline={isOffline}
+                  onRefreshPlaylists={fetchPlaylists}
+                />
+              </section>
+
+              {/* Local Audio File Upload & Storage */}
+              <section id="library-local-files">
+                <LocalFiles
+                  playlists={playlists}
+                  onSelectSong={handleSelectSong}
+                  onAddLocalSongToPlaylist={(pId, song) => {
+                    const targetPlaylist = playlists.find((p) => p.id === pId);
+                    if (targetPlaylist) {
+                      const updated = {
+                        ...targetPlaylist,
+                        songs: [...targetPlaylist.songs, song],
+                      };
+                      handlePlaylistChange(updated);
+                    }
+                  }}
+                  onAddLocalSongToCoreList={(song) => {
+                    setAllSongs((prev) => [song, ...prev.filter((s) => s.id !== song.id)]);
+                  }}
+                  theme={activeTheme}
+                />
+              </section>
             </div>
+          </Suspense>
+        )}
 
-            {/* Playlist Workspace Component in Full View */}
-            <section id="library-playlist-builder">
-              <PlaylistWorkspace
+        {/* 4. DESTINATION 4: 🎛️ STUDIO (Recording, audio projects, playlist creation, editing, mixing) */}
+        {activeTab === 'studio' && (
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <div className="flex flex-col gap-6 animate-fade-in">
+              <StudioWorkspace
                 playlists={playlists}
-                onSelectSong={handleSelectSong}
-                onPlaylistChange={handlePlaylistChange}
-                onPlayPlaylist={handlePlayPlaylist}
                 activePlaylistId={activePlaylistId}
-                onSetActivePlaylistId={setActivePlaylistId}
-                user={currentUser}
-                allSongs={allSongs}
-                theme={activeTheme}
-                isOffline={isOffline}
-                onRefreshPlaylists={fetchPlaylists}
-              />
-            </section>
-
-            {/* Local Audio File Upload & Storage */}
-            <section id="library-local-files">
-              <LocalFiles
-                playlists={playlists}
+                currentSong={currentSong}
+                isPlaying={isPlaying}
                 onSelectSong={handleSelectSong}
-                onAddLocalSongToPlaylist={(pId, song) => {
+                onPlayPause={setIsPlaying}
+                onPlaylistChange={handlePlaylistChange}
+                onCreatePlaylist={(name, description) => {
+                  const newPl: Playlist = {
+                    id: `pl-${Date.now()}`,
+                    name: name || 'New Studio Playlist',
+                    description: description || 'Created in Studio Workspace',
+                    createdBy: currentUser.uid || 'user-faisal',
+                    createdByName: currentUser.name || 'Faisal Hussain',
+                    userEmail: currentUser.email || 'iMFaisalHussain@gmail.com',
+                    isCollaborative: true,
+                    songs: [],
+                    members: [currentUser.name || 'Faisal Hussain'],
+                    createdAt: Date.now()
+                  };
+                  handlePlaylistChange(newPl);
+                }}
+                onAddSongToPlaylist={(pId, song) => {
                   const targetPlaylist = playlists.find((p) => p.id === pId);
                   if (targetPlaylist) {
                     const updated = {
@@ -693,13 +657,39 @@ export default function App() {
                     handlePlaylistChange(updated);
                   }
                 }}
-                onAddLocalSongToCoreList={(song) => {
-                  setAllSongs((prev) => [song, ...prev.filter((s) => s.id !== song.id)]);
-                }}
                 theme={activeTheme}
+                isOffline={isOffline}
               />
-            </section>
-          </div>
+            </div>
+          </Suspense>
+        )}
+
+        {/* 5. DESTINATION 5: 🤖 AI (Your intelligent MyBeatBox assistant) */}
+        {activeTab === 'ai' && (
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <div className="flex flex-col gap-6 animate-fade-in">
+              <AiAssistantWorkspace
+                playlists={playlists}
+                currentSong={currentSong}
+                isPlaying={isPlaying}
+                onSelectSong={handleSelectSong}
+                onPlayPause={setIsPlaying}
+                onAddSongToPlaylist={(pId, song) => {
+                  const targetPlaylist = playlists.find((p) => p.id === pId);
+                  if (targetPlaylist) {
+                    const updated = {
+                      ...targetPlaylist,
+                      songs: [...targetPlaylist.songs, song],
+                    };
+                    handlePlaylistChange(updated);
+                  }
+                }}
+                onNavigateToTab={setActiveTab}
+                theme={activeTheme}
+                isOffline={isOffline}
+              />
+            </div>
+          </Suspense>
         )}
 
         {/* Persistent Background Audio Engine (Kept mounted across all tabs so audio never stops) */}
@@ -729,62 +719,113 @@ export default function App() {
         theme={activeTheme}
       />
 
-      {/* 4. MOBILE-FIRST 3-BRANCH BOTTOM NAVIGATION BAR (HOME | DISCOVER | LIBRARY) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#090b14]/95 backdrop-blur-2xl border-t border-white/[0.08] px-3 sm:px-6 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-2xl">
-        <div className="max-w-md sm:max-w-lg mx-auto grid grid-cols-3 gap-2">
-          {/* 1. HOME */}
+      {/* 4. 5-DESTINATION MOBILE-FIRST BOTTOM NAVIGATION BAR (🏠 Home | 🔎 Discover | 🎵 Playlist | 🎛️ Studio | 🤖 AI) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#090b14]/95 backdrop-blur-2xl border-t border-white/[0.08] px-2 sm:px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-2xl">
+        <div className="max-w-xl mx-auto grid grid-cols-5 gap-1 sm:gap-2">
+          {/* 1. 🏠 Home: Personalized starting point */}
           <button
-            onClick={() => setActiveTab('home')}
-            className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-xl transition-all active:scale-95 cursor-pointer ${
+            onClick={() => {
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1.5 px-1 sm:px-2 rounded-xl transition-all active:scale-95 cursor-pointer ${
               activeTab === 'home'
-                ? 'text-cyan-300 bg-cyan-500/15 font-bold shadow-sm border border-cyan-500/25'
+                ? 'text-cyan-300 bg-cyan-500/15 font-bold shadow-sm border border-cyan-500/30'
                 : 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'
             }`}
             id="tab-btn-home"
-            title="Home Dashboard"
+            title="🏠 Home — Personalized starting point"
           >
-            <Home className="w-5 h-5" />
-            <span className="text-[11px] sm:text-xs">Home</span>
+            <div className="flex items-center justify-center">
+              <span className="text-base sm:text-lg leading-none" role="img" aria-label="Home">🏠</span>
+            </div>
+            <span className="text-[10px] sm:text-xs font-mono font-medium leading-none">Home</span>
           </button>
 
-          {/* 2. DISCOVER (4 STAGES) */}
+          {/* 2. 🔎 Discover: Music search and exploration */}
           <button
-            onClick={() => setActiveTab('discover')}
-            className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
+            onClick={() => {
+              setActiveTab('discover');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1.5 px-1 sm:px-2 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
               activeTab === 'discover'
-                ? 'text-amber-300 bg-amber-500/15 font-bold shadow-sm border border-amber-500/25'
+                ? 'text-amber-300 bg-amber-500/15 font-bold shadow-sm border border-amber-500/30'
                 : 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'
             }`}
             id="tab-btn-discover"
-            title="Discover — 4-Stage Music Grounding Pipeline"
+            title="🔎 Discover — Music search and exploration"
           >
-            <div className="relative">
-              <Compass className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-3.5 px-1 py-0.2 rounded-full text-[8px] font-mono bg-amber-400 text-black font-extrabold tracking-tighter">
-                4 STAGES
-              </span>
+            <div className="flex items-center justify-center">
+              <span className="text-base sm:text-lg leading-none" role="img" aria-label="Discover">🔎</span>
             </div>
-            <span className="text-[11px] sm:text-xs">Discover</span>
+            <span className="text-[10px] sm:text-xs font-mono font-medium leading-none">Discover</span>
           </button>
 
-          {/* 3. LIBRARY */}
+          {/* 3. 🎵 Playlist: User's saved playlists & library */}
           <button
-            onClick={() => setActiveTab('library')}
-            className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
+            onClick={() => {
+              setActiveTab('library');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1.5 px-1 sm:px-2 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
               activeTab === 'library'
-                ? 'text-purple-300 bg-purple-500/15 font-bold shadow-sm border border-purple-500/25'
+                ? 'text-purple-300 bg-purple-500/15 font-bold shadow-sm border border-purple-500/30'
                 : 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'
             }`}
-            id="tab-btn-library"
-            title="Music Library & Playlists"
+            id="tab-btn-playlist"
+            title="🎵 Playlist — Curated collections, mixes & music library"
           >
-            <div className="relative">
-              <Library className="w-5 h-5" />
-              <span className="absolute -top-1 -right-2 px-1 py-0.2 rounded-full text-[8px] font-mono bg-purple-500 text-white font-bold">
-                {playlists.length}
-              </span>
+            <div className="relative flex items-center justify-center">
+              <span className="text-base sm:text-lg leading-none" role="img" aria-label="Playlist">🎵</span>
+              {playlists.length > 0 && (
+                <span className="absolute -top-1 -right-2 px-1 py-0.2 rounded-full text-[8px] font-mono bg-purple-500 text-white font-bold">
+                  {playlists.length}
+                </span>
+              )}
             </div>
-            <span className="text-[11px] sm:text-xs">Library</span>
+            <span className="text-[10px] sm:text-xs font-mono font-medium leading-none">Playlist</span>
+          </button>
+
+          {/* 4. 🎛️ Studio: Recording, audio projects, playlist creation, editing, mixing */}
+          <button
+            onClick={() => {
+              setActiveTab('studio');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1.5 px-1 sm:px-2 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
+              activeTab === 'studio'
+                ? 'text-rose-300 bg-rose-500/15 font-bold shadow-sm border border-rose-500/30'
+                : 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'
+            }`}
+            id="tab-btn-studio"
+            title="🎛️ Studio — Recording, audio projects, editing & mixing"
+          >
+            <div className="flex items-center justify-center">
+              <span className="text-base sm:text-lg leading-none" role="img" aria-label="Studio">🎛️</span>
+            </div>
+            <span className="text-[10px] sm:text-xs font-mono font-medium leading-none">Studio</span>
+          </button>
+
+          {/* 5. 🤖 AI: Your intelligent MyBeatBox assistant */}
+          <button
+            onClick={() => {
+              setActiveTab('ai');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1.5 px-1 sm:px-2 rounded-xl transition-all active:scale-95 relative cursor-pointer ${
+              activeTab === 'ai'
+                ? 'text-emerald-300 bg-emerald-500/15 font-bold shadow-sm border border-emerald-500/30'
+                : 'text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent'
+            }`}
+            id="tab-btn-ai"
+            title="🤖 AI — Your intelligent MyBeatBox assistant"
+          >
+            <div className="relative flex items-center justify-center">
+              <span className="text-base sm:text-lg leading-none" role="img" aria-label="AI Assistant">🤖</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute -top-0.5 -right-1 animate-pulse" />
+            </div>
+            <span className="text-[10px] sm:text-xs font-mono font-medium leading-none">AI</span>
           </button>
         </div>
       </nav>
@@ -834,12 +875,14 @@ export default function App() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <ThemeSelector
-              activeTheme={activeTheme}
-              onSelectTheme={handleSelectTheme}
-              themeConfigs={THEME_CONFIGS}
-              onUpdateCustomTheme={handleUpdateCustomTheme}
-            />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <ThemeSelector
+                activeTheme={activeTheme}
+                onSelectTheme={handleSelectTheme}
+                themeConfigs={THEME_CONFIGS}
+                onUpdateCustomTheme={handleUpdateCustomTheme}
+              />
+            </Suspense>
           </div>
         </div>
       )}
@@ -854,21 +897,23 @@ export default function App() {
             >
               ✕
             </button>
-            <UserProfile
-              currentUser={currentUser}
-              onUpdateUser={(updated) => {
-                setCurrentUser(updated);
-              }}
-              onClose={() => setShowProfileModal(false)}
-              theme={activeTheme}
-              isOffline={isOffline}
-              onSelectSong={handleSelectSong}
-              playlists={playlists}
-              onOpenThemeTab={() => {
-                setShowProfileModal(false);
-                setShowThemeModal(true);
-              }}
-            />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <UserProfile
+                currentUser={currentUser}
+                onUpdateUser={(updated) => {
+                  setCurrentUser(updated);
+                }}
+                onClose={() => setShowProfileModal(false)}
+                theme={activeTheme}
+                isOffline={isOffline}
+                onSelectSong={handleSelectSong}
+                playlists={playlists}
+                onOpenThemeTab={() => {
+                  setShowProfileModal(false);
+                  setShowThemeModal(true);
+                }}
+              />
+            </Suspense>
           </div>
         </div>
       )}

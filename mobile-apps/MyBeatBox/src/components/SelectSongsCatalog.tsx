@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, Plus, Check, Music, Disc, Sparkles, Globe, UserSquare2, Music4, Loader2 } from 'lucide-react';
+import { Play, Pause, Plus, Check, Music, Disc, Sparkles, Globe, UserSquare2, Music4, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Song, Playlist, ThemeConfig } from '../types';
 
 export interface GroundedTrack {
@@ -56,6 +56,7 @@ export default function SelectSongsCatalog({
 }: SelectSongsCatalogProps) {
   const [addedSongId, setAddedSongId] = useState<string | null>(null);
   const [loadingTrackTitle, setLoadingTrackTitle] = useState<string | null>(null);
+  const [isListOpen, setIsListOpen] = useState(true);
 
   // Helper to trigger Play/Stop toggle for a particular track
   const handleToggleTrackPlay = async (track: GroundedTrack) => {
@@ -269,8 +270,8 @@ export default function SelectSongsCatalog({
     }
   };
 
-  // Tracks list to show: if searchResult exists, show search result tracks; else fallback to preloaded songs
-  const tracksToDisplay: GroundedTrack[] =
+  // Tracks list to show: if searchResult exists, show search result tracks; ensure at least 5 tracks
+  let rawTracks: GroundedTrack[] =
     searchResult?.topTracksOrAlbums && searchResult.topTracksOrAlbums.length > 0
       ? searchResult.topTracksOrAlbums.map((t) => ({
           title: t.title,
@@ -297,6 +298,28 @@ export default function SelectSongsCatalog({
           genre: s.genre,
         }));
 
+  // Ensure minimum 5 songs in the search listing
+  if (rawTracks.length < 5 && allSongs.length > 0) {
+    const existingTitles = new Set(rawTracks.map((t) => t.title.toLowerCase()));
+    const additionalTracks = allSongs
+      .filter((s) => !existingTitles.has(s.title.toLowerCase()))
+      .map((s) => ({
+        title: s.title,
+        artist: s.artist,
+        album: s.album || 'Master Track',
+        releaseYear: '2024',
+        description: `${s.genre} • Studio Master`,
+        url: s.url,
+        coverUrl: s.coverUrl,
+        duration: s.duration,
+        durationSec: s.durationSec,
+        genre: s.genre,
+      }));
+    rawTracks = [...rawTracks, ...additionalTracks].slice(0, Math.max(5, rawTracks.length));
+  }
+
+  const tracksToDisplay = rawTracks;
+
   return (
     <div
       id="select-songs-catalog"
@@ -307,25 +330,60 @@ export default function SelectSongsCatalog({
 
       {/* 1. STAGE 02 Badge */}
       <div className="flex items-center justify-between">
-        <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-          STAGE 02
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            STAGE 02
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsListOpen((prev) => !prev)}
+            className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-200 text-[10px] font-mono font-semibold transition active:scale-95 cursor-pointer shadow-sm"
+            id="btn-toggle-stage02-dropdown"
+            title={isListOpen ? 'Close list' : 'Open list'}
+          >
+            <span>{isListOpen ? 'Close' : 'Open'}</span>
+            {isListOpen ? (
+              <ChevronUp className="w-3 h-3 text-emerald-300" />
+            ) : (
+              <ChevronDown className="w-3 h-3 text-emerald-300" />
+            )}
+          </button>
+        </div>
         <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300/80 border border-emerald-500/20 uppercase tracking-wider">
           {tracksToDisplay.length} Tracks Ready
         </span>
       </div>
 
       {/* 2. Main Title: 💿 Your search results are here */}
-      <div className="flex flex-col gap-1 border-b border-white/[0.06] pb-3">
-        <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2.5 min-h-[28px]">
-          <Disc className="w-5 h-5 text-emerald-400 shrink-0 self-center" />
-          <span className="leading-tight self-center">Your search results are here</span>
-        </h2>
-        <p className="text-xs sm:text-[13px] text-emerald-200/60 leading-snug">
-          {searchResult
-            ? `Showing authentic tracks for "${searchResult.title}". Click Play to start streaming this particular song, or + to add to playlist.`
-            : 'Search any singer or song in Stage 01 above to see live grounded tracks here with instant Play / Stop and + Add.'}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] pb-3">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2.5 min-h-[28px]">
+            <Disc className="w-5 h-5 text-emerald-400 shrink-0 self-center" />
+            <span className="leading-tight self-center">Your search results are here</span>
+          </h2>
+          <p className="text-xs sm:text-[13px] text-emerald-200/60 leading-snug">
+            {searchResult
+              ? `Showing authentic tracks for "${searchResult.title}". Click Play to start streaming this particular song, or + to add to playlist.`
+              : 'Search any singer or song in Stage 01 above to see live grounded tracks here with instant Play / Stop and + Add.'}
+          </p>
+        </div>
+
+        {!searchResult && (
+          <button
+            type="button"
+            onClick={() => setIsListOpen((prev) => !prev)}
+            className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-200 font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+            id="btn-toggle-catalog-header"
+            title={isListOpen ? 'Close list' : 'Open list'}
+          >
+            <span>{isListOpen ? 'Close List' : 'Open List'}</span>
+            {isListOpen ? (
+              <ChevronUp className="w-3.5 h-3.5 text-emerald-300" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-emerald-300" />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Search Result Banner when search result is active */}
@@ -348,20 +406,40 @@ export default function SelectSongsCatalog({
             </div>
           </div>
 
-          {searchResult.topTracksOrAlbums && searchResult.topTracksOrAlbums.length > 0 && (
+          <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+            {searchResult.topTracksOrAlbums && searchResult.topTracksOrAlbums.length > 0 && (
+              <button
+                onClick={() => handleToggleTrackPlay(searchResult.topTracksOrAlbums[0])}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                id="btn-play-top-hit"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Play Top Hit</span>
+              </button>
+            )}
+
+            {/* Dropdown Button to open or close search list */}
             <button
-              onClick={() => handleToggleTrackPlay(searchResult.topTracksOrAlbums[0])}
-              className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all hover:scale-105"
+              type="button"
+              onClick={() => setIsListOpen((prev) => !prev)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-200 font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              id="btn-toggle-catalog-dropdown"
+              title={isListOpen ? 'Close list' : 'Open list'}
             >
-              <Play className="w-3.5 h-3.5 fill-current" />
-              <span>Play Top Hit</span>
+              <span>{isListOpen ? 'Close List' : 'Open List'}</span>
+              {isListOpen ? (
+                <ChevronUp className="w-3.5 h-3.5 text-emerald-300" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-emerald-300" />
+              )}
             </button>
-          )}
+          </div>
         </div>
       )}
 
-      {/* Tracks Listing Grid with Play / Stop and + Add button */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin">
+      {/* Tracks Listing Grid with Play / Stop and + Add button - uses full natural space with smooth scroll */}
+      {isListOpen && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 w-full animate-fade-in">
         {tracksToDisplay.map((track, idx) => {
           const isCurrentTrackPlaying = Boolean(
             isPlaying &&
@@ -512,12 +590,13 @@ export default function SelectSongsCatalog({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
 
       {/* Next Step Action Banner */}
       <div className="mt-4 p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs text-white/70">
-          Selected tracks are automatically synced into your Stage 03 playlist below.
+          Selected tracks are automatically synced into your Playlist.
         </p>
 
         <button
@@ -532,7 +611,7 @@ export default function SelectSongsCatalog({
           className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg bg-amber-400/15 hover:bg-amber-400/25 active:scale-95 text-amber-300 border border-amber-400/30 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
           id="btn-goto-stage-03"
         >
-          <span>Continue to Playlist below ↓</span>
+          <span>Continue to Playlist</span>
         </button>
       </div>
     </div>
