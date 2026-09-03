@@ -1,6 +1,0 @@
-{
-  "name": "MyBeatBox",
-  "description": "An interactive, premium dark-themed music player and playlist workspace featuring real-time collaboration, a Web Audio API equalizer, Gemini-powered daily recommendations, local music file syncing, and offline capability.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
