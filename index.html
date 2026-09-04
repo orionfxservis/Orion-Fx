@@ -2779,26 +2779,29 @@
 
   <style>
     @media (max-width: 1080px) {
+      /* Force 1 column on mobile for the Mobile Applications section */
+      #mobile-projects .grid {
+        grid-template-columns: 1fr !important;
+      }
+      
       #mobile-projects .card {
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: transform 0.2s ease;
       }
+      
+      /* Active tap effect */
+      #mobile-projects .card:active {
+        transform: scale(0.98);
+      }
+      
       /* Hide everything except the image div by default on mobile */
       #mobile-projects .card > *:not(div:first-of-type) {
-        display: none;
+        display: none !important;
       }
-      /* Remove bottom margin from image div when collapsed */
-      #mobile-projects .card:not(.expanded) > div:first-of-type {
+      
+      /* Remove bottom margin from image div */
+      #mobile-projects .card > div:first-of-type {
         margin-bottom: 0 !important;
-      }
-      /* Show them when expanded */
-      #mobile-projects .card.expanded > h3,
-      #mobile-projects .card.expanded > p,
-      #mobile-projects .card.expanded > div:nth-of-type(2) {
-        display: block;
-      }
-      #mobile-projects .card.expanded > a {
-        display: inline-flex;
       }
     }
   </style>
@@ -2809,9 +2812,10 @@
       document.querySelectorAll('#mobile-projects .card').forEach(card => {
         card.addEventListener('click', function(e) {
           if (window.innerWidth <= 1080) {
-            // Don't toggle if the user is clicking the actual link button
-            if (e.target.tagName !== 'A' && !e.target.closest('a')) {
-              this.classList.toggle('expanded');
+            // Find the link inside this card
+            const link = this.querySelector('a.project-link');
+            if (link && link.href) {
+              window.open(link.href, '_blank');
             }
           }
         });
