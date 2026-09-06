@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "net.orionfx.www.twa",
-        "sha256_cert_fingerprints": ["71:44:09:45:19:69:07:6C:02:AF:BF:97:8E:48:6D:12:E2:08:DA:2C:FA:57:3B:1D:40:A2:D7:00:89:83:9A:C3"]
-      }
-    }]
