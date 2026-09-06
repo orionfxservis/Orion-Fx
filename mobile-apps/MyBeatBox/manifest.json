@@ -1,0 +1,16 @@
+﻿{
+  "name": "MyBeatBox",
+  "short_name": "MyBeatBox",
+  "description": "An Intelligent, Mobile-first audio workstation designed to bring powerful music creation & audio production tools into one streamlined workspace.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#030508",
+  "theme_color": "#00E5FF",
+  "icons": [
+    {
+      "src": "/assets/project images/mybeatbox-app.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
