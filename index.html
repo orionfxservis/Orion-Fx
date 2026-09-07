@@ -1928,7 +1928,10 @@
                   <p class="muted" style="font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
                       MyBeatBox is an Intelligent, Mobile-first audio workstation designed to bring powerful music creation & audio production tools into one streamlined workspace. Discover Music with AI-powered search, Organize your Audio Library, Build Playlists & share with your friends.
                   </p>
-                  <a href="assets/apps/MyBeatBox.apk" class="project-link" download>Download App</a>
+                  <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: auto;">
+                      <a href="assets/apps/MyBeatBox.apk" class="project-link" download><i class="fas fa-download"></i> Download App</a>
+                      <a href="mobile-apps/MyBeatBox/" class="project-link" target="_blank"><i class="fas fa-globe"></i> Web Link</a>
+                  </div>
               </article>
 
               <!-- App 2 -->
@@ -2894,23 +2897,41 @@
         card.addEventListener('click', function(e) {
           if (window.innerWidth <= 1080) {
             const title = this.querySelector('h3') ? this.querySelector('h3').innerText : 'App Details';
+            const subtitle = this.querySelector('div[style*="text-transform"]') ? this.querySelector('div[style*="text-transform"]').innerText : '';
             const desc = this.querySelector('p') ? this.querySelector('p').innerText : '';
             const img = this.querySelector('img');
             const imgSrc = img ? img.src : '';
             
-            const linkEl = this.querySelector('a.project-link');
-            const linkHref = linkEl ? linkEl.href : '#';
-            const linkText = linkEl ? linkEl.innerText : 'Open Link';
-            const isDownload = linkEl && linkEl.hasAttribute('download') ? `download="${linkEl.getAttribute('download') || ''}"` : '';
-            const targetAttr = isDownload ? '' : 'target="_blank"';
+            const linkEls = this.querySelectorAll('a.project-link');
+            let linksHtml = '';
+            
+            if (linkEls.length > 0) {
+              linksHtml = '<div style="display: flex; gap: 12px; width: 100%; flex-wrap: wrap; margin-top: 10px;">';
+              linkEls.forEach(linkEl => {
+                const linkHref = linkEl.getAttribute('href') || '#';
+                const linkText = linkEl.textContent.trim();
+                const isDownload = linkEl.hasAttribute('download');
+                const downloadAttr = isDownload ? `download="${linkEl.getAttribute('download') || ''}"` : '';
+                const targetAttr = isDownload ? '' : 'target="_blank" rel="noopener noreferrer"';
+                const icon = isDownload ? '<i class="fas fa-download"></i>' : '<i class="fas fa-globe"></i>';
+                
+                linksHtml += `
+                    <a href="${linkHref}" ${targetAttr} ${downloadAttr} class="btn btn-primary" style="flex: 1 1 140px; text-align: center; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 11px 16px;">
+                        ${icon} <span>${linkText}</span>
+                    </a>
+                `;
+              });
+              linksHtml += '</div>';
+            }
             
             const html = `
                 <div style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; display: flex; justify-content: center; background: rgba(0,0,0,0.2);">
                     <img src="${imgSrc}" style="max-width: 100%; max-height: 250px; object-fit: contain;">
                 </div>
-                <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 15px; color: var(--primary);">${title}</h2>
+                <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 8px; color: var(--primary);">${title}</h2>
+                ${subtitle ? `<div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; letter-spacing: 1px;">${subtitle}</div>` : ''}
                 <p style="color: var(--muted); line-height: 1.8; font-size: 15px; margin-bottom: 25px;">${desc}</p>
-                <a href="${linkHref}" ${targetAttr} ${isDownload} class="btn btn-primary" style="display:inline-block; text-align:center; width:100%; font-size:16px;">${linkText}</a>
+                ${linksHtml}
             `;
             
             document.getElementById('appModalBody').innerHTML = html;
