@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: '/mobile-apps/MyBeatBox/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
