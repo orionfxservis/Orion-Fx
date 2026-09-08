@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { Wifi, WifiOff, Radio, Sparkles, Music, Volume2, User, Home, Library, Compass, Sliders, X, Maximize2, RotateCw, Check, Palette, Search, Play, ArrowRight, Disc, Bot, Loader2 } from 'lucide-react';
+import { Wifi, WifiOff, Radio, Sparkles, Music, Volume2, User, Home, Library, Compass, Sliders, X, Maximize2, RotateCw, Check, Palette, Search, Play, ArrowRight, Disc, Bot, Loader2, LogIn } from 'lucide-react';
 import { Song, Playlist, UserAccount, ThemeId, ThemeConfig, AppTab } from './types';
 import AudioPlayer from './components/AudioPlayer';
 import MiniPlayer from './components/MiniPlayer';
@@ -8,6 +8,7 @@ import GoogleSearchPanel from './components/GoogleSearchPanel';
 import SelectSongsCatalog from './components/SelectSongsCatalog';
 import { ArtistDetailData } from './components/ArtistDetailView';
 import { getArtistProfileData } from './data/artistsData';
+import { GUEST_USER, mapSupabaseUserToApp, signInWithGoogle, signOut as authSignOut, getSession, onAuthStateChange } from './services/authService';
 
 // Code-split heavy workspaces and modals to drastically reduce initial mobile bundle size
 const PlaylistWorkspace = lazy(() => import('./components/PlaylistWorkspace'));
@@ -146,15 +147,9 @@ export default function App() {
   const [showFullPlayerModal, setShowFullPlayerModal] = useState(false);
   const [selectedArtistData, setSelectedArtistData] = useState<ArtistDetailData | null>(null);
 
-  // Dynamic user account metadata
-  const [currentUser, setCurrentUser] = useState<UserAccount & { bio?: string }>({
-    uid: 'user-faisal',
-    name: 'Faisal Hussain',
-    email: 'iMFaisalHussain@gmail.com',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=120&auto=format&fit=crop',
-    favoriteGenres: ['Synthwave', 'Cyberpunk', 'Lofi Jazz'],
-    bio: 'Premium acoustic curator. Passionate about retro-futuristic audio architectures and high-fidelity soundscapes.'
-  });
+  // Dynamic user account metadata — starts as guest until Google sign-in
+  const [currentUser, setCurrentUser] = useState<UserAccount & { bio?: string }>(GUEST_USER);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Fetch initial music catalog & playlists from Server
   useEffect(() => {
@@ -179,30 +174,33 @@ export default function App() {
     fetchPlaylists();
   }, [isOffline]);
 
-  // Sync user session and listen for popups
+  // Supabase Auth: Check session on mount + listen for auth state changes (Google OAuth redirect)
   useEffect(() => {
-    const cachedUid = localStorage.getItem('syncbeat_uid') || 'user-faisal';
-    fetch(`/api/user/${cachedUid}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setCurrentUser(data.user);
-          localStorage.setItem('syncbeat_uid', data.user.uid);
-        }
-      })
-      .catch((err) => console.error('Failed to load user profile on startup:', err));
-
-    const handleMessage = (e: MessageEvent) => {
-      if (e.data && e.data.type === 'OAUTH_AUTH_SUCCESS') {
-        const user = e.data.user;
-        setCurrentUser(user);
-        localStorage.setItem('syncbeat_uid', user.uid);
-        fetchPlaylists();
+    // 1. Check if user already has an active session (persisted by Supabase in localStorage)
+    getSession().then((session) => {
+      if (session?.user) {
+        const appUser = mapSupabaseUserToApp(session.user);
+        setCurrentUser(appUser);
+        setIsAuthenticated(true);
       }
-    };
+    });
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    // 2. Listen for auth state changes (SIGNED_IN after OAuth redirect, SIGNED_OUT, etc.)
+    const unsubscribe = onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const appUser = mapSupabaseUserToApp(session.user);
+        setCurrentUser(appUser);
+        setIsAuthenticated(true);
+        fetchPlaylists();
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(GUEST_USER);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const fetchPlaylists = async () => {
@@ -460,23 +458,35 @@ export default function App() {
             )}
           </button>
 
-          {/* Profile Button (38-42px) */}
-          <button
-            onClick={() => setShowProfileModal(true)}
-            className="h-10 min-w-[40px] px-1.5 sm:px-2.5 flex items-center justify-center gap-1.5 bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 hover:border-amber-400/40 rounded-full transition-all duration-150 group cursor-pointer active:scale-95 shadow-sm shrink-0"
-            title="Profile & Settings"
-            id="btn-header-profile"
-          >
-            <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="w-7 h-7 rounded-full border border-white/20 object-cover shrink-0"
-              referrerPolicy="no-referrer"
-            />
-            <span className="text-xs font-semibold text-white/90 max-w-[70px] sm:max-w-[100px] truncate hidden min-[360px]:inline">
-              {currentUser.name.split(' ')[0]}
-            </span>
-          </button>
+          {/* Profile Button (38-42px) — Guest shows Sign In, Authenticated shows Google photo */}
+          {isAuthenticated ? (
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="h-10 min-w-[40px] px-1.5 sm:px-2.5 flex items-center justify-center gap-1.5 bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 hover:border-amber-400/40 rounded-full transition-all duration-150 group cursor-pointer active:scale-95 shadow-sm shrink-0"
+              title="Profile & Settings"
+              id="btn-header-profile"
+            >
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="w-7 h-7 rounded-full border border-white/20 object-cover shrink-0"
+                referrerPolicy="no-referrer"
+              />
+              <span className="text-xs font-semibold text-white/90 max-w-[70px] sm:max-w-[100px] truncate hidden min-[360px]:inline">
+                {currentUser.name.split(' ')[0]}
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => signInWithGoogle()}
+              className="h-10 px-3 sm:px-4 flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-cyan-400/40 rounded-full transition-all duration-200 group cursor-pointer active:scale-95 shadow-sm shrink-0"
+              title="Sign in with Google"
+              id="btn-header-sign-in"
+            >
+              <LogIn className="w-4 h-4 text-cyan-400 shrink-0" />
+              <span className="text-xs font-semibold text-white/90 hidden min-[360px]:inline">Sign In</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -503,6 +513,8 @@ export default function App() {
             onOpenProfile={() => setShowProfileModal(true)}
             theme={activeTheme}
             isOffline={isOffline}
+            isAuthenticated={isAuthenticated}
+            onSignIn={() => signInWithGoogle()}
           />
         )}
 
@@ -911,6 +923,14 @@ export default function App() {
                 onOpenThemeTab={() => {
                   setShowProfileModal(false);
                   setShowThemeModal(true);
+                }}
+                isAuthenticated={isAuthenticated}
+                onSignIn={() => signInWithGoogle()}
+                onSignOut={async () => {
+                  await authSignOut();
+                  setCurrentUser(GUEST_USER);
+                  setIsAuthenticated(false);
+                  setShowProfileModal(false);
                 }}
               />
             </Suspense>
