@@ -13,7 +13,8 @@ import {
   FolderPlus, 
   Layers,
   Volume2,
-  Clock
+  Clock,
+  LogIn
 } from 'lucide-react';
 import { Song, Playlist, UserAccount, ThemeConfig } from '../types';
 import WelcomeOfferCard from './WelcomeOfferCard';
@@ -34,6 +35,8 @@ interface HomeWorkspaceProps {
   onOpenProfile?: () => void;
   theme?: ThemeConfig;
   isOffline?: boolean;
+  isAuthenticated?: boolean;
+  onSignIn?: () => void;
 }
 
 export default function HomeWorkspace({
@@ -51,9 +54,11 @@ export default function HomeWorkspace({
   onUpdateUser,
   onOpenProfile,
   theme,
-  isOffline
+  isOffline,
+  isAuthenticated = false,
+  onSignIn
 }: HomeWorkspaceProps) {
-  const firstName = user?.name ? user.name.split(' ')[0] : 'Faisal';
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Guest';
   const activePlaylist = playlists.find(p => p.id === activePlaylistId) || playlists[0];
 
   // Quick picks (4-6 handpicked diverse tracks)
@@ -95,11 +100,29 @@ export default function HomeWorkspace({
           {/* User Greeting & Welcome Note */}
           <div className="mt-1 flex flex-col gap-1">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Welcome Back, {firstName} 👋
+              {isAuthenticated ? `Welcome Back, ${firstName}` : 'Welcome, Guest'} 👋
             </h1>
-            <p className="text-sm sm:text-base font-semibold text-cyan-200/90">
-              What do you want to create today ?
-            </p>
+            {isAuthenticated ? (
+              <p className="text-sm sm:text-base font-semibold text-cyan-200/90">
+                What do you want to create today ?
+              </p>
+            ) : (
+              <div className="flex flex-col gap-2 mt-1">
+                <p className="text-sm sm:text-base font-semibold text-cyan-200/90">
+                  Sign in with Google to unlock your workspace
+                </p>
+                {onSignIn && (
+                  <button
+                    onClick={onSignIn}
+                    className="self-start flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] border border-cyan-500/30 hover:border-cyan-400/50 text-cyan-300 hover:text-cyan-200 text-sm font-semibold transition-all duration-200 active:scale-95 cursor-pointer shadow-sm"
+                    id="btn-home-sign-in"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Continue with Google
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <p className="text-xs sm:text-[13px] text-white/70 max-w-xl leading-relaxed mt-0.5">
