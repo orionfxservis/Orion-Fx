@@ -383,7 +383,7 @@ export default function App() {
         >
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/90 border border-cyan-500/30 shadow-[0_0_15px_-2px_rgba(6,182,212,0.25)] relative overflow-hidden group-hover:border-cyan-400 transition flex items-center justify-center shrink-0">
             <img 
-              src="/src/assets/images/mybeatbox_badge_logo_1787687281522.jpg" 
+              src="/mobile-apps/MyBeatBox/logo/mybeatbox-app.png" 
               alt="MyBeatBox Logo" 
               className="w-full h-full object-cover rounded-xl"
               referrerPolicy="no-referrer"
