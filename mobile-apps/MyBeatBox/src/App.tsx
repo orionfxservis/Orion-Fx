@@ -345,6 +345,28 @@ export default function App() {
     setActiveTheme(customTheme);
   };
 
+  const renderLoginPrompt = (featureName: string) => (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 animate-fade-in mt-8">
+      <div className="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-sm w-full mx-auto shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full"></div>
+        <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 relative z-10">
+          <span className="text-3xl">🔒</span>
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2 relative z-10">Sign in to MyBeatBox</h2>
+        <p className="text-sm text-white/60 mb-8 relative z-10">
+          Continue with Google to access your music library, playlists, AI and {featureName}.
+        </p>
+        <button
+          onClick={() => signInWithGoogle()}
+          className="w-full py-3.5 px-4 bg-white hover:bg-zinc-200 text-black rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-3 relative z-10 active:scale-95 cursor-pointer"
+        >
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className={`min-h-screen ${activeTheme.bgClass} relative overflow-hidden transition-colors duration-300 flex flex-col font-sans`}>
       {/* 🔮 Lightweight Hardware-Accelerated Ambient Glow Background */}
@@ -520,99 +542,151 @@ export default function App() {
 
         {/* BRANCH 2: DISCOVER (Clean, Fast Search, AI Grounding & Song Exploration) */}
         {activeTab === 'discover' && (
-          <div className="flex flex-col gap-5 animate-fade-in">
-            {selectedArtistData ? (
-              <Suspense fallback={<TabLoadingSkeleton />}>
-                <ArtistDetailView
-                  artistData={selectedArtistData}
-                  onBack={() => setSelectedArtistData(null)}
-                  playlists={playlists}
-                  onPlaylistChange={handlePlaylistChange}
-                  onSelectSong={handleSelectSong}
-                  onPlayPause={(playing) => setIsPlaying(playing)}
-                  currentSong={currentSong}
-                  isPlaying={isPlaying}
-                  theme={activeTheme}
-                  isOffline={isOffline}
-                />
-              </Suspense>
-            ) : (
-              <>
-                {/* Google Music Grounding Search */}
-                <section id="step-google-search">
-                  <GoogleSearchPanel
+          isAuthenticated ? (
+            <div className="flex flex-col gap-5 animate-fade-in">
+              {selectedArtistData ? (
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <ArtistDetailView
+                    artistData={selectedArtistData}
+                    onBack={() => setSelectedArtistData(null)}
                     playlists={playlists}
-                    allSongs={allSongs}
-                    onSelectSong={handleSelectSong}
                     onPlaylistChange={handlePlaylistChange}
-                    onSearchResultChange={(res) => setGoogleSearchResult(res)}
-                    onSelectArtist={(artistName) => {
-                      const profile = getArtistProfileData(artistName, allSongs);
-                      setSelectedArtistData(profile);
-                    }}
-                    onSelectAlbum={(albumName, artistName) => {
-                      const profile = getArtistProfileData(artistName, allSongs);
-                      setSelectedArtistData(profile);
-                    }}
-                    theme={activeTheme}
-                    isOffline={isOffline}
-                    currentSong={currentSong}
-                    isPlaying={isPlaying}
-                  />
-                </section>
-
-                {/* Search Results & Curated Catalog */}
-                <section id="step-select-songs">
-                  <SelectSongsCatalog
-                    allSongs={allSongs}
-                    playlists={playlists}
-                    activePlaylistId={activePlaylistId}
                     onSelectSong={handleSelectSong}
                     onPlayPause={(playing) => setIsPlaying(playing)}
-                    onPlaylistChange={handlePlaylistChange}
-                    theme={activeTheme}
-                    isOffline={isOffline}
-                    searchResult={googleSearchResult}
                     currentSong={currentSong}
                     isPlaying={isPlaying}
-                    onNavigateToPlaylist={() => {
-                      setActiveTab('library');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
+                    theme={activeTheme}
+                    isOffline={isOffline}
                   />
-                </section>
-              </>
-            )}
-          </div>
+                </Suspense>
+              ) : (
+                <>
+                  {/* Google Music Grounding Search */}
+                  <section id="step-google-search">
+                    <GoogleSearchPanel
+                      playlists={playlists}
+                      allSongs={allSongs}
+                      onSelectSong={handleSelectSong}
+                      onPlaylistChange={handlePlaylistChange}
+                      onSearchResultChange={(res) => setGoogleSearchResult(res)}
+                      onSelectArtist={(artistName) => {
+                        const profile = getArtistProfileData(artistName, allSongs);
+                        setSelectedArtistData(profile);
+                      }}
+                      onSelectAlbum={(albumName, artistName) => {
+                        const profile = getArtistProfileData(artistName, allSongs);
+                        setSelectedArtistData(profile);
+                      }}
+                      theme={activeTheme}
+                      isOffline={isOffline}
+                      currentSong={currentSong}
+                      isPlaying={isPlaying}
+                    />
+                  </section>
+
+                  {/* Search Results & Curated Catalog */}
+                  <section id="step-select-songs">
+                    <SelectSongsCatalog
+                      allSongs={allSongs}
+                      playlists={playlists}
+                      activePlaylistId={activePlaylistId}
+                      onSelectSong={handleSelectSong}
+                      onPlayPause={(playing) => setIsPlaying(playing)}
+                      onPlaylistChange={handlePlaylistChange}
+                      theme={activeTheme}
+                      isOffline={isOffline}
+                      searchResult={googleSearchResult}
+                      currentSong={currentSong}
+                      isPlaying={isPlaying}
+                      onNavigateToPlaylist={() => {
+                        setActiveTab('library');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    />
+                  </section>
+                </>
+              )}
+            </div>
+          ) : renderLoginPrompt('Discover')
         )}
 
         {/* BRANCH 3: LIBRARY (Master Playlists, Personal Lists & Local Audio Files) */}
         {activeTab === 'library' && (
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <div className="flex flex-col gap-6 animate-fade-in">
-              {/* Playlist Workspace Component */}
-              <section id="library-playlist-builder">
-                <PlaylistWorkspace
-                  playlists={playlists}
-                  onSelectSong={handleSelectSong}
-                  onPlaylistChange={handlePlaylistChange}
-                  onPlayPlaylist={handlePlayPlaylist}
-                  activePlaylistId={activePlaylistId}
-                  onSetActivePlaylistId={setActivePlaylistId}
-                  user={currentUser}
-                  allSongs={allSongs}
-                  theme={activeTheme}
-                  isOffline={isOffline}
-                  onRefreshPlaylists={fetchPlaylists}
-                />
-              </section>
+          isAuthenticated ? (
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <div className="flex flex-col gap-6 animate-fade-in">
+                {/* Playlist Workspace Component */}
+                <section id="library-playlist-builder">
+                  <PlaylistWorkspace
+                    playlists={playlists}
+                    onSelectSong={handleSelectSong}
+                    onPlaylistChange={handlePlaylistChange}
+                    onPlayPlaylist={handlePlayPlaylist}
+                    activePlaylistId={activePlaylistId}
+                    onSetActivePlaylistId={setActivePlaylistId}
+                    user={currentUser}
+                    allSongs={allSongs}
+                    theme={activeTheme}
+                    isOffline={isOffline}
+                    onRefreshPlaylists={fetchPlaylists}
+                  />
+                </section>
 
-              {/* Local Audio File Upload & Storage */}
-              <section id="library-local-files">
-                <LocalFiles
+                {/* Local Audio File Upload & Storage */}
+                <section id="library-local-files">
+                  <LocalFiles
+                    playlists={playlists}
+                    onSelectSong={handleSelectSong}
+                    onAddLocalSongToPlaylist={(pId, song) => {
+                      const targetPlaylist = playlists.find((p) => p.id === pId);
+                      if (targetPlaylist) {
+                        const updated = {
+                          ...targetPlaylist,
+                          songs: [...targetPlaylist.songs, song],
+                        };
+                        handlePlaylistChange(updated);
+                      }
+                    }}
+                    onAddLocalSongToCoreList={(song) => {
+                      setAllSongs((prev) => [song, ...prev.filter((s) => s.id !== song.id)]);
+                    }}
+                    theme={activeTheme}
+                  />
+                </section>
+              </div>
+            </Suspense>
+          ) : renderLoginPrompt('Library')
+        )}
+
+        {/* 4. DESTINATION 4: 🎛️ STUDIO (Recording, audio projects, playlist creation, editing, mixing) */}
+        {activeTab === 'studio' && (
+          isAuthenticated ? (
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <div className="flex flex-col gap-6 animate-fade-in">
+                <StudioWorkspace
                   playlists={playlists}
+                  activePlaylistId={activePlaylistId}
+                  currentSong={currentSong}
+                  isPlaying={isPlaying}
                   onSelectSong={handleSelectSong}
-                  onAddLocalSongToPlaylist={(pId, song) => {
+                  onPlayPause={setIsPlaying}
+                  onPlaylistChange={handlePlaylistChange}
+                  onCreatePlaylist={(name, description) => {
+                    const newPl: Playlist = {
+                      id: `pl-${Date.now()}`,
+                      name: name || 'New Studio Playlist',
+                      description: description || 'Created in Studio Workspace',
+                      createdBy: currentUser.uid || 'user-faisal',
+                      createdByName: currentUser.name || 'Faisal Hussain',
+                      userEmail: currentUser.email || 'iMFaisalHussain@gmail.com',
+                      isCollaborative: true,
+                      songs: [],
+                      members: [currentUser.name || 'Faisal Hussain'],
+                      createdAt: Date.now()
+                    };
+                    handlePlaylistChange(newPl);
+                  }}
+                  onAddSongToPlaylist={(pId, song) => {
                     const targetPlaylist = playlists.find((p) => p.id === pId);
                     if (targetPlaylist) {
                       const updated = {
@@ -622,86 +696,42 @@ export default function App() {
                       handlePlaylistChange(updated);
                     }
                   }}
-                  onAddLocalSongToCoreList={(song) => {
-                    setAllSongs((prev) => [song, ...prev.filter((s) => s.id !== song.id)]);
-                  }}
                   theme={activeTheme}
+                  isOffline={isOffline}
                 />
-              </section>
-            </div>
-          </Suspense>
-        )}
-
-        {/* 4. DESTINATION 4: 🎛️ STUDIO (Recording, audio projects, playlist creation, editing, mixing) */}
-        {activeTab === 'studio' && (
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <div className="flex flex-col gap-6 animate-fade-in">
-              <StudioWorkspace
-                playlists={playlists}
-                activePlaylistId={activePlaylistId}
-                currentSong={currentSong}
-                isPlaying={isPlaying}
-                onSelectSong={handleSelectSong}
-                onPlayPause={setIsPlaying}
-                onPlaylistChange={handlePlaylistChange}
-                onCreatePlaylist={(name, description) => {
-                  const newPl: Playlist = {
-                    id: `pl-${Date.now()}`,
-                    name: name || 'New Studio Playlist',
-                    description: description || 'Created in Studio Workspace',
-                    createdBy: currentUser.uid || 'user-faisal',
-                    createdByName: currentUser.name || 'Faisal Hussain',
-                    userEmail: currentUser.email || 'iMFaisalHussain@gmail.com',
-                    isCollaborative: true,
-                    songs: [],
-                    members: [currentUser.name || 'Faisal Hussain'],
-                    createdAt: Date.now()
-                  };
-                  handlePlaylistChange(newPl);
-                }}
-                onAddSongToPlaylist={(pId, song) => {
-                  const targetPlaylist = playlists.find((p) => p.id === pId);
-                  if (targetPlaylist) {
-                    const updated = {
-                      ...targetPlaylist,
-                      songs: [...targetPlaylist.songs, song],
-                    };
-                    handlePlaylistChange(updated);
-                  }
-                }}
-                theme={activeTheme}
-                isOffline={isOffline}
-              />
-            </div>
-          </Suspense>
+              </div>
+            </Suspense>
+          ) : renderLoginPrompt('Studio')
         )}
 
         {/* 5. DESTINATION 5: 🤖 AI (Your intelligent MyBeatBox assistant) */}
         {activeTab === 'ai' && (
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <div className="flex flex-col gap-6 animate-fade-in">
-              <AiAssistantWorkspace
-                playlists={playlists}
-                currentSong={currentSong}
-                isPlaying={isPlaying}
-                onSelectSong={handleSelectSong}
-                onPlayPause={setIsPlaying}
-                onAddSongToPlaylist={(pId, song) => {
-                  const targetPlaylist = playlists.find((p) => p.id === pId);
-                  if (targetPlaylist) {
-                    const updated = {
-                      ...targetPlaylist,
-                      songs: [...targetPlaylist.songs, song],
-                    };
-                    handlePlaylistChange(updated);
-                  }
-                }}
-                onNavigateToTab={setActiveTab}
-                theme={activeTheme}
-                isOffline={isOffline}
-              />
-            </div>
-          </Suspense>
+          isAuthenticated ? (
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <div className="flex flex-col gap-6 animate-fade-in">
+                <AiAssistantWorkspace
+                  playlists={playlists}
+                  currentSong={currentSong}
+                  isPlaying={isPlaying}
+                  onSelectSong={handleSelectSong}
+                  onPlayPause={setIsPlaying}
+                  onAddSongToPlaylist={(pId, song) => {
+                    const targetPlaylist = playlists.find((p) => p.id === pId);
+                    if (targetPlaylist) {
+                      const updated = {
+                        ...targetPlaylist,
+                        songs: [...targetPlaylist.songs, song],
+                      };
+                      handlePlaylistChange(updated);
+                    }
+                  }}
+                  onNavigateToTab={setActiveTab}
+                  theme={activeTheme}
+                  isOffline={isOffline}
+                />
+              </div>
+            </Suspense>
+          ) : renderLoginPrompt('AI')
         )}
 
         {/* Persistent Background Audio Engine (Kept mounted across all tabs so audio never stops) */}
@@ -731,9 +761,9 @@ export default function App() {
         theme={activeTheme}
       />
 
-      {/* 4. 5-DESTINATION MOBILE-FIRST BOTTOM NAVIGATION BAR (🏠 Home | 🔎 Discover | 🎵 Playlist | 🎛️ Studio | 🤖 AI) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#06080d] border-t border-white/[0.04] px-2 sm:px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div className="max-w-xl mx-auto flex justify-between items-center px-2">
+      {/* 4. MOBILE-FIRST BOTTOM NAVIGATION BAR (Conditionally Rendered) */}
+      <nav className={`fixed bottom-0 left-0 right-0 z-50 bg-[#06080d] border-t border-white/[0.04] px-2 sm:px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] transition-all duration-300 ${!isAuthenticated ? 'logged-out' : ''}`}>
+        <div className={`max-w-xl mx-auto flex ${isAuthenticated ? 'justify-between' : 'justify-center'} items-center px-2`}>
           {/* 1. 🏠 Home: Personalized starting point */}
           <button
             onClick={() => {
@@ -754,91 +784,95 @@ export default function App() {
             <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Home</span>
           </button>
 
-          {/* 2. 🔎 Discover: Music search and exploration */}
-          <button
-            onClick={() => {
-              setActiveTab('discover');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
-              activeTab === 'discover'
-                ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                : 'px-2 text-zinc-500 hover:text-zinc-300'
-            }`}
-            id="tab-btn-discover"
-            title="🔎 Discover — Music search and exploration"
-          >
-            <div className="flex items-center justify-center">
-              <span className="text-xl leading-none" role="img" aria-label="Discover">🔎</span>
-            </div>
-            <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Discover</span>
-          </button>
+          {isAuthenticated && (
+            <>
+              {/* 2. 🔎 Discover: Music search and exploration */}
+              <button
+                onClick={() => {
+                  setActiveTab('discover');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
+                  activeTab === 'discover'
+                    ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'px-2 text-zinc-500 hover:text-zinc-300'
+                }`}
+                id="tab-btn-discover"
+                title="🔎 Discover — Music search and exploration"
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-xl leading-none" role="img" aria-label="Discover">🔎</span>
+                </div>
+                <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Discover</span>
+              </button>
 
-          {/* 3. 🎵 Playlist: User's saved playlists & library */}
-          <button
-            onClick={() => {
-              setActiveTab('library');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
-              activeTab === 'library'
-                ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                : 'px-2 text-zinc-500 hover:text-zinc-300'
-            }`}
-            id="tab-btn-playlist"
-            title="🎵 Playlist — Curated collections, mixes & music library"
-          >
-            <div className="relative flex items-center justify-center">
-              <span className="text-xl leading-none" role="img" aria-label="Playlist">🎵</span>
-              {playlists.length > 0 && (
-                <span className="absolute -top-1.5 -right-3 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#c061cb] text-white leading-none shadow-sm">
-                  {playlists.length}
-                </span>
-              )}
-            </div>
-            <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Playlist</span>
-          </button>
+              {/* 3. 🎵 Playlist: User's saved playlists & library */}
+              <button
+                onClick={() => {
+                  setActiveTab('library');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
+                  activeTab === 'library'
+                    ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'px-2 text-zinc-500 hover:text-zinc-300'
+                }`}
+                id="tab-btn-playlist"
+                title="🎵 Playlist — Curated collections, mixes & music library"
+              >
+                <div className="relative flex items-center justify-center">
+                  <span className="text-xl leading-none" role="img" aria-label="Playlist">🎵</span>
+                  {playlists.length > 0 && (
+                    <span className="absolute -top-1.5 -right-3 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-[#c061cb] text-white leading-none shadow-sm">
+                      {playlists.length}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Playlist</span>
+              </button>
 
-          {/* 4. 🎛️ Studio: Recording, audio projects, playlist creation, editing, mixing */}
-          <button
-            onClick={() => {
-              setActiveTab('studio');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
-              activeTab === 'studio'
-                ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                : 'px-2 text-zinc-500 hover:text-zinc-300'
-            }`}
-            id="tab-btn-studio"
-            title="🎛️ Studio — Recording, audio projects, editing & mixing"
-          >
-            <div className="flex items-center justify-center">
-              <span className="text-xl leading-none" role="img" aria-label="Studio">🎛️</span>
-            </div>
-            <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Studio</span>
-          </button>
+              {/* 4. 🎛️ Studio: Recording, audio projects, playlist creation, editing, mixing */}
+              <button
+                onClick={() => {
+                  setActiveTab('studio');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
+                  activeTab === 'studio'
+                    ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'px-2 text-zinc-500 hover:text-zinc-300'
+                }`}
+                id="tab-btn-studio"
+                title="🎛️ Studio — Recording, audio projects, editing & mixing"
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-xl leading-none" role="img" aria-label="Studio">🎛️</span>
+                </div>
+                <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">Studio</span>
+              </button>
 
-          {/* 5. 🤖 AI: Your intelligent MyBeatBox assistant */}
-          <button
-            onClick={() => {
-              setActiveTab('ai');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
-              activeTab === 'ai'
-                ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                : 'px-2 text-zinc-500 hover:text-zinc-300'
-            }`}
-            id="tab-btn-ai"
-            title="🤖 AI — Your intelligent MyBeatBox assistant"
-          >
-            <div className="relative flex items-center justify-center">
-              <span className="text-xl leading-none" role="img" aria-label="AI Assistant">🤖</span>
-              <span className="w-2 h-2 rounded-full bg-[#00d084] absolute -top-1 -right-2 shadow-[0_0_8px_#00d084]" />
-            </div>
-            <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">AI</span>
-          </button>
+              {/* 5. 🤖 AI: Your intelligent MyBeatBox assistant */}
+              <button
+                onClick={() => {
+                  setActiveTab('ai');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`flex flex-col items-center justify-center gap-1 py-2 transition-all duration-300 relative cursor-pointer ${
+                  activeTab === 'ai'
+                    ? 'px-8 sm:px-10 rounded-2xl text-cyan-400 bg-cyan-950/60 font-bold border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'px-2 text-zinc-500 hover:text-zinc-300'
+                }`}
+                id="tab-btn-ai"
+                title="🤖 AI — Your intelligent MyBeatBox assistant"
+              >
+                <div className="relative flex items-center justify-center">
+                  <span className="text-xl leading-none" role="img" aria-label="AI Assistant">🤖</span>
+                  <span className="w-2 h-2 rounded-full bg-[#00d084] absolute -top-1 -right-2 shadow-[0_0_8px_#00d084]" />
+                </div>
+                <span className="text-[11px] sm:text-xs font-mono font-medium leading-none tracking-wide">AI</span>
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
