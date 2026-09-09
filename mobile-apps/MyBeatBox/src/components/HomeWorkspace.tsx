@@ -140,34 +140,6 @@ export default function HomeWorkspace({
           />
         </div>
 
-        {/* 2. Primary 4-Stage Launchpad Banner */}
-        <div className="mt-1 p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-pink-500 flex items-center justify-center text-black font-extrabold shadow-lg shadow-amber-500/20 shrink-0">
-              <Compass className="w-5 h-5 text-black" />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-white">4-Stage Music Pipeline</span>
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                  01 → 04
-                </span>
-              </div>
-              <p className="text-[11px] text-white/50">
-                Search • Build • Review • Save
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => onNavigateToTab('discover')}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 via-pink-500 to-purple-500 hover:from-amber-300 hover:to-purple-400 text-black shadow-md flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer shrink-0"
-            id="btn-home-launch-discover-pipeline"
-          >
-            <span>Start Discovery</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
       </div>
 
       {/* 3. "What can I do right now?" Action Grid */}
