@@ -1,0 +1,6 @@
+{
+  "name": "OrionFx Receipt & Invoice Generator",
+  "description": "A fast, client-side SaaS receipt and invoice generator for OrionFx with customizable templates, logo adjustment, terms & conditions, and instant PDF, JPG, or print exports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

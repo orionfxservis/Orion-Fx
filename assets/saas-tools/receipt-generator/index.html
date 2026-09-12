@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>OrionFx Receipt & Invoice Generator</title>
+    <meta name="description" content="A fast, client-side SaaS receipt and invoice generator for OrionFx with customizable templates, logo adjustment, terms & conditions, and instant PDF, JPG, or print exports." />
+    <meta property="og:title" content="OrionFx Receipt & Invoice Generator" />
+    <meta property="og:description" content="A fast, client-side SaaS receipt and invoice generator for OrionFx with customizable templates, logo adjustment, terms & conditions, and instant PDF, JPG, or print exports." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Google Fonts for receipt styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <!-- Client-side CDN libraries for zero-npm rendering & export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased min-h-screen selection:bg-indigo-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
