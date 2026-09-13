@@ -25,6 +25,15 @@ export interface LineItem {
   quantity: number;
   unitPrice: number;
   taxRate?: number; // per item tax percentage (e.g., 5, 10, 18)
+  discountValue?: number; // per item discount amount or percentage
+  discountType?: 'percent' | 'fixed';
+}
+
+export interface TaxItem {
+  id: string;
+  name: string;
+  rate: number;
+  isCompound?: boolean; // compound tax applied on subtotal + previous taxes
 }
 
 export interface CompanyInfo {
@@ -108,7 +117,11 @@ export interface ReceiptData {
   discountValue: number;
   taxRate: number; // overall tax %
   taxLabel: string; // e.g. "VAT (10%)" or "GST (18%)" or "Sales Tax"
+  taxEnabled?: boolean;
+  taxes?: TaxItem[];
   shippingFee: number;
+  handlingFee?: number;
+  serviceFee?: number;
   paidAmount: number;
   notes: string;
   terms: string;
