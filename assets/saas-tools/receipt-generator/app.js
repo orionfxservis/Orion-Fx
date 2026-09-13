@@ -46,15 +46,21 @@
       taxId: '3920194-8'
     },
     items: [
-      { id: '1', description: 'OrionFx Cloud SaaS Core License', details: 'Dedicated Business Suite (Annual)', quantity: 1, unitPrice: 45000 },
-      { id: '2', description: 'POS System Integration & Hardware Setup', details: 'Thermal Roll & Barcode Interface', quantity: 1, unitPrice: 15000 },
-      { id: '3', description: 'FBR Tier-1 Real-time Fiscal API Module', details: 'FBR e-Invoicing Gateway & QR Sync', quantity: 1, unitPrice: 12500 }
+      { id: '1', description: 'OrionFx Cloud SaaS Core License', details: 'Dedicated Business Suite (Annual)', quantity: 1, unitPrice: 45000, discountValue: 0, discountType: 'fixed' },
+      { id: '2', description: 'POS System Integration & Hardware Setup', details: 'Thermal Roll & Barcode Interface', quantity: 1, unitPrice: 15000, discountValue: 0, discountType: 'fixed' },
+      { id: '3', description: 'FBR Tier-1 Real-time Fiscal API Module', details: 'FBR e-Invoicing Gateway & QR Sync', quantity: 1, unitPrice: 12500, discountValue: 0, discountType: 'fixed' }
     ],
     discountType: 'fixed',
     discountValue: 2500,
+    taxEnabled: true,
+    taxes: [
+      { id: 'tax-1', name: 'Sales Tax / GST', rate: 15, isCompound: false }
+    ],
     taxRate: 15,
     taxLabel: 'GST / Sales Tax',
     shippingFee: 0,
+    handlingFee: 0,
+    serviceFee: 0,
     paidAmount: 70000,
     payment: {
       method: 'Bank Transfer',
@@ -80,43 +86,311 @@
     }
   };
 
+  // Default Starter Templates for local template manager
+  const DEFAULT_TEMPLATES = [
+    {
+      id: 'tpl-fbr-pos',
+      title: 'Pakistan FBR Tier-1 80mm POS',
+      isTemplate: true,
+      templateName: 'thermal',
+      receiptNumber: 'FBR-POS-00892',
+      clientName: 'Walk-in Retail Customer',
+      companyName: 'OrionFx Retail & Cloud POS',
+      itemCount: 3,
+      grandTotal: 96600,
+      currencySymbol: 'Rs',
+      dateString: '2026-09-13',
+      snapshot: {
+        company: {
+          name: 'OrionFx Retail & Cloud POS',
+          tagline: 'FBR Tier-1 Certified Retail POS',
+          address: 'Main Commercial Avenue, DHA Phase 5, Lahore, Pakistan',
+          phone: '+92 42 3574 8899',
+          email: 'retail@orionfx.net',
+          website: 'https://orionfx.net',
+          strn: 'STRN-3277876123456',
+          ntn: 'NTN-7345912-8',
+          posId: 'POS-01',
+          logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
+          logoWidth: 120,
+          showLogo: true
+        },
+        client: {
+          name: 'Walk-in Retail Customer',
+          phone: '+92 300 1234567',
+          email: 'counter@walkin.pk',
+          address: 'Counter 02, DHA Branch',
+          taxId: ''
+        },
+        receiptNumber: 'FBR-POS-00892',
+        fbrInvoiceNumber: '1002342609120842',
+        receiptDate: '2026-09-13',
+        receiptTime: '15:30:00',
+        dueDate: '2026-09-13',
+        currency: { code: 'PKR', symbol: 'Rs' },
+        items: [
+          { id: '1', description: 'Thermal Barcode Scanner 2D QR', details: 'High-speed handheld USB', quantity: 2, unitPrice: 18000, discountValue: 0, discountType: 'fixed' },
+          { id: '2', description: 'POS Thermal Roll 80mm Premium Box', details: 'Box of 50 Rolls BPA Free', quantity: 4, unitPrice: 6500, discountValue: 1000, discountType: 'fixed' },
+          { id: '3', description: 'POS Software Cloud Annual License', details: 'Retail Tier-1 Sync', quantity: 1, unitPrice: 35000, discountValue: 5, discountType: 'percent' }
+        ],
+        discountType: 'fixed',
+        discountValue: 0,
+        taxEnabled: true,
+        taxes: [
+          { id: 'tax-1', name: 'Sales Tax / GST', rate: 15, isCompound: false }
+        ],
+        taxRate: 15,
+        taxLabel: 'Sales Tax / GST',
+        shippingFee: 0,
+        handlingFee: 0,
+        serviceFee: 0,
+        paidAmount: 96600,
+        payment: {
+          method: 'Cash / Credit Card',
+          bankName: '',
+          accountName: '',
+          accountNumber: '',
+          showQrCode: true,
+          qrPayload: 'https://e.fbr.gov.pk/pos/verify?fbrInvoiceNo=1002342609120842&posId=POS-01'
+        },
+        terms: '• Goods once sold can be exchanged within 7 days with original receipt.\n• FBR Tier-1 verified POS invoice.',
+        notes: 'Thank you for shopping with us!',
+        signature: {
+          signerName: 'Store Supervisor',
+          signerTitle: 'Shift Lead',
+          signatureType: 'typed',
+          signatureData: '',
+          showStamp: true
+        },
+        styling: {
+          template: 'thermal',
+          primaryColor: '#059669',
+          fontFamily: 'mono'
+        }
+      }
+    },
+    {
+      id: 'tpl-corp-saas',
+      title: 'Corporate Enterprise SaaS Agreement',
+      isTemplate: true,
+      templateName: 'corporate',
+      receiptNumber: 'INV-2026-1042',
+      clientName: 'Meezan Bank Operations Hub',
+      companyName: 'OrionFx Technologies Pvt Ltd',
+      itemCount: 3,
+      grandTotal: 70000,
+      currencySymbol: 'Rs',
+      dateString: '2026-09-13',
+      snapshot: JSON.parse(JSON.stringify(DEFAULT_DATA))
+    },
+    {
+      id: 'tpl-modern-consult',
+      title: 'Professional Technology Advisory',
+      isTemplate: true,
+      templateName: 'modern',
+      receiptNumber: 'REC-2026-015',
+      clientName: 'Habib Metropolitan Tech Ltd',
+      companyName: 'OrionFx Technologies Pvt Ltd',
+      itemCount: 2,
+      grandTotal: 45000,
+      currencySymbol: 'Rs',
+      dateString: '2026-09-13',
+      snapshot: {
+        ...JSON.parse(JSON.stringify(DEFAULT_DATA)),
+        receiptNumber: 'REC-2026-015',
+        client: {
+          name: 'Habib Metropolitan Tech Ltd',
+          phone: '+92 21 111 222 333',
+          email: 'tech@habibmetro.com',
+          address: 'I.I. Chundrigar Road, Karachi, Pakistan',
+          taxId: 'NTN-4892019-1'
+        },
+        items: [
+          { id: '1', description: 'Fintech Architectural Audit & Cloud Security', details: 'Full scope system vulnerability & latency review', quantity: 1, unitPrice: 30000, discountValue: 0, discountType: 'fixed' },
+          { id: '2', description: 'Disaster Recovery Simulation & Report', details: 'High availability multi-region failover testing', quantity: 1, unitPrice: 15000, discountValue: 0, discountType: 'fixed' }
+        ],
+        styling: {
+          template: 'modern',
+          primaryColor: '#1e3a8a',
+          fontFamily: 'sans'
+        }
+      }
+    }
+  ];
+
   // State
   let state = loadFromStorage() || JSON.parse(JSON.stringify(DEFAULT_DATA));
   let activeTab = 'edit'; // 'edit' or 'preview' on mobile
   let zoomLevel = 1;
   let activeAccordion = 'template'; // 'template', 'company', 'client', 'items', 'payment', 'terms'
+  let lastSavedTime = 'Just now';
+  let historySearchTerm = '';
+  let activeHistoryTab = 'all'; // 'all' or 'templates'
 
   function loadFromStorage() {
     try {
       const saved = localStorage.getItem('orionfx_receipt_data');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Ensure backward compatibility migrations
+        if (parsed.taxEnabled === undefined) parsed.taxEnabled = true;
+        if (!Array.isArray(parsed.taxes) || parsed.taxes.length === 0) {
+          parsed.taxes = [
+            { id: 'tax-1', name: parsed.taxLabel || 'Sales Tax / GST', rate: typeof parsed.taxRate === 'number' ? parsed.taxRate : 15, isCompound: false }
+          ];
+        }
+        if (parsed.handlingFee === undefined) parsed.handlingFee = 0;
+        if (parsed.serviceFee === undefined) parsed.serviceFee = 0;
+        if (Array.isArray(parsed.items)) {
+          parsed.items.forEach(it => {
+            if (it.discountValue === undefined) it.discountValue = 0;
+            if (!it.discountType) it.discountType = 'fixed';
+          });
+        }
+        return parsed;
+      }
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
     return null;
   }
 
+  // Ensure active state has new fields populated
+  if (state.taxEnabled === undefined) state.taxEnabled = true;
+  if (!Array.isArray(state.taxes) || state.taxes.length === 0) {
+    state.taxes = [
+      { id: 'tax-1', name: state.taxLabel || 'Sales Tax / GST', rate: typeof state.taxRate === 'number' ? state.taxRate : 15, isCompound: false }
+    ];
+  }
+  if (state.handlingFee === undefined) state.handlingFee = 0;
+  if (state.serviceFee === undefined) state.serviceFee = 0;
+  if (Array.isArray(state.items)) {
+    state.items.forEach(it => {
+      if (it.discountValue === undefined) it.discountValue = 0;
+      if (!it.discountType) it.discountType = 'fixed';
+    });
+  }
+
   function saveToStorage() {
     try {
       localStorage.setItem('orionfx_receipt_data', JSON.stringify(state));
+      const now = new Date();
+      lastSavedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const el = document.getElementById('autosave-indicator-text');
+      if (el) el.textContent = `Saved ${lastSavedTime}`;
     } catch (e) {}
   }
 
   // --- Financial Calculation Helpers ---
   function calculateTotals() {
-    const subtotal = state.items.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.unitPrice) || 0), 0);
-    const discountAmount = state.discountType === 'percent'
-      ? (subtotal * (Number(state.discountValue) || 0)) / 100
-      : (Number(state.discountValue) || 0);
-    const taxableAmount = Math.max(0, subtotal - discountAmount);
-    const taxAmount = (taxableAmount * (Number(state.taxRate) || 0)) / 100;
+    let grossSubtotal = 0;
+    let totalItemDiscounts = 0;
+
+    const computedItems = (state.items || []).map((item, idx) => {
+      const qty = Number(item.quantity) || 0;
+      const unitPrice = Number(item.unitPrice) || 0;
+      const gross = qty * unitPrice;
+      grossSubtotal += gross;
+
+      let itemDiscount = 0;
+      const dVal = Number(item.discountValue) || 0;
+      if (dVal > 0) {
+        if (item.discountType === 'percent') {
+          itemDiscount = (gross * dVal) / 100;
+        } else {
+          itemDiscount = Math.min(gross, dVal);
+        }
+      }
+      totalItemDiscounts += itemDiscount;
+      const net = Math.max(0, gross - itemDiscount);
+
+      return {
+        ...item,
+        quantity: qty,
+        unitPrice: unitPrice,
+        grossTotal: gross,
+        discountAmount: itemDiscount,
+        netTotal: net
+      };
+    });
+
+    // Net items subtotal after item-level discounts
+    const subtotal = Math.max(0, grossSubtotal - totalItemDiscounts);
+
+    // Invoice-level discount (Flat or Percentage)
+    let invoiceDiscountAmount = 0;
+    const invVal = Number(state.discountValue) || 0;
+    if (invVal > 0) {
+      if (state.discountType === 'percent') {
+        invoiceDiscountAmount = (subtotal * invVal) / 100;
+      } else {
+        invoiceDiscountAmount = Math.min(subtotal, invVal);
+      }
+    }
+    const totalDiscount = totalItemDiscounts + invoiceDiscountAmount;
+    const taxableAmount = Math.max(0, subtotal - invoiceDiscountAmount);
+
+    // Multiple & Compound Tax / VAT Calculations
+    const taxEnabled = state.taxEnabled !== false;
+    let taxAmount = 0;
+    const taxBreakdown = [];
+
+    if (taxEnabled) {
+      const taxList = Array.isArray(state.taxes) && state.taxes.length > 0
+        ? state.taxes
+        : [{ id: 'tax-1', name: state.taxLabel || 'Sales Tax / GST', rate: Number(state.taxRate) || 0, isCompound: false }];
+
+      let runningTaxSum = 0;
+      taxList.forEach((t, i) => {
+        const rate = Number(t.rate) || 0;
+        // Compound tax calculates on taxable base PLUS previously accrued taxes
+        const base = t.isCompound ? (taxableAmount + runningTaxSum) : taxableAmount;
+        const amt = (base * rate) / 100;
+        runningTaxSum += amt;
+        taxBreakdown.push({
+          id: t.id || `tax-${i}`,
+          name: t.name || `Tax ${i + 1}`,
+          rate: rate,
+          amount: amt,
+          isCompound: Boolean(t.isCompound)
+        });
+      });
+      taxAmount = runningTaxSum;
+    }
+
+    // Shipping, Handling & Extra Fees
     const shipping = Number(state.shippingFee) || 0;
-    const grandTotal = taxableAmount + taxAmount + shipping;
+    const handling = Number(state.handlingFee) || 0;
+    const serviceFee = Number(state.serviceFee) || 0;
+    const totalExtraFees = shipping + handling + serviceFee;
+
+    // Final Grand Total
+    const grandTotal = taxableAmount + taxAmount + totalExtraFees;
     const paidAmount = Number(state.paidAmount) || 0;
     const balanceDue = Math.max(0, grandTotal - paidAmount);
     const changeReturned = Math.max(0, paidAmount - grandTotal);
 
-    return { subtotal, discountAmount, taxableAmount, taxAmount, shipping, grandTotal, paidAmount, balanceDue, changeReturned };
+    return {
+      grossSubtotal,
+      totalItemDiscounts,
+      subtotal, // subtotal after item-level discounts
+      discountAmount: invoiceDiscountAmount, // backward compat
+      invoiceDiscountAmount,
+      totalDiscount,
+      taxableAmount,
+      taxEnabled,
+      taxBreakdown,
+      taxAmount,
+      shipping,
+      handling,
+      serviceFee,
+      totalExtraFees,
+      grandTotal,
+      paidAmount,
+      balanceDue,
+      changeReturned,
+      computedItems
+    };
   }
 
   function formatMoney(amount, symbol) {
@@ -156,52 +430,471 @@
     return res + ' Only';
   }
 
-  // --- Export Actions ---
+  // --- Export Actions (High-DPI 300 DPI & Multi-Format Engine) ---
   window.printReceipt = function () {
     window.print();
   };
 
-  window.downloadPdf = function () {
+  window.downloadPdf = function (customDpi) {
     const el = document.getElementById('receipt-printable-area');
     if (!el || !window.html2canvas || !window.jspdf) {
-      alert('PDF generator library is initializing, please try again in a moment.');
+      alert('Export libraries are initializing, please wait a moment and retry.');
       return;
     }
+
+    const scale = customDpi || 3; // 3 = ~300 DPI razor-sharp print quality
+    showToast(`Rendering high-DPI PDF (${scale === 3 ? '300 DPI' : '150 DPI'})...`);
 
     const isThermal = state.styling.template === 'thermal';
     const originalShadow = el.style.boxShadow;
     el.style.boxShadow = 'none';
 
-    window.html2canvas(el, { scale: 2, useCORS: true, logging: false }).then(function (canvas) {
+    window.html2canvas(el, {
+      scale: scale,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      imageTimeout: 15000
+    }).then(function (canvas) {
       el.style.boxShadow = originalShadow;
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      const pdf = new window.jspdf.jsPDF('p', 'mm', isThermal ? [80, 260] : 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const margin = isThermal ? 3 : 10;
-      const width = pageWidth - (margin * 2);
-      const height = (canvas.height * width) / canvas.width;
+      const imgData = canvas.toDataURL('image/png');
 
-      pdf.addImage(imgData, 'JPEG', margin, margin, width, height);
-      pdf.save(`${state.receiptNumber || 'Receipt'}.pdf`);
-      showToast('PDF downloaded successfully!');
+      if (isThermal) {
+        // Continuous thermal roll (80mm width standard)
+        const rollWidthMm = 80;
+        const calculatedHeightMm = Math.ceil((canvas.height * rollWidthMm) / canvas.width);
+        const rollHeightMm = Math.max(60, calculatedHeightMm + 4);
+
+        const pdf = new window.jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: [rollWidthMm, rollHeightMm],
+          compress: true
+        });
+
+        pdf.addImage(imgData, 'PNG', 0, 2, rollWidthMm, calculatedHeightMm, undefined, 'FAST');
+        pdf.save(`${state.receiptNumber || 'Thermal-Receipt'}.pdf`);
+        showToast('High-DPI 80mm Thermal PDF downloaded!');
+      } else {
+        // Standard A4 document (210 x 297 mm)
+        const pdf = new window.jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        });
+
+        const pageWidth = 210;
+        const pageHeight = 297;
+        const margin = 8;
+        const printWidth = pageWidth - (margin * 2); // 194 mm
+        const totalHeightMm = (canvas.height * printWidth) / canvas.width;
+        const pageContentHeight = pageHeight - (margin * 2); // 281 mm
+
+        if (totalHeightMm <= pageContentHeight) {
+          // Fits on a single A4 sheet
+          pdf.addImage(imgData, 'PNG', margin, margin, printWidth, totalHeightMm, undefined, 'FAST');
+        } else {
+          // Intelligent Multi-page slicing for large invoices
+          let heightLeft = totalHeightMm;
+          let position = margin;
+          let page = 1;
+
+          pdf.addImage(imgData, 'PNG', margin, position, printWidth, totalHeightMm, undefined, 'FAST');
+          heightLeft -= pageContentHeight;
+
+          while (heightLeft > 0) {
+            position = margin - (page * pageContentHeight);
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', margin, position, printWidth, totalHeightMm, undefined, 'FAST');
+            heightLeft -= pageContentHeight;
+            page++;
+          }
+        }
+
+        pdf.save(`${state.receiptNumber || 'Invoice'}.pdf`);
+        showToast('High-DPI A4 PDF downloaded successfully!');
+      }
     }).catch(function (err) {
+      el.style.boxShadow = originalShadow;
       console.error(err);
       alert('Error exporting PDF: ' + err.message);
+    });
+  };
+
+  window.downloadPng = function () {
+    const el = document.getElementById('receipt-printable-area');
+    if (!el || !window.html2canvas) return;
+    showToast('Rendering lossless 300 DPI PNG...');
+    const originalShadow = el.style.boxShadow;
+    el.style.boxShadow = 'none';
+
+    window.html2canvas(el, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      imageTimeout: 15000
+    }).then(function (canvas) {
+      el.style.boxShadow = originalShadow;
+      const link = document.createElement('a');
+      link.download = `${state.receiptNumber || 'Receipt'}-300dpi.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Lossless 300 DPI PNG image saved!');
+    }).catch(function (err) {
+      el.style.boxShadow = originalShadow;
+      alert('PNG download failed: ' + err.message);
     });
   };
 
   window.downloadJpg = function () {
     const el = document.getElementById('receipt-printable-area');
     if (!el || !window.html2canvas) return;
+    showToast('Rendering high-res JPG (300 DPI)...');
+    const originalShadow = el.style.boxShadow;
+    el.style.boxShadow = 'none';
 
-    window.html2canvas(el, { scale: 2, useCORS: true }).then(function (canvas) {
+    window.html2canvas(el, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      imageTimeout: 15000
+    }).then(function (canvas) {
+      el.style.boxShadow = originalShadow;
       const link = document.createElement('a');
       link.download = `${state.receiptNumber || 'Receipt'}.jpg`;
       link.href = canvas.toDataURL('image/jpeg', 0.95);
       link.click();
       showToast('High-Res JPG image saved!');
+    }).catch(function (err) {
+      el.style.boxShadow = originalShadow;
+      alert('JPG download failed: ' + err.message);
     });
   };
+
+  window.openExportModal = function () {
+    const modal = document.getElementById('export-modal');
+    if (modal) modal.classList.remove('hidden');
+  };
+
+  window.closeExportModal = function () {
+    const modal = document.getElementById('export-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  // --- Local Receipt History & Template Manager ---
+  function getHistoryList() {
+    try {
+      const data = localStorage.getItem('orionfx_receipt_history');
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('History read error:', e);
+    }
+    // Seed with initial starter templates
+    try {
+      localStorage.setItem('orionfx_receipt_history', JSON.stringify(DEFAULT_TEMPLATES));
+    } catch (e) {}
+    return DEFAULT_TEMPLATES;
+  }
+
+  function saveHistoryList(list) {
+    try {
+      localStorage.setItem('orionfx_receipt_history', JSON.stringify(list));
+    } catch (e) {
+      console.warn('History write error:', e);
+    }
+    updateHistoryCountBadge();
+  }
+
+  function updateHistoryCountBadge() {
+    const list = getHistoryList();
+    const badges = document.querySelectorAll('.history-count-badge');
+    badges.forEach(b => {
+      b.textContent = list.length;
+    });
+  }
+
+  window.quickSaveToHistory = function () {
+    window.saveCurrentToHistory(false);
+  };
+
+  window.saveCurrentToHistory = function (asTemplate = false, customTitle = '') {
+    const totals = calculateTotals();
+    const list = getHistoryList();
+    const defaultTitle = `${state.receiptNumber || 'Receipt'} • ${state.client.name || 'Client'} (${state.currency.symbol} ${formatMoney(totals.grandTotal, '')})`;
+
+    let title = customTitle;
+    if (!title) {
+      if (asTemplate) {
+        title = prompt('Enter a name for this reusable template:', state.company.name ? `${state.styling.template.toUpperCase()} - ${state.company.name}` : 'Custom Invoicing Template');
+        if (!title) return; // user cancelled prompt
+      } else {
+        title = defaultTitle;
+      }
+    }
+
+    const newRecord = {
+      id: 'rec_' + Date.now(),
+      title: title.trim(),
+      isTemplate: !!asTemplate,
+      templateName: state.styling.template,
+      receiptNumber: state.receiptNumber || 'N/A',
+      clientName: state.client.name || 'N/A',
+      companyName: state.company.name || 'N/A',
+      itemCount: (state.items || []).length,
+      grandTotal: totals.grandTotal,
+      currencySymbol: state.currency.symbol,
+      dateString: state.receiptDate || new Date().toISOString().split('T')[0],
+      timestamp: Date.now(),
+      snapshot: JSON.parse(JSON.stringify(state))
+    };
+
+    const updated = [newRecord, ...list];
+    saveHistoryList(updated);
+    showToast(asTemplate ? `⭐ Template "${newRecord.title}" saved!` : `📁 Receipt saved to local history!`);
+    renderHistoryModalContent();
+  };
+
+  window.loadHistoryItem = function (id) {
+    const list = getHistoryList();
+    const item = list.find(x => x.id === id);
+    if (!item) return;
+
+    if (confirm(`Load "${item.title}" into the editor? Current draft will be updated.`)) {
+      state = JSON.parse(JSON.stringify(item.snapshot));
+      if (state.taxEnabled === undefined) state.taxEnabled = true;
+      if (!Array.isArray(state.taxes) || state.taxes.length === 0) {
+        state.taxes = [{ id: 'tax-1', name: state.taxLabel || 'Sales Tax / GST', rate: typeof state.taxRate === 'number' ? state.taxRate : 15, isCompound: false }];
+      }
+      if (state.handlingFee === undefined) state.handlingFee = 0;
+      if (state.serviceFee === undefined) state.serviceFee = 0;
+      if (Array.isArray(state.items)) {
+        state.items.forEach(it => {
+          if (it.discountValue === undefined) it.discountValue = 0;
+          if (!it.discountType) it.discountType = 'fixed';
+        });
+      }
+      saveToStorage();
+      window.closeHistoryModal();
+      render();
+      showToast(`Loaded "${item.title}"!`);
+    }
+  };
+
+  window.duplicateHistoryItem = function (id) {
+    const list = getHistoryList();
+    const item = list.find(x => x.id === id);
+    if (!item) return;
+
+    state = JSON.parse(JSON.stringify(item.snapshot));
+    const year = new Date().getFullYear();
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    state.receiptNumber = `OFX-${year}-${rand}`;
+    state.receiptDate = new Date().toISOString().split('T')[0];
+    saveToStorage();
+    window.closeHistoryModal();
+    render();
+    showToast(`Duplicated as receipt #${state.receiptNumber}!`);
+  };
+
+  window.deleteHistoryItem = function (id) {
+    const list = getHistoryList();
+    const item = list.find(x => x.id === id);
+    if (!item) return;
+
+    if (confirm(`Delete "${item.title}" from local history?`)) {
+      const updated = list.filter(x => x.id !== id);
+      saveHistoryList(updated);
+      renderHistoryModalContent();
+      showToast('Item deleted from history');
+    }
+  };
+
+  window.clearAllHistory = function () {
+    if (confirm('Are you sure you want to clear all receipt history? This cannot be undone.')) {
+      saveHistoryList([]);
+      renderHistoryModalContent();
+      showToast('Local history cleared');
+    }
+  };
+
+  window.exportHistoryJson = function () {
+    const list = getHistoryList();
+    const blob = new Blob([JSON.stringify(list, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `orionfx-receipt-history-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('Exported backup JSON file!');
+  };
+
+  window.importHistoryJson = function (event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (Array.isArray(imported)) {
+          const current = getHistoryList();
+          const existingIds = new Set(current.map(x => x.id));
+          const toAdd = imported.filter(x => !existingIds.has(x.id));
+          const merged = [...toAdd, ...current];
+          saveHistoryList(merged);
+          renderHistoryModalContent();
+          showToast(`Imported ${toAdd.length} items into local history!`);
+        } else {
+          alert('Invalid file format: Expected an array of receipts.');
+        }
+      } catch (err) {
+        alert('Could not parse JSON file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  window.openHistoryModal = function () {
+    const modal = document.getElementById('history-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      renderHistoryModalContent();
+    }
+  };
+
+  window.closeHistoryModal = function () {
+    const modal = document.getElementById('history-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  window.setHistoryTab = function (tab) {
+    activeHistoryTab = tab;
+    renderHistoryModalContent();
+  };
+
+  window.setHistorySearch = function (val) {
+    historySearchTerm = (val || '').toLowerCase().trim();
+    renderHistoryModalContent();
+  };
+
+  function renderHistoryModalContent() {
+    const container = document.getElementById('history-modal-content-container');
+    if (!container) return;
+
+    const list = getHistoryList();
+    let filtered = list;
+
+    if (activeHistoryTab === 'templates') {
+      filtered = filtered.filter(x => x.isTemplate);
+    }
+
+    if (historySearchTerm) {
+      filtered = filtered.filter(x =>
+        (x.title && x.title.toLowerCase().includes(historySearchTerm)) ||
+        (x.receiptNumber && x.receiptNumber.toLowerCase().includes(historySearchTerm)) ||
+        (x.clientName && x.clientName.toLowerCase().includes(historySearchTerm)) ||
+        (x.companyName && x.companyName.toLowerCase().includes(historySearchTerm)) ||
+        (x.templateName && x.templateName.toLowerCase().includes(historySearchTerm))
+      );
+    }
+
+    const templateCount = list.filter(x => x.isTemplate).length;
+    const allCount = list.length;
+
+    const tabAllBadge = document.getElementById('history-tab-all-count');
+    if (tabAllBadge) tabAllBadge.textContent = allCount;
+    const tabTplBadge = document.getElementById('history-tab-tpl-count');
+    if (tabTplBadge) tabTplBadge.textContent = templateCount;
+
+    const tabAllBtn = document.getElementById('history-tab-all-btn');
+    const tabTplBtn = document.getElementById('history-tab-tpl-btn');
+    if (tabAllBtn && tabTplBtn) {
+      if (activeHistoryTab === 'all') {
+        tabAllBtn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1.5';
+        tabTplBtn.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5';
+      } else {
+        tabAllBtn.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1.5';
+        tabTplBtn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1.5';
+      }
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="p-10 text-center text-slate-400">
+          <div class="text-3xl mb-2">📁</div>
+          <p class="text-sm font-bold text-slate-700">No saved items found</p>
+          <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+            ${historySearchTerm ? 'No receipts match your search keyword.' : 'You haven’t saved any receipts or reusable templates yet.'}
+          </p>
+          <div class="mt-4 flex justify-center gap-2">
+            <button onclick="saveCurrentToHistory(false)" class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition">
+              💾 Save Current Receipt
+            </button>
+            <button onclick="saveCurrentToHistory(true)" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold transition">
+              ⭐ Save as Template
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="divide-y divide-slate-100 max-h-[55vh] overflow-y-auto">
+        ${filtered.map(item => `
+          <div class="p-3.5 sm:p-4 hover:bg-slate-50/80 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-extrabold text-slate-900 truncate">${item.title}</span>
+                ${item.isTemplate ? `
+                  <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.2 rounded-full border border-amber-200">
+                    Template
+                  </span>
+                ` : `
+                  <span class="text-[10px] bg-blue-50 text-blue-800 font-bold px-2 py-0.2 rounded-full border border-blue-200">
+                    Receipt
+                  </span>
+                `}
+                <span class="text-[10px] bg-slate-100 text-slate-700 font-mono px-2 py-0.2 rounded uppercase font-semibold">
+                  ${item.templateName}
+                </span>
+              </div>
+              <div class="flex items-center gap-3 sm:gap-4 text-[11px] text-slate-500 flex-wrap">
+                <span>Receipt: <strong class="text-slate-700 font-mono font-medium">${item.receiptNumber}</strong></span>
+                <span>Client: <strong class="text-slate-700 font-medium">${item.clientName || 'N/A'}</strong></span>
+                <span>Date: <strong class="text-slate-700 font-medium">${item.dateString}</strong></span>
+                <span>Total: <strong class="text-emerald-800 font-mono font-bold">${item.currencySymbol || 'Rs'} ${formatMoney(item.grandTotal, '')}</strong></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+              <button onclick="loadHistoryItem('${item.id}')" title="Load into Editor" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition shadow-2xs flex items-center gap-1">
+                <span>⚡</span> Load
+              </button>
+              <button onclick="duplicateHistoryItem('${item.id}')" title="Duplicate with new ID & date" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                <span>📑</span> Copy
+              </button>
+              <button onclick="deleteHistoryItem('${item.id}')" title="Delete" class="px-2.5 py-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs font-bold rounded-lg transition">
+                &times;
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
 
   window.copyStandaloneHtml = function () {
     const htmlCode = generateStandaloneCode();
@@ -310,9 +1003,16 @@
 
   window.clearForm = function () {
     if (confirm('Clear receipt details and start fresh?')) {
-      state.items = [{ id: '1', description: 'Item description', details: '', quantity: 1, unitPrice: 0 }];
+      state.items = [{ id: '1', description: 'Item description', details: '', quantity: 1, unitPrice: 0, discountValue: 0, discountType: 'fixed' }];
       state.discountValue = 0;
-      state.taxRate = 0;
+      state.discountType = 'fixed';
+      state.taxEnabled = true;
+      state.taxes = [{ id: 'tax-1', name: 'Sales Tax / GST', rate: 15, isCompound: false }];
+      state.taxRate = 15;
+      state.taxLabel = 'Sales Tax / GST';
+      state.shippingFee = 0;
+      state.handlingFee = 0;
+      state.serviceFee = 0;
       state.paidAmount = 0;
       saveToStorage();
       render();
@@ -326,7 +1026,9 @@
       description: '',
       details: '',
       quantity: 1,
-      unitPrice: 0
+      unitPrice: 0,
+      discountValue: 0,
+      discountType: 'fixed'
     });
     saveToStorage();
     render();
@@ -334,7 +1036,7 @@
 
   window.removeItem = function (index) {
     if (state.items.length <= 1) {
-      state.items = [{ id: Date.now().toString(), description: '', details: '', quantity: 1, unitPrice: 0 }];
+      state.items = [{ id: Date.now().toString(), description: '', details: '', quantity: 1, unitPrice: 0, discountValue: 0, discountType: 'fixed' }];
     } else {
       state.items.splice(index, 1);
     }
@@ -344,15 +1046,216 @@
 
   window.loadItemPreset = function (type) {
     if (type === 'saas') {
-      state.items.push({ id: Date.now().toString(), description: 'OrionFx Cloud Server Enterprise Core', details: 'Monthly Recurring Subscription', quantity: 1, unitPrice: 35000 });
+      state.items.push({ id: Date.now().toString(), description: 'OrionFx Cloud Server Enterprise Core', details: 'Monthly Recurring Subscription', quantity: 1, unitPrice: 35000, discountValue: 0, discountType: 'fixed' });
     } else if (type === 'grocery') {
-      state.items.push({ id: Date.now().toString(), description: 'Basmati Rice Premium (5kg Pack)', details: 'Brand: Super Kernel', quantity: 2, unitPrice: 2800 });
+      state.items.push({ id: Date.now().toString(), description: 'Basmati Rice Premium (5kg Pack)', details: 'Brand: Super Kernel', quantity: 2, unitPrice: 2800, discountValue: 0, discountType: 'fixed' });
     } else if (type === 'hardware') {
-      state.items.push({ id: Date.now().toString(), description: 'Thermal Receipt Printer 80mm USB/LAN', details: 'Direct Thermal Auto-Cutter', quantity: 1, unitPrice: 18500 });
+      state.items.push({ id: Date.now().toString(), description: 'Thermal Receipt Printer 80mm USB/LAN', details: 'Direct Thermal Auto-Cutter', quantity: 1, unitPrice: 18500, discountValue: 0, discountType: 'fixed' });
     }
     saveToStorage();
     render();
   };
+
+  window.updateItemRowTotal = function (idx) {
+    const it = state.items[idx];
+    if (!it) return;
+    const qty = Number(it.quantity) || 0;
+    const price = Number(it.unitPrice) || 0;
+    const gross = qty * price;
+    let disc = 0;
+    const dVal = Number(it.discountValue) || 0;
+    if (dVal > 0) {
+      disc = it.discountType === 'percent' ? (gross * dVal) / 100 : Math.min(gross, dVal);
+    }
+    const net = Math.max(0, gross - disc);
+    const el = document.getElementById(`item-row-total-${idx}`);
+    if (el) {
+      el.textContent = formatMoney(net);
+    }
+    updateLiveTotalsWidget();
+  };
+
+  // --- Advanced Tax / VAT Handlers ---
+  window.toggleTaxEnabled = function () {
+    state.taxEnabled = state.taxEnabled === undefined ? false : !state.taxEnabled;
+    saveToStorage();
+    render();
+    showToast(state.taxEnabled ? 'Tax calculations enabled' : 'Taxes disabled (0% Tax Free)');
+  };
+
+  window.addTaxLine = function () {
+    if (!Array.isArray(state.taxes)) {
+      state.taxes = [];
+    }
+    const count = state.taxes.length;
+    state.taxes.push({
+      id: 'tax-' + Date.now(),
+      name: count === 0 ? 'Sales Tax / GST' : (count === 1 ? 'Federal / Secondary Tax' : `Tax Line ${count + 1}`),
+      rate: count === 0 ? 15 : 5,
+      isCompound: count > 0 // Secondary taxes default to compound option
+    });
+    state.taxEnabled = true;
+    saveToStorage();
+    render();
+  };
+
+  window.removeTaxLine = function (index) {
+    if (Array.isArray(state.taxes) && state.taxes.length > 1) {
+      state.taxes.splice(index, 1);
+    } else {
+      state.taxEnabled = false;
+    }
+    if (state.taxes && state.taxes[0]) {
+      state.taxRate = state.taxes[0].rate;
+      state.taxLabel = state.taxes[0].name;
+    }
+    saveToStorage();
+    render();
+  };
+
+  window.updateTaxLine = function (index, field, value) {
+    if (!state.taxes || !state.taxes[index]) return;
+    if (field === 'rate') {
+      state.taxes[index].rate = Number(value) || 0;
+      if (index === 0) state.taxRate = state.taxes[0].rate;
+    } else if (field === 'name') {
+      state.taxes[index].name = value;
+      if (index === 0) state.taxLabel = value;
+    } else if (field === 'isCompound') {
+      state.taxes[index].isCompound = Boolean(value);
+    }
+    saveToStorage();
+    renderPreview();
+  };
+
+  window.setTaxPreset = function (key) {
+    state.taxEnabled = true;
+    if (key === 'gst_pk') {
+      state.taxes = [{ id: 't-pk', name: 'Sales Tax / GST (PK)', rate: 17, isCompound: false }];
+    } else if (key === 'sales_15') {
+      state.taxes = [{ id: 't-15', name: 'Sales Tax / GST', rate: 15, isCompound: false }];
+    } else if (key === 'vat_uk') {
+      state.taxes = [{ id: 't-uk', name: 'Standard VAT (UK)', rate: 20, isCompound: false }];
+    } else if (key === 'vat_uae') {
+      state.taxes = [{ id: 't-uae', name: 'VAT (UAE / GCC)', rate: 5, isCompound: false }];
+    } else if (key === 'us_state_fed') {
+      state.taxes = [
+        { id: 't-state', name: 'State Sales Tax', rate: 7, isCompound: false },
+        { id: 't-fed', name: 'Federal / Local Tax', rate: 5, isCompound: true }
+      ];
+    } else if (key === 'canada_gst_pst') {
+      state.taxes = [
+        { id: 't-gst', name: 'Federal GST', rate: 5, isCompound: false },
+        { id: 't-pst', name: 'Provincial PST / QST', rate: 9.975, isCompound: true }
+      ];
+    } else if (key === 'none') {
+      state.taxEnabled = false;
+      state.taxes = [{ id: 't-none', name: 'No Tax', rate: 0, isCompound: false }];
+    }
+    if (state.taxes && state.taxes[0]) {
+      state.taxRate = state.taxes[0].rate;
+      state.taxLabel = state.taxes[0].name;
+    }
+    saveToStorage();
+    render();
+    showToast('Applied tax preset!');
+  };
+
+  function updateLiveTotalsWidget() {
+    const widget = document.getElementById('editor-live-totals');
+    if (!widget) return;
+    const totals = calculateTotals();
+    widget.innerHTML = renderEditorTotalsHtml(totals);
+  }
+
+  function renderEditorTotalsHtml(totals) {
+    return `
+      <div class="space-y-1.5 text-xs">
+        <div class="flex justify-between text-slate-600">
+          <span>Gross Items Total:</span>
+          <span class="font-mono font-bold">${formatMoney(totals.grossSubtotal)}</span>
+        </div>
+        ${totals.totalItemDiscounts > 0 ? `
+          <div class="flex justify-between text-rose-600 font-semibold">
+            <span>Item-Level Discounts:</span>
+            <span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span>
+          </div>
+        ` : ''}
+        <div class="flex justify-between text-slate-700 font-medium pt-0.5 border-t border-slate-200">
+          <span>Net Items Subtotal:</span>
+          <span class="font-mono font-bold text-slate-900">${formatMoney(totals.subtotal)}</span>
+        </div>
+        ${totals.invoiceDiscountAmount > 0 ? `
+          <div class="flex justify-between text-rose-600 font-semibold">
+            <span>Invoice Discount (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span>
+            <span class="font-mono">-${formatMoney(totals.invoiceDiscountAmount)}</span>
+          </div>
+        ` : ''}
+        <div class="flex justify-between text-slate-600">
+          <span>Taxable Amount:</span>
+          <span class="font-mono font-bold text-slate-800">${formatMoney(totals.taxableAmount)}</span>
+        </div>
+        ${totals.taxEnabled ? (
+          totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+            <div class="flex justify-between text-slate-700">
+              <span class="flex items-center gap-1">
+                <span>${t.name} (${t.rate}%):</span>
+                ${t.isCompound ? '<span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-bold">Compound</span>' : ''}
+              </span>
+              <span class="font-mono font-bold text-slate-900">+${formatMoney(t.amount)}</span>
+            </div>
+          `).join('') : `
+            <div class="flex justify-between text-slate-500">
+              <span>Tax (0%):</span>
+              <span class="font-mono">+${formatMoney(0)}</span>
+            </div>
+          `
+        ) : `
+          <div class="flex justify-between text-slate-400 italic">
+            <span>Taxes:</span>
+            <span class="text-[11px] font-semibold text-slate-500">Disabled (0%)</span>
+          </div>
+        `}
+        ${totals.shipping > 0 ? `
+          <div class="flex justify-between text-slate-600">
+            <span>Shipping / Delivery:</span>
+            <span class="font-mono font-bold">+${formatMoney(totals.shipping)}</span>
+          </div>
+        ` : ''}
+        ${totals.handling > 0 ? `
+          <div class="flex justify-between text-slate-600">
+            <span>Handling Fee:</span>
+            <span class="font-mono font-bold">+${formatMoney(totals.handling)}</span>
+          </div>
+        ` : ''}
+        ${totals.serviceFee > 0 ? `
+          <div class="flex justify-between text-slate-600">
+            <span>Service Charge:</span>
+            <span class="font-mono font-bold">+${formatMoney(totals.serviceFee)}</span>
+          </div>
+        ` : ''}
+        <div class="pt-2 border-t-2 border-slate-300 flex justify-between items-baseline">
+          <span class="font-black text-slate-950 text-sm">Grand Total (Payable):</span>
+          <span class="font-mono font-black text-base text-emerald-700">${formatMoney(totals.grandTotal)}</span>
+        </div>
+        <div class="flex justify-between text-slate-600 pt-1">
+          <span>Amount Paid / Tendered:</span>
+          <span class="font-mono font-bold text-slate-900">${formatMoney(totals.paidAmount)}</span>
+        </div>
+        ${totals.balanceDue > 0 ? `
+          <div class="flex justify-between font-bold text-rose-600">
+            <span>Balance Due:</span>
+            <span class="font-mono">${formatMoney(totals.balanceDue)}</span>
+          </div>
+        ` : `
+          <div class="flex justify-between font-bold text-emerald-700">
+            <span>Change Returned:</span>
+            <span class="font-mono">${formatMoney(totals.changeReturned)}</span>
+          </div>
+        `}
+      </div>
+    `;
+  }
 
   // --- Template Switcher ---
   window.setTemplate = function (tmpl) {
@@ -616,7 +1519,7 @@
             <span class="w-16 text-right">AMOUNT</span>
           </div>
           <div class="space-y-2 text-[11px]">
-            ${state.items.map((item, idx) => `
+            ${(totals.computedItems || state.items).map((item, idx) => `
               <div class="leading-tight">
                 <div class="flex items-start">
                   <span class="w-[18px] text-[10px] text-slate-500 font-bold">${String(idx + 1).padStart(2, '0')}</span>
@@ -628,8 +1531,14 @@
                 <div class="flex justify-between items-center text-[10px] pl-[18px] text-slate-600 pt-0.5">
                   <span class="w-10 text-center font-semibold text-slate-800">${item.quantity}</span>
                   <span class="w-14 text-right font-mono">${formatMoney(item.unitPrice, '')}</span>
-                  <span class="w-16 text-right font-bold font-mono text-slate-950">${formatMoney(item.quantity * item.unitPrice, state.currency.symbol)}</span>
+                  <span class="w-16 text-right font-bold font-mono text-slate-950">${formatMoney(item.netTotal !== undefined ? item.netTotal : item.quantity * item.unitPrice, state.currency.symbol)}</span>
                 </div>
+                ${item.discountAmount > 0 ? `
+                  <div class="flex justify-between text-[9px] pl-[18px] text-rose-600 italic">
+                    <span>Item Disc (${item.discountValue}${item.discountType === 'percent' ? '%' : ''}):</span>
+                    <span class="font-mono">-${formatMoney(item.discountAmount, '')}</span>
+                  </div>
+                ` : ''}
               </div>
             `).join('')}
           </div>
@@ -643,22 +1552,52 @@
 
         <!-- Financial Totals & Taxes -->
         <div class="space-y-1 text-[11px] py-1">
-          <div class="flex justify-between text-slate-700"><span>GROSS AMOUNT:</span><span class="font-mono">${formatMoney(totals.subtotal)}</span></div>
-          ${totals.discountAmount > 0 ? `
+          <div class="flex justify-between text-slate-700"><span>GROSS TOTAL:</span><span class="font-mono">${formatMoney(totals.grossSubtotal)}</span></div>
+          ${totals.totalItemDiscounts > 0 ? `
+            <div class="flex justify-between text-rose-700 font-medium">
+              <span>ITEM DISCOUNTS:</span>
+              <span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span>
+            </div>
             <div class="flex justify-between text-slate-700">
-              <span>DISCOUNT (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span>
-              <span class="font-mono font-bold text-rose-700">-${formatMoney(totals.discountAmount)}</span>
+              <span>NET ITEMS SUBTOTAL:</span>
+              <span class="font-mono">${formatMoney(totals.subtotal)}</span>
+            </div>
+          ` : ''}
+          ${totals.invoiceDiscountAmount > 0 ? `
+            <div class="flex justify-between text-rose-700 font-medium">
+              <span>INVOICE DISCOUNT (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span>
+              <span class="font-mono font-bold">-${formatMoney(totals.invoiceDiscountAmount)}</span>
             </div>
           ` : ''}
           <div class="flex justify-between text-slate-700"><span>TAXABLE VALUE:</span><span class="font-mono font-semibold">${formatMoney(totals.taxableAmount)}</span></div>
-          ${totals.taxAmount > 0 ? `
-            <div class="flex justify-between text-slate-800">
-              <span>${state.taxLabel || 'SALES TAX / GST'} (${state.taxRate}%):</span>
-              <span class="font-mono font-bold">+${formatMoney(totals.taxAmount)}</span>
+          
+          ${totals.taxEnabled ? (
+            totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+              <div class="flex justify-between text-slate-800">
+                <span>${t.name.toUpperCase()} (${t.rate}%${t.isCompound ? ' CMPD' : ''}):</span>
+                <span class="font-mono font-bold">+${formatMoney(t.amount)}</span>
+              </div>
+            `).join('') : `
+              <div class="flex justify-between text-slate-500">
+                <span>TAX (0%):</span>
+                <span class="font-mono">+${formatMoney(0)}</span>
+              </div>
+            `
+          ) : `
+            <div class="flex justify-between text-slate-500 italic">
+              <span>TAX (0% TAX-FREE):</span>
+              <span class="font-mono font-bold">EXEMPT</span>
             </div>
-          ` : ''}
+          `}
+
           ${totals.shipping > 0 ? `
-            <div class="flex justify-between text-slate-700"><span>SERVICE / CHARGES:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+            <div class="flex justify-between text-slate-700"><span>SHIPPING / DELIVERY:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+          ` : ''}
+          ${totals.handling > 0 ? `
+            <div class="flex justify-between text-slate-700"><span>HANDLING FEE:</span><span class="font-mono">+${formatMoney(totals.handling)}</span></div>
+          ` : ''}
+          ${totals.serviceFee > 0 ? `
+            <div class="flex justify-between text-slate-700"><span>SERVICE CHARGE:</span><span class="font-mono">+${formatMoney(totals.serviceFee)}</span></div>
           ` : ''}
           
           <div class="border-y-2 border-slate-950 py-1.5 my-1.5 flex justify-between items-baseline text-sm sm:text-base font-black text-slate-950">
@@ -809,12 +1748,13 @@
                   <th class="py-3 px-3 rounded-l-lg">#</th>
                   <th class="py-3 px-3">Item Description & Specifications</th>
                   <th class="py-3 px-3 text-center w-16">Qty</th>
-                  <th class="py-3 px-3 text-right w-28">Unit Rate</th>
-                  <th class="py-3 px-3 text-right w-32 rounded-r-lg">Total Amount</th>
+                  <th class="py-3 px-3 text-right w-24">Unit Rate</th>
+                  <th class="py-3 px-3 text-right w-24">Disc</th>
+                  <th class="py-3 px-3 text-right w-28 rounded-r-lg">Total Amount</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                ${state.items.map((it, idx) => `
+                ${(totals.computedItems || state.items).map((it, idx) => `
                   <tr class="hover:bg-slate-50/80 transition">
                     <td class="py-3.5 px-3 text-slate-400 font-mono font-bold align-top">${String(idx + 1).padStart(2, '0')}</td>
                     <td class="py-3.5 px-3 align-top">
@@ -823,7 +1763,10 @@
                     </td>
                     <td class="py-3.5 px-3 text-center font-bold text-slate-800 align-top">${it.quantity}</td>
                     <td class="py-3.5 px-3 text-right font-mono text-slate-700 align-top">${formatMoney(it.unitPrice, '')}</td>
-                    <td class="py-3.5 px-3 text-right font-mono font-black text-slate-900 align-top">${formatMoney(it.quantity * it.unitPrice, state.currency.symbol)}</td>
+                    <td class="py-3.5 px-3 text-right font-mono text-rose-600 align-top">
+                      ${it.discountAmount > 0 ? `-${formatMoney(it.discountAmount, '')}` : '<span class="text-slate-300">—</span>'}
+                    </td>
+                    <td class="py-3.5 px-3 text-right font-mono font-black text-slate-900 align-top">${formatMoney(it.netTotal !== undefined ? it.netTotal : it.quantity * it.unitPrice, state.currency.symbol)}</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -856,17 +1799,41 @@
               ` : ''}
             </div>
 
-            <div class="w-full sm:w-72 space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <div class="flex justify-between text-slate-600"><span>Gross Subtotal:</span><span class="font-mono font-semibold">${formatMoney(totals.subtotal)}</span></div>
-              ${totals.discountAmount > 0 ? `
-                <div class="flex justify-between text-rose-600 font-semibold"><span>Discount (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span><span class="font-mono">-${formatMoney(totals.discountAmount)}</span></div>
+            <div class="w-full sm:w-80 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="flex justify-between text-slate-600"><span>Gross Subtotal:</span><span class="font-mono font-semibold">${formatMoney(totals.grossSubtotal)}</span></div>
+              ${totals.totalItemDiscounts > 0 ? `
+                <div class="flex justify-between text-rose-600 font-medium"><span>Item Discounts:</span><span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span></div>
+                <div class="flex justify-between text-slate-700 font-medium"><span>Net Items Subtotal:</span><span class="font-mono font-bold">${formatMoney(totals.subtotal)}</span></div>
+              ` : ''}
+              ${totals.invoiceDiscountAmount > 0 ? `
+                <div class="flex justify-between text-rose-600 font-semibold"><span>Invoice Discount (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span><span class="font-mono">-${formatMoney(totals.invoiceDiscountAmount)}</span></div>
               ` : ''}
               <div class="flex justify-between text-slate-600"><span>Taxable Base:</span><span class="font-mono font-semibold">${formatMoney(totals.taxableAmount)}</span></div>
-              ${totals.taxAmount > 0 ? `
-                <div class="flex justify-between text-slate-700 font-medium"><span>${state.taxLabel || 'Sales Tax / GST'} (${state.taxRate}%):</span><span class="font-mono font-bold">+${formatMoney(totals.taxAmount)}</span></div>
-              ` : ''}
+              
+              ${totals.taxEnabled ? (
+                totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+                  <div class="flex justify-between text-slate-700 font-medium">
+                    <span class="flex items-center gap-1">
+                      <span>${t.name} (${t.rate}%):</span>
+                      ${t.isCompound ? '<span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-bold">Compound</span>' : ''}
+                    </span>
+                    <span class="font-mono font-bold text-slate-900">+${formatMoney(t.amount)}</span>
+                  </div>
+                `).join('') : `
+                  <div class="flex justify-between text-slate-500"><span>Tax (0%):</span><span class="font-mono">+${formatMoney(0)}</span></div>
+                `
+              ) : `
+                <div class="flex justify-between text-slate-400 italic"><span>Tax:</span><span class="font-mono text-slate-500 font-bold">Exempt (0%)</span></div>
+              `}
+
               ${totals.shipping > 0 ? `
-                <div class="flex justify-between text-slate-600"><span>Service / Shipping:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+                <div class="flex justify-between text-slate-600"><span>Shipping / Delivery:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+              ` : ''}
+              ${totals.handling > 0 ? `
+                <div class="flex justify-between text-slate-600"><span>Handling Fee:</span><span class="font-mono">+${formatMoney(totals.handling)}</span></div>
+              ` : ''}
+              ${totals.serviceFee > 0 ? `
+                <div class="flex justify-between text-slate-600"><span>Service Charge:</span><span class="font-mono">+${formatMoney(totals.serviceFee)}</span></div>
               ` : ''}
 
               <div class="border-t-2 border-b-2 py-2.5 my-1 flex justify-between items-baseline text-base font-black text-slate-950" style="border-color: ${primary}">
@@ -970,12 +1937,13 @@
                 <th class="py-2.5 px-1">Item #</th>
                 <th class="py-2.5 px-2">Particulars & Services Rendered</th>
                 <th class="py-2.5 px-2 text-center w-16">Quantity</th>
-                <th class="py-2.5 px-2 text-right w-28">Rate</th>
-                <th class="py-2.5 px-2 text-right w-32">Amount</th>
+                <th class="py-2.5 px-2 text-right w-24">Rate</th>
+                <th class="py-2.5 px-2 text-right w-20">Discount</th>
+                <th class="py-2.5 px-2 text-right w-28">Amount</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
-              ${state.items.map((it, idx) => `
+              ${(totals.computedItems || state.items).map((it, idx) => `
                 <tr>
                   <td class="py-3 px-1 text-slate-500 font-mono align-top">${idx + 1}.</td>
                   <td class="py-3 px-2 align-top">
@@ -984,7 +1952,10 @@
                   </td>
                   <td class="py-3 px-2 text-center font-sans font-semibold text-slate-800 align-top">${it.quantity}</td>
                   <td class="py-3 px-2 text-right font-mono text-slate-700 align-top">${formatMoney(it.unitPrice, '')}</td>
-                  <td class="py-3 px-2 text-right font-mono font-bold text-slate-900 align-top">${formatMoney(it.quantity * it.unitPrice, state.currency.symbol)}</td>
+                  <td class="py-3 px-2 text-right font-mono text-rose-700 align-top">
+                    ${it.discountAmount > 0 ? `-${formatMoney(it.discountAmount, '')}` : '<span class="text-slate-300">—</span>'}
+                  </td>
+                  <td class="py-3 px-2 text-right font-mono font-bold text-slate-900 align-top">${formatMoney(it.netTotal !== undefined ? it.netTotal : it.quantity * it.unitPrice, state.currency.symbol)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -1006,14 +1977,41 @@
             ` : ''}
           </div>
 
-          <div class="w-full sm:w-72 space-y-1.5 font-sans">
-            <div class="flex justify-between text-slate-600"><span>Sub-Total:</span><span class="font-mono font-medium">${formatMoney(totals.subtotal)}</span></div>
-            ${totals.discountAmount > 0 ? `
-              <div class="flex justify-between text-rose-700 font-medium"><span>Less Remission / Discount:</span><span class="font-mono">-${formatMoney(totals.discountAmount)}</span></div>
+          <div class="w-full sm:w-80 space-y-1.5 font-sans">
+            <div class="flex justify-between text-slate-600"><span>Gross Sub-Total:</span><span class="font-mono font-medium">${formatMoney(totals.grossSubtotal)}</span></div>
+            ${totals.totalItemDiscounts > 0 ? `
+              <div class="flex justify-between text-rose-700 font-medium"><span>Item Remissions / Discounts:</span><span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span></div>
+              <div class="flex justify-between text-slate-700 font-medium"><span>Net Items Sub-Total:</span><span class="font-mono font-bold">${formatMoney(totals.subtotal)}</span></div>
+            ` : ''}
+            ${totals.invoiceDiscountAmount > 0 ? `
+              <div class="flex justify-between text-rose-700 font-medium"><span>Invoice Remission (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span><span class="font-mono font-bold">-${formatMoney(totals.invoiceDiscountAmount)}</span></div>
             ` : ''}
             <div class="flex justify-between text-slate-600"><span>Taxable Balance:</span><span class="font-mono font-medium">${formatMoney(totals.taxableAmount)}</span></div>
-            ${totals.taxAmount > 0 ? `
-              <div class="flex justify-between text-slate-700"><span>${state.taxLabel || 'Sales Tax / Duty'} (${state.taxRate}%):</span><span class="font-mono">+${formatMoney(totals.taxAmount)}</span></div>
+            
+            ${totals.taxEnabled ? (
+              totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+                <div class="flex justify-between text-slate-700">
+                  <span class="flex items-center gap-1">
+                    <span>${t.name} (${t.rate}%):</span>
+                    ${t.isCompound ? '<span class="text-[9px] bg-slate-200 text-slate-800 px-1 py-0.2 rounded font-bold">Compound</span>' : ''}
+                  </span>
+                  <span class="font-mono font-bold">+${formatMoney(t.amount)}</span>
+                </div>
+              `).join('') : `
+                <div class="flex justify-between text-slate-500"><span>Tax (0%):</span><span class="font-mono">+${formatMoney(0)}</span></div>
+              `
+            ) : `
+              <div class="flex justify-between text-slate-400 italic"><span>Tax / Duty:</span><span class="font-mono text-slate-500">Exempt (0%)</span></div>
+            `}
+
+            ${totals.shipping > 0 ? `
+              <div class="flex justify-between text-slate-600"><span>Carriage / Freight:</span><span class="font-mono font-medium">+${formatMoney(totals.shipping)}</span></div>
+            ` : ''}
+            ${totals.handling > 0 ? `
+              <div class="flex justify-between text-slate-600"><span>Handling / Custody Fee:</span><span class="font-mono font-medium">+${formatMoney(totals.handling)}</span></div>
+            ` : ''}
+            ${totals.serviceFee > 0 ? `
+              <div class="flex justify-between text-slate-600"><span>Service Duty:</span><span class="font-mono font-medium">+${formatMoney(totals.serviceFee)}</span></div>
             ` : ''}
             
             <div class="border-t-2 border-b-4 border-double border-slate-900 py-2 my-2 flex justify-between items-baseline text-base font-bold text-slate-950 font-serif">
@@ -1103,11 +2101,12 @@
                 <th class="py-2 px-1">DESCRIPTION</th>
                 <th class="py-2 px-1 text-center w-14">QTY</th>
                 <th class="py-2 px-1 text-right w-24">RATE</th>
+                <th class="py-2 px-1 text-right w-20">DISC</th>
                 <th class="py-2 px-1 text-right w-28">AMOUNT</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              ${state.items.map((it) => `
+              ${(totals.computedItems || state.items).map((it) => `
                 <tr>
                   <td class="py-3 px-1">
                     <span class="font-medium text-slate-900 block">${it.description || 'Item'}</span>
@@ -1115,7 +2114,10 @@
                   </td>
                   <td class="py-3 px-1 text-center text-slate-600">${it.quantity}</td>
                   <td class="py-3 px-1 text-right font-mono text-slate-600">${formatMoney(it.unitPrice, '')}</td>
-                  <td class="py-3 px-1 text-right font-mono font-medium text-slate-900">${formatMoney(it.quantity * it.unitPrice, state.currency.symbol)}</td>
+                  <td class="py-3 px-1 text-right font-mono text-rose-600">
+                    ${it.discountAmount > 0 ? `-${formatMoney(it.discountAmount, '')}` : '<span class="text-slate-200">—</span>'}
+                  </td>
+                  <td class="py-3 px-1 text-right font-mono font-medium text-slate-900">${formatMoney(it.netTotal !== undefined ? it.netTotal : it.quantity * it.unitPrice, state.currency.symbol)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -1129,10 +2131,24 @@
             ${state.terms ? `<p class="text-[10px] text-slate-400 leading-relaxed">${state.terms}</p>` : ''}
           </div>
 
-          <div class="w-full sm:w-64 space-y-1.5">
-            <div class="flex justify-between text-slate-500"><span>Subtotal:</span><span class="font-mono">${formatMoney(totals.subtotal)}</span></div>
-            ${totals.discountAmount > 0 ? `<div class="flex justify-between text-slate-500"><span>Discount:</span><span class="font-mono">-${formatMoney(totals.discountAmount)}</span></div>` : ''}
-            ${totals.taxAmount > 0 ? `<div class="flex justify-between text-slate-500"><span>Tax (${state.taxRate}%):</span><span class="font-mono">+${formatMoney(totals.taxAmount)}</span></div>` : ''}
+          <div class="w-full sm:w-72 space-y-1.5">
+            <div class="flex justify-between text-slate-500"><span>Gross Subtotal:</span><span class="font-mono">${formatMoney(totals.grossSubtotal)}</span></div>
+            ${totals.totalItemDiscounts > 0 ? `<div class="flex justify-between text-rose-600"><span>Item Discounts:</span><span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span></div>` : ''}
+            ${totals.invoiceDiscountAmount > 0 ? `<div class="flex justify-between text-rose-600"><span>Invoice Discount:</span><span class="font-mono">-${formatMoney(totals.invoiceDiscountAmount)}</span></div>` : ''}
+            <div class="flex justify-between text-slate-500"><span>Taxable Base:</span><span class="font-mono">${formatMoney(totals.taxableAmount)}</span></div>
+            
+            ${totals.taxEnabled ? (
+              totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+                <div class="flex justify-between text-slate-600">
+                  <span>${t.name} (${t.rate}%${t.isCompound ? ' Cmpd' : ''}):</span>
+                  <span class="font-mono">+${formatMoney(t.amount)}</span>
+                </div>
+              `).join('') : `<div class="flex justify-between text-slate-400"><span>Tax:</span><span class="font-mono">0.00</span></div>`
+            ) : `<div class="flex justify-between text-slate-400 italic"><span>Tax:</span><span class="font-mono">Exempt</span></div>`}
+
+            ${totals.shipping > 0 ? `<div class="flex justify-between text-slate-500"><span>Shipping:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>` : ''}
+            ${totals.handling > 0 ? `<div class="flex justify-between text-slate-500"><span>Handling:</span><span class="font-mono">+${formatMoney(totals.handling)}</span></div>` : ''}
+            ${totals.serviceFee > 0 ? `<div class="flex justify-between text-slate-500"><span>Service:</span><span class="font-mono">+${formatMoney(totals.serviceFee)}</span></div>` : ''}
             
             <div class="border-t border-slate-900 pt-2 my-1 flex justify-between items-baseline text-sm font-bold text-slate-950">
               <span>TOTAL:</span><span class="font-mono text-base">${formatMoney(totals.grandTotal)}</span>
@@ -1252,12 +2268,13 @@
                 <th class="py-2.5 px-2">#</th>
                 <th class="py-2.5 px-2">Description & Specifications</th>
                 <th class="py-2.5 px-2 text-center w-16">Qty</th>
-                <th class="py-2.5 px-2 text-right w-28">Unit Rate</th>
-                <th class="py-2.5 px-2 text-right w-32">Amount</th>
+                <th class="py-2.5 px-2 text-right w-24">Unit Rate</th>
+                <th class="py-2.5 px-2 text-right w-20">Discount</th>
+                <th class="py-2.5 px-2 text-right w-28">Amount</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-xs">
-              ${state.items.map((item, idx) => `
+              ${(totals.computedItems || state.items).map((item, idx) => `
                 <tr class="hover:bg-slate-50/50 transition">
                   <td class="py-3 px-2 text-slate-400 font-mono align-top text-[11px]">${idx + 1}</td>
                   <td class="py-3 px-2 align-top">
@@ -1266,7 +2283,10 @@
                   </td>
                   <td class="py-3 px-2 text-center font-mono font-semibold text-slate-700 align-top">${item.quantity}</td>
                   <td class="py-3 px-2 text-right font-mono text-slate-700 align-top">${formatMoney(item.unitPrice, '')}</td>
-                  <td class="py-3 px-2 text-right font-mono font-bold text-slate-900 align-top">${formatMoney(item.quantity * item.unitPrice, state.currency.symbol)}</td>
+                  <td class="py-3 px-2 text-right font-mono text-rose-600 align-top">
+                    ${item.discountAmount > 0 ? `-${formatMoney(item.discountAmount, '')}` : '<span class="text-slate-300">—</span>'}
+                  </td>
+                  <td class="py-3 px-2 text-right font-mono font-bold text-slate-900 align-top">${formatMoney(item.netTotal !== undefined ? item.netTotal : item.quantity * item.unitPrice, state.currency.symbol)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -1292,17 +2312,37 @@
             ` : ''}
           </div>
 
-          <div class="w-full sm:w-72 space-y-2 text-xs">
-            <div class="flex justify-between text-slate-600"><span>Subtotal:</span><span class="font-mono font-medium">${formatMoney(totals.subtotal)}</span></div>
-            ${totals.discountAmount > 0 ? `
-              <div class="flex justify-between text-rose-600 font-medium"><span>Discount (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span><span class="font-mono">-${formatMoney(totals.discountAmount)}</span></div>
+          <div class="w-full sm:w-80 space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-600"><span>Gross Subtotal:</span><span class="font-mono font-medium">${formatMoney(totals.grossSubtotal)}</span></div>
+            ${totals.totalItemDiscounts > 0 ? `
+              <div class="flex justify-between text-rose-600 font-medium"><span>Item Discounts:</span><span class="font-mono">-${formatMoney(totals.totalItemDiscounts)}</span></div>
+              <div class="flex justify-between text-slate-700 font-medium"><span>Net Items Subtotal:</span><span class="font-mono font-bold">${formatMoney(totals.subtotal)}</span></div>
             ` : ''}
-            <div class="flex justify-between text-slate-600"><span>Taxable Value:</span><span class="font-mono">${formatMoney(totals.taxableAmount)}</span></div>
-            ${totals.taxAmount > 0 ? `
-              <div class="flex justify-between text-slate-700"><span>${state.taxLabel || 'Tax / GST'} (${state.taxRate}%):</span><span class="font-mono">+${formatMoney(totals.taxAmount)}</span></div>
+            ${totals.invoiceDiscountAmount > 0 ? `
+              <div class="flex justify-between text-rose-600 font-medium"><span>Invoice Discount (${state.discountValue}${state.discountType === 'percent' ? '%' : ''}):</span><span class="font-mono">-${formatMoney(totals.invoiceDiscountAmount)}</span></div>
             ` : ''}
+            <div class="flex justify-between text-slate-600"><span>Taxable Base:</span><span class="font-mono font-medium">${formatMoney(totals.taxableAmount)}</span></div>
+            
+            ${totals.taxEnabled ? (
+              totals.taxBreakdown && totals.taxBreakdown.length > 0 ? totals.taxBreakdown.map(t => `
+                <div class="flex justify-between text-slate-700">
+                  <span class="flex items-center gap-1">
+                    <span>${t.name} (${t.rate}%):</span>
+                    ${t.isCompound ? '<span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-bold">Compound</span>' : ''}
+                  </span>
+                  <span class="font-mono font-bold text-slate-900">+${formatMoney(t.amount)}</span>
+                </div>
+              `).join('') : `<div class="flex justify-between text-slate-400"><span>Tax:</span><span class="font-mono">0.00</span></div>`
+            ) : `<div class="flex justify-between text-slate-400 italic"><span>Tax:</span><span class="font-mono text-slate-500 font-bold">Exempt (0%)</span></div>`}
+
             ${totals.shipping > 0 ? `
-              <div class="flex justify-between text-slate-600"><span>Shipping / Fee:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+              <div class="flex justify-between text-slate-600"><span>Shipping / Delivery:</span><span class="font-mono">+${formatMoney(totals.shipping)}</span></div>
+            ` : ''}
+            ${totals.handling > 0 ? `
+              <div class="flex justify-between text-slate-600"><span>Handling Fee:</span><span class="font-mono">+${formatMoney(totals.handling)}</span></div>
+            ` : ''}
+            ${totals.serviceFee > 0 ? `
+              <div class="flex justify-between text-slate-600"><span>Service Charge:</span><span class="font-mono">+${formatMoney(totals.serviceFee)}</span></div>
             ` : ''}
 
             <div class="flex justify-between text-sm sm:text-base font-black border-t-2 border-b-2 py-2 text-slate-900" style="border-color: ${primary}">
@@ -1416,6 +2456,25 @@
                 <button type="button" onclick="setTemplate('minimal')" class="p-3 rounded-xl border text-left transition ${tmpl === 'minimal' ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 font-bold ring-2 ring-emerald-500/20' : 'border-slate-200 hover:border-slate-300'}">
                   <div class="text-xs font-black">📐 Minimalist Studio</div>
                   <div class="text-[10px] text-slate-500 mt-0.5">Swiss Architectural</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Saved Templates & History Quick Bar -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">📁</span>
+                <div>
+                  <span class="text-xs font-bold text-slate-800">Saved Templates &amp; History</span>
+                  <p class="text-[10px] text-slate-500">Save custom receipt layouts to reload anytime offline.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="saveCurrentToHistory(true)" class="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg font-bold text-[11px] transition shadow-2xs">
+                  ⭐ Save Template
+                </button>
+                <button type="button" onclick="openHistoryModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold text-[11px] transition shadow-2xs">
+                  Browse (<span class="history-count-badge">0</span>)
                 </button>
               </div>
             </div>
@@ -1679,79 +2738,207 @@
         <button type="button" onclick="toggleAccordion('items')" class="w-full px-5 py-4 flex items-center justify-between font-bold text-slate-800 hover:bg-slate-50 transition">
           <div class="flex items-center gap-2.5">
             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span class="text-sm">Items & Totals (${state.items.length})</span>
+            <span class="text-sm">Items & Calculations (${state.items.length})</span>
           </div>
           <span class="text-xs text-slate-400 font-mono">${activeAccordion === 'items' ? '▲ Hide' : '▼ Expand'}</span>
         </button>
         ${activeAccordion === 'items' ? `
-          <div class="p-5 border-t border-slate-100 space-y-4">
+          <div class="p-5 border-t border-slate-100 space-y-5">
             <!-- Preset Quick Buttons -->
-            <div class="flex flex-wrap gap-2 text-[11px]">
-              <span class="text-slate-500 self-center">Quick Insert:</span>
-              <button type="button" onclick="loadItemPreset('saas')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium">+ SaaS License</button>
-              <button type="button" onclick="loadItemPreset('grocery')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium">+ Grocery Pack</button>
-              <button type="button" onclick="loadItemPreset('hardware')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium">+ POS Hardware</button>
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] pb-1 border-b border-slate-100">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-slate-500 font-medium">Quick Insert:</span>
+                <button type="button" onclick="loadItemPreset('saas')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium transition">+ SaaS License</button>
+                <button type="button" onclick="loadItemPreset('grocery')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium transition">+ Grocery Pack</button>
+                <button type="button" onclick="loadItemPreset('hardware')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium transition">+ POS Hardware</button>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono">${state.items.length} item(s)</span>
             </div>
 
-            <!-- Items List -->
+            <!-- Items List with Per-Item Discounts -->
             <div class="space-y-3">
-              ${state.items.map((it, idx) => `
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              ${state.items.map((it, idx) => {
+                const itQty = Number(it.quantity) || 0;
+                const itPrice = Number(it.unitPrice) || 0;
+                const itGross = itQty * itPrice;
+                let itDisc = 0;
+                const itDVal = Number(it.discountValue) || 0;
+                if (itDVal > 0) {
+                  itDisc = (it.discountType === 'percent') ? (itGross * itDVal) / 100 : Math.min(itGross, itDVal);
+                }
+                const itNet = Math.max(0, itGross - itDisc);
+                return `
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
                   <div class="flex justify-between items-center">
-                    <span class="text-[11px] font-bold text-slate-600">Item #${idx + 1}</span>
+                    <span class="text-[11px] font-black text-slate-700 uppercase tracking-wider">Item #${idx + 1}</span>
                     <button type="button" onclick="removeItem(${idx})" class="text-[10px] text-rose-600 font-bold hover:underline">Remove</button>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div class="sm:col-span-2">
-                      <input type="text" placeholder="Item description" value="${it.description}" oninput="state.items[${idx}].description=this.value;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-bold" />
+                      <input type="text" placeholder="Item description" value="${it.description}" oninput="state.items[${idx}].description=this.value;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-bold bg-white" />
                     </div>
                     <div>
-                      <input type="text" placeholder="Details / SKU" value="${it.details || ''}" oninput="state.items[${idx}].details=this.value;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg text-slate-600" />
+                      <input type="text" placeholder="Details / SKU / Specs" value="${it.details || ''}" oninput="state.items[${idx}].details=this.value;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg text-slate-600 bg-white" />
                     </div>
                   </div>
-                  <div class="grid grid-cols-3 gap-2">
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-0.5 items-end">
                     <div>
-                      <label class="block text-[10px] text-slate-500 font-bold">Qty</label>
-                      <input type="number" min="1" value="${it.quantity}" oninput="state.items[${idx}].quantity=Number(this.value);saveToStorage();renderPreview();" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg text-center font-bold" />
+                      <label class="block text-[10px] text-slate-500 font-bold mb-0.5">Qty</label>
+                      <input type="number" min="1" step="any" value="${it.quantity}" oninput="state.items[${idx}].quantity=Number(this.value);saveToStorage();renderPreview();updateItemRowTotal(${idx});" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg text-center font-bold bg-white" />
                     </div>
                     <div>
-                      <label class="block text-[10px] text-slate-500 font-bold">Rate</label>
-                      <input type="number" min="0" step="any" value="${it.unitPrice}" oninput="state.items[${idx}].unitPrice=Number(this.value);saveToStorage();renderPreview();" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg text-right font-mono" />
+                      <label class="block text-[10px] text-slate-500 font-bold mb-0.5">Unit Rate</label>
+                      <input type="number" min="0" step="any" value="${it.unitPrice}" oninput="state.items[${idx}].unitPrice=Number(this.value);saveToStorage();renderPreview();updateItemRowTotal(${idx});" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg text-right font-mono bg-white" />
                     </div>
                     <div>
-                      <label class="block text-[10px] text-slate-500 font-bold">Total</label>
-                      <div class="px-2.5 py-1 text-xs font-mono font-bold text-right text-slate-800 bg-white border border-slate-200 rounded-lg">
-                        ${formatMoney(it.quantity * it.unitPrice)}
+                      <label class="block text-[10px] text-slate-500 font-bold mb-0.5">Item Discount</label>
+                      <div class="flex gap-1">
+                        <input type="number" min="0" step="any" placeholder="0" value="${it.discountValue || ''}" oninput="state.items[${idx}].discountValue=Number(this.value)||0;saveToStorage();renderPreview();updateItemRowTotal(${idx});" class="w-full px-2 py-1 text-xs border border-slate-300 rounded-lg font-mono text-right bg-white" />
+                        <select onchange="state.items[${idx}].discountType=this.value;saveToStorage();renderPreview();updateItemRowTotal(${idx});" class="text-[10px] border border-slate-300 rounded-lg px-1 font-bold bg-white text-slate-700">
+                          <option value="fixed" ${(it.discountType || 'fixed') === 'fixed' ? 'selected' : ''}>Flat</option>
+                          <option value="percent" ${it.discountType === 'percent' ? 'selected' : ''}>%</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-slate-500 font-bold mb-0.5">Line Total</label>
+                      <div id="item-row-total-${idx}" class="px-2.5 py-1 text-xs font-mono font-black text-right text-slate-900 bg-white border border-slate-200 rounded-lg">
+                        ${formatMoney(itNet)}
                       </div>
                     </div>
                   </div>
                 </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
 
-            <button type="button" onclick="addItem()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1">
+            <button type="button" onclick="addItem()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
               + Add Another Line Item
             </button>
 
-            <!-- Tax, Discount & Paid -->
-            <div class="pt-3 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Discount</label>
-                <div class="flex gap-1">
-                  <input type="number" min="0" value="${state.discountValue}" oninput="state.discountValue=Number(this.value);saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono" />
-                  <select onchange="state.discountType=this.value;saveToStorage();renderPreview();" class="text-xs border border-slate-300 rounded-lg px-2 font-bold">
-                    <option value="fixed" ${state.discountType === 'fixed' ? 'selected' : ''}>Fixed</option>
-                    <option value="percent" ${state.discountType === 'percent' ? 'selected' : ''}>%</option>
-                  </select>
+            <!-- Total Invoice Discount Card -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="text-xs font-bold text-slate-800">🏷️ Invoice Discount (Overall)</span>
+                  <span class="block text-[10px] text-slate-500">Applies across the whole invoice subtotal</span>
+                </div>
+                <span id="invoice-discount-hint" class="text-xs font-mono font-bold text-rose-600">
+                  ${totals.invoiceDiscountAmount > 0 ? `-${formatMoney(totals.invoiceDiscountAmount)}` : 'No discount'}
+                </span>
+              </div>
+              <div class="flex gap-2 items-center">
+                <div class="relative flex-1">
+                  <input type="number" min="0" step="any" value="${state.discountValue || 0}" oninput="state.discountValue=Number(this.value)||0;saveToStorage();renderPreview();" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg font-mono bg-white" placeholder="0" />
+                </div>
+                <select onchange="state.discountType=this.value;saveToStorage();renderPreview();" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 font-bold bg-white text-slate-800">
+                  <option value="fixed" ${state.discountType === 'fixed' ? 'selected' : ''}>Flat Amount (${state.currency.symbol.trim()})</option>
+                  <option value="percent" ${state.discountType === 'percent' ? 'selected' : ''}>Percentage (%)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Tax / VAT Options & Multiple / Compound Taxes -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="text-xs font-bold text-slate-800">🏛️ Tax / VAT Options</span>
+                  <span class="block text-[10px] text-slate-500">Toggle tax, multiple tax lines & compound taxation</span>
+                </div>
+                <button type="button" onclick="toggleTaxEnabled()" class="px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${state.taxEnabled ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200' : 'bg-slate-200 text-slate-600 border border-slate-300 hover:bg-slate-300'}">
+                  <span>${state.taxEnabled ? '✓ Tax Active' : '✕ Tax Disabled'}</span>
+                </button>
+              </div>
+
+              ${state.taxEnabled ? `
+                <!-- Quick Tax Presets -->
+                <div class="space-y-1.5 pt-1">
+                  <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Quick Regional Presets:</span>
+                  <div class="flex flex-wrap gap-1.5 text-[10px]">
+                    <button type="button" onclick="setTaxPreset('gst_pk')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded font-medium">GST 17% (PK)</button>
+                    <button type="button" onclick="setTaxPreset('sales_15')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded font-medium">Sales Tax 15%</button>
+                    <button type="button" onclick="setTaxPreset('vat_uk')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded font-medium">VAT 20% (UK)</button>
+                    <button type="button" onclick="setTaxPreset('vat_uae')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded font-medium">VAT 5% (UAE)</button>
+                    <button type="button" onclick="setTaxPreset('us_state_fed')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded font-medium">State 7% + Fed 5% (Compound)</button>
+                    <button type="button" onclick="setTaxPreset('none')" class="px-2 py-0.5 bg-white hover:bg-slate-100 text-rose-700 border border-slate-300 rounded font-medium">No Tax (0%)</button>
+                  </div>
+                </div>
+
+                <!-- Custom Taxes List -->
+                <div class="space-y-2 pt-2 border-t border-slate-200">
+                  <div class="flex justify-between items-center">
+                    <span class="text-[11px] font-bold text-slate-700">Tax Lines & Rates</span>
+                    <button type="button" onclick="addTaxLine()" class="text-[11px] text-emerald-700 font-bold hover:underline flex items-center gap-1">
+                      + Add Secondary / Compound Tax
+                    </button>
+                  </div>
+                  ${(state.taxes || []).map((t, tIdx) => `
+                    <div class="p-2.5 bg-white rounded-lg border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-2">
+                      <div class="flex-1">
+                        <input type="text" placeholder="Tax Name (e.g. Sales Tax, GST, Federal)" value="${t.name || ''}" oninput="updateTaxLine(${tIdx}, 'name', this.value)" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded font-bold text-slate-800" />
+                      </div>
+                      <div class="flex items-center gap-1.5 w-32">
+                        <input type="number" min="0" step="any" value="${t.rate || 0}" oninput="updateTaxLine(${tIdx}, 'rate', this.value)" class="w-20 px-2 py-1 text-xs border border-slate-300 rounded text-right font-mono font-bold" />
+                        <span class="text-xs font-bold text-slate-600">%</span>
+                      </div>
+                      <label class="flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer select-none">
+                        <input type="checkbox" ${t.isCompound ? 'checked' : ''} onchange="updateTaxLine(${tIdx}, 'isCompound', this.checked)" class="rounded text-emerald-600 border-slate-300" />
+                        <span>Compound</span>
+                      </label>
+                      ${(state.taxes || []).length > 1 ? `
+                        <button type="button" onclick="removeTaxLine(${tIdx})" class="text-[11px] text-rose-600 hover:text-rose-800 font-bold px-1.5 py-0.5">✕</button>
+                      ` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-800 flex justify-between items-center">
+                  <span>Taxes are currently disabled for this receipt (0% Tax-Free invoice).</span>
+                  <button type="button" onclick="toggleTaxEnabled()" class="px-2.5 py-1 bg-amber-600 text-white rounded font-bold hover:bg-amber-700">Turn Tax ON</button>
+                </div>
+              `}
+            </div>
+
+            <!-- Shipping, Handling & Service Fees -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="text-xs font-bold text-slate-800">🚚 Shipping, Handling & Service Fees</span>
+                  <span class="block text-[10px] text-slate-500">Optional extra fees added to total</span>
+                </div>
+                <span id="extra-fees-total-hint" class="text-xs font-mono font-bold text-slate-700">
+                  ${formatMoney(totals.totalExtraFees)}
+                </span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Shipping / Delivery</label>
+                  <input type="number" min="0" step="any" value="${state.shippingFee || 0}" oninput="state.shippingFee=Number(this.value)||0;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono bg-white text-right" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Handling / Packaging</label>
+                  <input type="number" min="0" step="any" value="${state.handlingFee || 0}" oninput="state.handlingFee=Number(this.value)||0;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono bg-white text-right" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Service / Convenience</label>
+                  <input type="number" min="0" step="any" value="${state.serviceFee || 0}" oninput="state.serviceFee=Number(this.value)||0;saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono bg-white text-right" />
                 </div>
               </div>
+            </div>
+
+            <!-- Payment Tendered & Live Calculation Summary -->
+            <div class="pt-2 border-t border-slate-200 space-y-3">
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Sales Tax / GST Rate (%)</label>
-                <input type="number" min="0" max="100" value="${state.taxRate}" oninput="state.taxRate=Number(this.value);saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono" />
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Paid / Tendered Amount</label>
+                <input type="number" min="0" step="any" value="${state.paidAmount}" oninput="state.paidAmount=Number(this.value)||0;saveToStorage();renderPreview();" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl font-mono font-bold text-emerald-800 bg-white" placeholder="0" />
               </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Paid / Tendered</label>
-                <input type="number" min="0" value="${state.paidAmount}" oninput="state.paidAmount=Number(this.value);saveToStorage();renderPreview();" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg font-mono font-bold text-emerald-800" />
+
+              <!-- Live Auto-Calculated Totals Card in Editor -->
+              <div class="p-3.5 bg-slate-100 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1.5">LIVE COMPUTED TOTALS BREAKDOWN</span>
+                <div id="editor-live-totals">
+                  ${renderEditorTotalsHtml(totals)}
+                </div>
               </div>
             </div>
           </div>
@@ -1843,6 +3030,19 @@
       previewContainer.innerHTML = renderDocumentHtml();
       updateQrCodes();
     }
+    const totals = calculateTotals();
+    const liveWidget = document.getElementById('editor-live-totals');
+    if (liveWidget) {
+      liveWidget.innerHTML = renderEditorTotalsHtml(totals);
+    }
+    const invDispHint = document.getElementById('invoice-discount-hint');
+    if (invDispHint) {
+      invDispHint.textContent = totals.invoiceDiscountAmount > 0 ? `-${formatMoney(totals.invoiceDiscountAmount)}` : 'No discount applied';
+    }
+    const extraFeesHint = document.getElementById('extra-fees-total-hint');
+    if (extraFeesHint) {
+      extraFeesHint.textContent = formatMoney(totals.totalExtraFees);
+    }
   }
 
   // Full app re-render
@@ -1874,27 +3074,35 @@
 
           <!-- Top Quick Actions -->
           <div class="flex items-center gap-2">
+            <!-- Auto-save state indicator -->
+            <div class="hidden xl:flex items-center gap-1.5 text-[11px] text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span id="autosave-indicator-text">Draft saved ${lastSavedTime}</span>
+            </div>
+
             <!-- Mobile Tab Toggle -->
             <div class="flex md:hidden bg-slate-100 p-0.5 rounded-lg border border-slate-200">
               <button onclick="setActiveTab('edit')" class="px-3 py-1 text-xs font-bold rounded-md ${activeTab === 'edit' ? 'bg-white shadow-xs text-slate-900' : 'text-slate-600'}">Edit</button>
               <button onclick="setActiveTab('preview')" class="px-3 py-1 text-xs font-bold rounded-md ${activeTab === 'preview' ? 'bg-white shadow-xs text-slate-900' : 'text-slate-600'}">Preview</button>
             </div>
 
-            <button onclick="loadSampleData()" class="hidden sm:inline-flex px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition">
-              Sample Data
+            <button onclick="openHistoryModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200 shadow-2xs">
+              <span>📁</span>
+              <span class="hidden sm:inline">History &amp;</span> Templates
+              <span class="history-count-badge bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full text-[10px] font-bold">0</span>
             </button>
-            <button onclick="clearForm()" class="hidden sm:inline-flex px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition">
-              Clear
+            <button onclick="quickSaveToHistory()" title="Save current receipt snapshot to history" class="hidden sm:inline-flex px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition items-center gap-1 border border-slate-200">
+              <span>💾</span> Save
             </button>
 
-            <button onclick="printReceipt()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="printReceipt()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
               <span>🖨️</span> Print
             </button>
-            <button onclick="downloadPdf()" class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <button onclick="downloadPdf(3)" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm" title="Download High-DPI 300 DPI PDF">
               <span>📄</span> PDF
             </button>
-            <button onclick="downloadJpg()" class="hidden sm:inline-flex px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
-              JPG
+            <button onclick="openExportModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm">
+              <span>⚡</span> Export ▼
             </button>
           </div>
         </div>
@@ -1938,6 +3146,158 @@
         </div>
       </main>
 
+      <!-- Export & Print Center Modal -->
+      <div id="export-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 font-black flex items-center justify-center text-sm">
+                ⚡
+              </div>
+              <div>
+                <h3 class="text-sm font-extrabold text-slate-900">Export &amp; Print Center</h3>
+                <p class="text-[11px] text-slate-500">High-DPI rendering, vector printing, and image formats</p>
+              </div>
+            </div>
+            <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl leading-none">&times;</button>
+          </div>
+
+          <!-- Export Options Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- 300 DPI PDF -->
+            <button onclick="closeExportModal(); downloadPdf(3);" class="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 text-left transition group">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">📄</span>
+                <span class="text-xs font-bold text-emerald-950">PDF Document</span>
+                <span class="text-[10px] bg-emerald-200 text-emerald-800 font-bold px-1.5 py-0.2 rounded ml-auto">300 DPI</span>
+              </div>
+              <p class="text-[11px] text-emerald-800/80">Crystal clear print-ready document. Supports 80mm roll or A4 pagination.</p>
+            </button>
+
+            <!-- Direct Print -->
+            <button onclick="closeExportModal(); printReceipt();" class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-left transition group">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">🖨️</span>
+                <span class="text-xs font-bold text-slate-900">Direct Print</span>
+                <span class="text-[10px] bg-slate-200 text-slate-700 font-bold px-1.5 py-0.2 rounded ml-auto">Ctrl+P</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Prints cleanly with optimized CSS @media print. Hides all app UI elements.</p>
+            </button>
+
+            <!-- Lossless PNG -->
+            <button onclick="closeExportModal(); downloadPng();" class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/40 hover:bg-blue-50 text-left transition group">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">🖼️</span>
+                <span class="text-xs font-bold text-blue-950">PNG Image</span>
+                <span class="text-[10px] bg-blue-200 text-blue-800 font-bold px-1.5 py-0.2 rounded ml-auto">Lossless</span>
+              </div>
+              <p class="text-[11px] text-blue-800/80">High-resolution PNG with sharp text, barcodes, and QR code reproduction.</p>
+            </button>
+
+            <!-- High-Res JPG -->
+            <button onclick="closeExportModal(); downloadJpg();" class="p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-left transition group">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">📷</span>
+                <span class="text-xs font-bold text-slate-900">JPG Photo</span>
+                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded ml-auto">Compressed</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Optimized file size for fast WhatsApp, email, or messaging attachments.</p>
+            </button>
+          </div>
+
+          <!-- Standalone Web File Export -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🌐</span>
+                <span class="text-xs font-bold text-slate-800">Standalone Self-Contained HTML File</span>
+              </div>
+              <span class="text-[10px] text-slate-500">Zero Dependencies</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Download or copy self-rendering HTML with embedded fonts &amp; styling that opens directly in any browser.</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="copyStandaloneHtml()" class="flex-1 px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg transition shadow-2xs">
+                📋 Copy HTML
+              </button>
+              <button onclick="downloadStandaloneHtml()" class="flex-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition shadow-2xs">
+                💾 Download .html
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receipt History & Template Manager Modal -->
+      <div id="history-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4">
+          <!-- Header -->
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-800 font-black flex items-center justify-center text-base">
+                📁
+              </div>
+              <div>
+                <h3 class="text-sm font-extrabold text-slate-900">Receipt History &amp; Template Manager</h3>
+                <p class="text-[11px] text-slate-500">Save, reload, duplicate, and back up your receipt drafts locally</p>
+              </div>
+            </div>
+            <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl leading-none">&times;</button>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <!-- Tabs -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+              <button id="history-tab-all-btn" onclick="setHistoryTab('all')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1.5">
+                <span>All Receipts</span>
+                <span id="history-tab-all-count" class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full font-mono">0</span>
+              </button>
+              <button id="history-tab-tpl-btn" onclick="setHistoryTab('templates')" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-200 transition flex items-center gap-1.5">
+                <span>⭐ Templates</span>
+                <span id="history-tab-tpl-count" class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full font-mono">0</span>
+              </button>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="flex items-center gap-1.5">
+              <button onclick="saveCurrentToHistory(false)" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-2xs">
+                <span>💾</span> Save Current
+              </button>
+              <button onclick="saveCurrentToHistory(true)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-2xs">
+                <span>⭐</span> As Template
+              </button>
+            </div>
+          </div>
+
+          <!-- Search Filter -->
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs">🔍</span>
+            <input type="text" oninput="setHistorySearch(this.value)" placeholder="Search by client, invoice #, company, or template..." class="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 bg-slate-50/50" />
+          </div>
+
+          <!-- Saved Items List Container -->
+          <div id="history-modal-content-container" class="border border-slate-200 rounded-xl bg-white overflow-hidden min-h-[220px]">
+            <!-- Dynamic list generated by renderHistoryModalContent() -->
+          </div>
+
+          <!-- Backup & Restore Footer -->
+          <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+              <button onclick="exportHistoryJson()" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-md transition flex items-center gap-1">
+                <span>📥</span> Export JSON Backup
+              </button>
+              <label class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-md transition flex items-center gap-1 cursor-pointer">
+                <span>📤</span> Import JSON
+                <input type="file" accept=".json" onchange="importHistoryJson(event)" class="hidden" />
+              </label>
+            </div>
+            <button onclick="clearAllHistory()" class="text-[11px] text-rose-600 hover:text-rose-800 font-semibold hover:underline">
+              Clear All History
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Signature Pad Modal -->
       <div id="signature-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
@@ -1962,6 +3322,7 @@
     `;
 
     updateQrCodes();
+    updateHistoryCountBadge();
   }
 
   // Kickstart Application
