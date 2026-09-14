@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -109,16 +109,34 @@
     .icon { font-size: 32px; margin-bottom: 16px; }
 
     /* Footer */
-    .footer { background: rgba(10, 20, 40, 0.85); border-top: 1px solid var(--card-border); padding: 38px 0 18px; margin-top: 50px; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 20px; }
-    @media (max-width: 1080px) { .footer-grid { grid-template-columns: 1fr; } }
-    .footer-brand p { font-size: 14px; margin-top: 12px; max-width: 320px; }
-    .footer-col h4 { font-size: 15px; color: #fff; margin-bottom: 16px; text-transform: uppercase; }
-    .footer-col ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-    .footer-col a { color: var(--muted); font-size: 14px; }
-    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; display: flex; justify-content: space-between; }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a { color: var(--muted); font-size: 13px; }
+    .footer {
+      background: rgba(10, 20, 40, 0.85); 
+      border-top: 1px solid var(--card-border);
+      backdrop-filter: var(--glass);
+      padding: 30px 0 20px;
+      margin-top: 50px;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    .footer-links a {
+      color: var(--muted);
+      font-size: 13px;
+      transition: 0.3s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+    }
+    .footer p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
 
     /* Buttons */
     .btn { padding: 12px 24px; border-radius: 12px; font-family: var(--font-display); font-weight: 600; font-size: 14px; border: 1px solid var(--primary); color: var(--primary); background: transparent; cursor: pointer; transition: 0.3s; display: inline-block; }
@@ -177,6 +195,15 @@
     <p class="lead muted">Upcoming SaaS tools to help your business thrive.</p>
     
     <div class="grid grid-3" style="margin-top: 40px;">
+      
+      <!-- App 1: Receipt Generator -->
+      <article class="card">
+        <div style="position: absolute; top: 15px; right: 15px; background: rgba(0, 229, 255, 0.15); border: 1px solid var(--primary); color: var(--primary); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Live</div>
+        <div class="icon" style="color:var(--primary);"><i class="fas fa-file-invoice"></i></div>
+        <h3>Receipt Generator</h3>
+        <p class="muted" style="font-size: 14px;">Create professional, printable receipts in seconds for your business.</p>
+      </article>
+
       <!-- App 2: Invoice Generator -->
       <article class="card">
         <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
@@ -193,42 +220,213 @@
         <p class="muted" style="font-size: 14px;">Build professional quotation documents instantly.</p>
       </article>
 
-      <!-- App 4: Payment Receipt -->
+      <!-- App 4: Payment Receipt Generator -->
       <article class="card">
         <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
         <div class="icon" style="color:#FFCC66;"><i class="fas fa-money-check-alt"></i></div>
-        <h3>Payment Receipt</h3>
+        <h3>Payment Receipt Generator</h3>
         <p class="muted" style="font-size: 14px;">Create payment confirmation receipts securely.</p>
       </article>
 
-      <!-- App 5: Delivery Note -->
+      <!-- App 5: Delivery Note Generator -->
       <article class="card">
         <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
         <div class="icon" style="color:#27e1ae;"><i class="fas fa-box-open"></i></div>
-        <h3>Delivery Note</h3>
+        <h3>Delivery Note Generator</h3>
         <p class="muted" style="font-size: 14px;">Create clear and structured delivery/challan documents.</p>
       </article>
+
+      <!-- App 6: Business Calculator Tools -->
+      <article class="card">
+        <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
+        <div class="icon" style="color:#ff6b6b;"><i class="fas fa-calculator"></i></div>
+        <h3>Business Calculator Tools</h3>
+        <p class="muted" style="font-size: 14px;">Smart tools to help calculate margins, taxes, and other metrics.</p>
+      </article>
+
+      <!-- App 7: Business Document Generators -->
+      <article class="card">
+        <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
+        <div class="icon" style="color:#4facfe;"><i class="fas fa-file-alt"></i></div>
+        <h3>Business Document Generators</h3>
+        <p class="muted" style="font-size: 14px;">Generate standard business letters and essential documentation.</p>
+      </article>
+
+      <!-- App 8: Small Business Productivity Tools -->
+      <article class="card">
+        <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">Coming Soon</div>
+        <div class="icon" style="color:#43e97b;"><i class="fas fa-chart-line"></i></div>
+        <h3>Small Business Productivity Tools</h3>
+        <p class="muted" style="font-size: 14px;">Streamline your daily tasks with powerful productivity utilities.</p>
+      </article>
+
     </div>
   </section>
 
   <!-- Detailed SEO Introduction -->
   <section class="container" style="padding-bottom: 80px;">
-    <h2>About Orion Fx SaaS Applications</h2>
+    <h2>☁️ SaaS Applications</h2>
     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 40px; margin-top: 30px;">
-      <h3 style="font-size: 22px; color: var(--primary); margin-bottom: 16px;">Empowering Small Businesses with Smart Tools</h3>
-      <p class="muted" style="margin-bottom: 20px; font-size: 15px;">
-        At Orion Fx, we understand that running a business requires managing countless daily operations. Our suite of SaaS (Software as a Service) applications is specifically designed to minimize administrative friction. By bringing traditional paperwork to the digital realm, we help businesses create receipts, invoices, and quotations swiftly without the need to download or install complex software.
+      
+      <h3 style="font-size: 22px; color: var(--primary); margin-bottom: 16px;">Smart Business Tools, Available Online</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Welcome to <strong>SaaS Applications by Orion Fx</strong>, a growing collection of smart, practical & easy-to-use online business tools designed to simplify everyday business tasks.
       </p>
-      <h3 style="font-size: 20px; color: #fff; margin-bottom: 12px;">Why Choose Orion Fx Online Tools?</h3>
-      <ul class="muted" style="font-size: 15px; line-height: 1.8; margin-bottom: 20px; padding-left: 20px;">
-        <li><strong>No Installation Required:</strong> Everything runs seamlessly inside your web browser.</li>
-        <li><strong>Modern & Intuitive Design:</strong> A clean UI ensures you don't waste time figuring out how the app works.</li>
-        <li><strong>High Performance:</strong> Built with state-of-the-art web technologies for instant loading and generation.</li>
-        <li><strong>Data Privacy:</strong> Many of our tools process your data directly on your device, ensuring total privacy.</li>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        At <strong>OrionFx.net</strong>, we build lightweight & user-friendly <strong>SaaS (Software as a Service) applications</strong> that businesses, professionals, retailers, service providers, freelancers & individuals can access directly from a web browser without complicated software installation.
+      </p>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Our goal is simple: <strong>make useful business software easier, faster & more accessible.</strong>
+      </p>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        From creating professional receipts & invoices to generating quotations, payment documents, delivery notes & other essential business documents, Orion Fx SaaS Applications are designed to help you complete everyday tasks with less effort.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🚀 Simple Tools. Smarter Business.</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Modern businesses need tools that work wherever they are. Our SaaS applications are designed for <strong>desktop, laptop, tablet & mobile devices</strong>, providing a convenient experience whether you are working from your Office, Shop, Home, or on the move.
+      </p>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        With Orion Fx online business applications, you can create, customize, manage, download, print & share your business documents directly from your device.
+      </p>
+      <ul class="muted" style="font-size: 15px; line-height: 1.8; margin-bottom: 40px; list-style: none; padding: 0;">
+        <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> No complicated installation.</li>
+        <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> No unnecessary software.</li>
+        <li><i class="fas fa-check" style="color: var(--primary); margin-right: 8px;"></i> Just open the application and get started.</li>
       </ul>
-      <p class="muted" style="font-size: 15px;">
-        As we continue to grow, we are committed to adding more practical digital solutions. Our upcoming Invoice Generator and Quotation Maker will seamlessly integrate into the daily routine of freelancers, local service providers, and SMEs alike.
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🧾 Professional Business Documents in Minutes</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Our first SaaS application, <strong>Orion Fx Receipt Generator</strong>, makes it easy to create professional receipts online.
       </p>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Enter your company name, upload your business logo, add customer information, enter products or services, specify quantities and prices, add discounts or taxes, include payment information and terms & conditions, and instantly generate a professional receipt.
+      </p>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Receipts can be <strong>downloaded as PDF or JPG, printed, or shared digitally</strong>, making the tool useful for shops, retailers, freelancers, service providers, restaurants, repair businesses & other small businesses.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🎨 Customizable Templates</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Orion Fx SaaS Applications are designed around flexible templates that allow users to create professional-looking documents without needing graphic design or technical skills.
+      </p>
+      <p class="muted" style="margin-bottom: 12px; font-size: 15px; line-height: 1.8;">Business information such as:</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px;">
+        <ul class="muted" style="font-size: 14px; line-height: 1.8; margin-bottom: 0; padding-left: 20px;">
+          <li>Company Name</li>
+          <li>Business Logo</li>
+          <li>Address</li>
+          <li>Phone & WhatsApp</li>
+        </ul>
+        <ul class="muted" style="font-size: 14px; line-height: 1.8; margin-bottom: 0; padding-left: 20px;">
+          <li>Customer Details</li>
+          <li>Products & Services</li>
+          <li>Prices & Amounts</li>
+          <li>Discounts & Taxes</li>
+        </ul>
+        <ul class="muted" style="font-size: 14px; line-height: 1.8; margin-bottom: 0; padding-left: 20px;">
+          <li>Payment Method</li>
+          <li>Terms & Conditions</li>
+          <li>Receipt or Document Number</li>
+        </ul>
+      </div>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        can be arranged within predefined template areas while maintaining a clean and professional layout.<br>
+        Users can choose a suitable template and customize important elements such as logo placement, company name alignment, document information & other available settings.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">📱 Built for Desktop & Mobile</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Whether you are using a <strong>laptop, desktop computer, tablet, or smartphone</strong>, Orion Fx SaaS Applications are designed to provide a responsive & convenient experience across devices.
+      </p>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Our applications can also be developed as <strong>Progressive Web Apps (PWAs)</strong>, allowing supported applications to be installed on compatible mobile & desktop devices & used more like a traditional application.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">⚡ Fast, Practical & Easy to Use</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        We believe business software should solve problems rather than create new ones.<br>
+        That's why Orion Fx focuses on:
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 40px;">
+        <div style="background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <strong style="color: var(--primary);">Simple Interfaces</strong><br>
+          <span class="muted" style="font-size: 14px;">Easy-to-understand screens with minimal unnecessary complexity.</span>
+        </div>
+        <div style="background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <strong style="color: var(--primary);">Fast Workflows</strong><br>
+          <span class="muted" style="font-size: 14px;">Create documents quickly without navigating through complicated software.</span>
+        </div>
+        <div style="background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <strong style="color: var(--primary);">Responsive Design</strong><br>
+          <span class="muted" style="font-size: 14px;">Designed to work across laptops, desktops, tablets & smartphones.</span>
+        </div>
+        <div style="background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <strong style="color: var(--primary);">Professional Output</strong><br>
+          <span class="muted" style="font-size: 14px;">Clean documents suitable for customers, businesses & professional communication.</span>
+        </div>
+        <div style="background: rgba(0, 0, 0, 0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);">
+          <strong style="color: var(--primary);">Digital Export</strong><br>
+          <span class="muted" style="font-size: 14px;">Download, print & share your documents in convenient formats.</span>
+        </div>
+      </div>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🏪 Designed for Small & Growing Businesses</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Orion Fx SaaS Applications are particularly useful for <strong>Small Businesses, Retailers, Wholesalers, Service Providers, Freelancers, Startups, Home Businesses, Shops & Professionals</strong> who need affordable & straightforward digital tools.
+      </p>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Whether you run an electronics shop, mobile shop, computer business, restaurant, repair workshop, clothing store, online business, consultancy, or service company, our goal is to provide practical tools that help you manage everyday documentation more efficiently.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🇵🇰 Built with Local Businesses in Mind</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Orion Fx is developing SaaS solutions with the needs of businesses in <strong>Pakistan and International Markets</strong> in mind.
+      </p>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Applications can support practical business requirements such as <strong>PKR currency, Pakistani business contact information, WhatsApp communication, local payment methods, printable documents & mobile-first workflows</strong>, while maintaining a professional interface suitable for modern businesses.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🔮 More SaaS Applications Coming</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        <strong>Receipt Generator</strong> is only the beginning.<br>
+        The Orion Fx SaaS Applications platform can continue to expand with tools such as:
+      </p>
+      <ul class="muted" style="font-size: 15px; line-height: 1.8; margin-bottom: 20px; list-style-type: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+        <li><i class="fas fa-file-invoice" style="margin-right: 8px; color: var(--primary);"></i> Receipt Generator</li>
+        <li><i class="fas fa-file-invoice-dollar" style="margin-right: 8px; color: var(--primary);"></i> Invoice Generator</li>
+        <li><i class="fas fa-file-contract" style="margin-right: 8px; color: var(--primary);"></i> Quotation Maker</li>
+        <li><i class="fas fa-money-check-alt" style="margin-right: 8px; color: var(--primary);"></i> Payment Receipt Generator</li>
+        <li><i class="fas fa-box-open" style="margin-right: 8px; color: var(--primary);"></i> Delivery Note Generator</li>
+        <li><i class="fas fa-calculator" style="margin-right: 8px; color: var(--primary);"></i> Business Calculator Tools</li>
+        <li><i class="fas fa-file-alt" style="margin-right: 8px; color: var(--primary);"></i> Business Document Generators</li>
+        <li><i class="fas fa-chart-line" style="margin-right: 8px; color: var(--primary);"></i> Small Business Productivity Tools</li>
+      </ul>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Our aim is to create a growing ecosystem of <strong>simple online business applications</strong> that help businesses save time and work more efficiently.
+      </p>
+
+      <h3 style="font-size: 20px; color: #fff; margin-bottom: 16px;">🌐 Powered by Orion Fx</h3>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        <strong>Orion Fx</strong> is building modern websites, web applications, mobile-first solutions, and SaaS products for businesses and individuals.
+      </p>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        Through <strong>OrionFx.net</strong>, we are developing practical digital tools that combine modern web technology with simple, business-focused user experiences.
+      </p>
+      <p class="muted" style="margin-bottom: 20px; font-size: 15px; line-height: 1.8;">
+        <strong>SaaS Applications by Orion Fx</strong> are built around one simple idea:
+      </p>
+      <blockquote style="border-left: 4px solid var(--primary); padding-left: 16px; margin-left: 0; margin-bottom: 20px; font-style: italic; color: #fff; font-size: 16px;">
+        "Useful software should be easy to access, easy to understand, and easy to use."
+      </blockquote>
+      <p class="muted" style="margin-bottom: 40px; font-size: 15px; line-height: 1.8;">
+        Explore the growing collection of <strong>Orion Fx SaaS Applications</strong> and discover smart online tools designed to make everyday business tasks faster and simpler.
+      </p>
+
+      <div style="text-align: center; margin-top: 40px; padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <h3 style="font-size: 24px; color: var(--primary); margin-bottom: 12px;">☁️ Orion Fx SaaS Applications</h3>
+        <p style="color: #fff; font-weight: 500; font-size: 16px;">Smart business tools. Available online. Built for modern businesses.</p>
+      </div>
     </div>
   </section>
 
