@@ -1342,6 +1342,539 @@
     render();
   };
 
+  // ==========================================
+  // --- Smart Vector & Canvas Logo Generator ---
+  // ==========================================
+  const BUSINESS_CATEGORIES = [
+    { id: 'retail', label: 'Retail, Mart & POS', icon: '🛒', desc: 'Stores, Supermarkets & General POS' },
+    { id: 'tech', label: 'Tech, Cloud & Software', icon: '💻', desc: 'IT, SaaS, Apps & Digital Services' },
+    { id: 'cafe', label: 'Cafe, Food & Bakery', icon: '☕', desc: 'Restaurants, Bakeries & Dining' },
+    { id: 'health', label: 'Healthcare & Pharmacy', icon: '🏥', desc: 'Clinics, Labs, Medical & Drugs' },
+    { id: 'corporate', label: 'Corporate & Finance', icon: '🏢', desc: 'Consulting, Banking & Advisory' },
+    { id: 'logistics', label: 'Logistics & Cargo', icon: '📦', desc: 'Courier, Transport & Shipping' },
+    { id: 'construction', label: 'Construction & Property', icon: '🏗️', desc: 'Real Estate, Architects & Builders' },
+    { id: 'automotive', label: 'Automotive & Workshop', icon: '🚗', desc: 'Garages, Spare Parts & Dealerships' },
+    { id: 'legal', label: 'Legal & Audit', icon: '⚖️', desc: 'Law Firms, Tax & Compliance' },
+    { id: 'education', label: 'Education & Academy', icon: '🎓', desc: 'Schools, Courses & Training' },
+    { id: 'fashion', label: 'Fashion & Boutique', icon: '💎', desc: 'Apparel, Jewelry & Luxury' },
+    { id: 'services', label: 'General & Services', icon: '⭐', desc: 'Agency, Professional & Modern' }
+  ];
+
+  const LOGO_ICONS = {
+    retail: `<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z M3 6h18 M16 10a4 4 0 01-8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+    tech: `<rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    cafe: `<path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    health: `<path d="M11 2h2v7h7v2h-7v7h-2v-7H4V9h7V2z" fill="currentColor"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    corporate: `<path d="M3 21h18M5 21V7l8-4v18M13 21V11l6 3v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="9" cy="13" r="1" fill="currentColor"/><circle cx="9" cy="17" r="1" fill="currentColor"/>`,
+    logistics: `<rect x="1" y="3" width="15" height="13" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" fill="currentColor"/><circle cx="18.5" cy="18.5" r="2.5" fill="currentColor"/>`,
+    construction: `<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    automotive: `<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    legal: `<line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="2"/><path d="M5 21h14M3 7l9-3 9 3M6 7l-3 6h6l-3-6zM18 7l-3 6h6l-3-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+    education: `<path d="M22 10v6M2 10l10-5 10 5-10 5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    fashion: `<path d="M6 3h12l4 6-10 12L2 9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="11" y1="3" x2="8" y2="9" stroke="currentColor" stroke-width="2"/><line x1="13" y1="3" x2="16" y2="9" stroke="currentColor" stroke-width="2"/><line x1="2" y1="9" x2="22" y2="9" stroke="currentColor" stroke-width="2"/><line x1="12" y1="21" x2="8" y2="9" stroke="currentColor" stroke-width="2"/><line x1="12" y1="21" x2="16" y2="9" stroke="currentColor" stroke-width="2"/>`,
+    services: `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="12 7 13.5 10 17 10.5 14.5 13 15 16.5 12 15 9 16.5 9.5 13 7 10.5 10.5 10" fill="currentColor"/>`
+  };
+
+  function escapeXml(str) {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  function darkerColor(hex, percent) {
+    let num = parseInt((hex || '#059669').replace('#', ''), 16);
+    if (isNaN(num)) return hex || '#059669';
+    let amt = Math.round(2.55 * percent);
+    let R = (num >> 16) - amt;
+    let B = ((num >> 8) & 0x00ff) - amt;
+    let G = (num & 0x0000ff) - amt;
+    return '#' + (0x1000000 + (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 + (B < 255 ? (B < 0 ? 0 : B) : 255) * 0x100 + (G < 255 ? (G < 0 ? 0 : G) : 255)).toString(16).slice(1);
+  }
+
+  function detectBusinessNature(name, tagline) {
+    const text = ((name || '') + ' ' + (tagline || '')).toLowerCase();
+    if (text.match(/retail|pos|mart|shop|store|supermarket|bazaar|general store|market|bakes/)) return 'retail';
+    if (text.match(/tech|cloud|software|it |code|digital|cyber|system|app|saas|network|data/)) return 'tech';
+    if (text.match(/cafe|coffee|food|restaurant|dining|bakery|grill|burger|kitchen|bistro|pizza|tea/)) return 'cafe';
+    if (text.match(/pharma|health|medical|clinic|doctor|hospital|care|dental|lab|medicine/)) return 'health';
+    if (text.match(/bank|finance|money|invest|capital|corp|advisory|tax|wealth|audit|holding/)) return 'corporate';
+    if (text.match(/logistics|courier|cargo|freight|delivery|transport|shipping|express|movers/)) return 'logistics';
+    if (text.match(/construct|build|estate|property|architect|engineer|real estate|homes|developer/)) return 'construction';
+    if (text.match(/auto|car|motor|workshop|garage|parts|service|tyre|mechanic|vehicle/)) return 'automotive';
+    if (text.match(/law|legal|advocate|solicitor|court|attorney|justice|barrister/)) return 'legal';
+    if (text.match(/school|academy|college|edu|learn|tutor|institute|training|study/)) return 'education';
+    if (text.match(/fashion|wear|boutique|cloth|garment|apparel|tailor|style|jewelry/)) return 'fashion';
+    return 'services';
+  }
+
+  function extractInitials(name) {
+    if (!name) return 'OF';
+    const cleaned = name.replace(/[^a-zA-Z0-9\s]/g, ' ').trim();
+    const words = cleaned.split(/\s+/).filter(w => {
+      const l = w.toLowerCase();
+      return !['and', '&', 'the', 'pvt', 'ltd', 'inc', 'co', 'of', 'for'].includes(l);
+    });
+    if (words.length === 0) return name.slice(0, 2).toUpperCase();
+    if (words.length === 1) {
+      const single = words[0];
+      const uppers = single.replace(/[^A-Z]/g, '');
+      if (uppers.length >= 2 && uppers.length <= 4) return uppers;
+      return single.slice(0, 3).toUpperCase();
+    }
+    if (words.length === 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return (words[0][0] + words[1][0] + (words[2] ? words[2][0] : '')).toUpperCase();
+  }
+
+  // Generate clean SVG vector string for any of the 6 layout archetypes
+  function generateLogoSvg(styleKey, params) {
+    const companyName = params.companyName || 'Company Name';
+    const tagline = params.tagline || 'Certified Quality & Service';
+    const category = params.category || 'retail';
+    const primary = params.color || state.styling.primaryColor || '#059669';
+    const darker = darkerColor(primary, 25);
+    const initials = params.initials || extractInitials(companyName);
+    const iconSvg = LOGO_ICONS[category] || LOGO_ICONS.services;
+    const catObj = BUSINESS_CATEGORIES.find(c => c.id === category) || BUSINESS_CATEGORIES[0];
+    const catLabel = catObj.label.split(',')[0].toUpperCase();
+    const uid = Math.floor(Math.random() * 10000);
+
+    if (styleKey === 'horizontal') {
+      // Horizontal Wordmark + Emblem (Width: 380, Height: 90) - Best for receipt headers
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" width="380" height="90">
+          <defs>
+            <linearGradient id="grad_h_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${primary}" />
+              <stop offset="100%" stop-color="${darker}" />
+            </linearGradient>
+          </defs>
+          <rect x="10" y="10" width="70" height="70" rx="16" fill="url(#grad_h_${uid})" />
+          <g transform="translate(25, 25) scale(1.66)" stroke="#ffffff" fill="#ffffff" color="#ffffff">
+            ${iconSvg}
+          </g>
+          <text x="96" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="900" fill="#0f172a" letter-spacing="-0.3">${escapeXml(companyName.slice(0, 24))}</text>
+          <text x="96" y="62" font-family="system-ui, -apple-system, sans-serif" font-size="10.5" font-weight="700" fill="${primary}" letter-spacing="1.5">${escapeXml(tagline.slice(0, 32).toUpperCase())}</text>
+          <circle cx="96" cy="74" r="2.5" fill="${primary}" />
+          <line x1="104" y1="74" x2="260" y2="74" stroke="${primary}" stroke-width="1.5" stroke-opacity="0.35" stroke-linecap="round"/>
+        </svg>
+      `.trim();
+    }
+
+    if (styleKey === 'monogram') {
+      // Modern Monogram Squircle Badge (Width: 200, Height: 200)
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+          <defs>
+            <linearGradient id="grad_m_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${primary}" />
+              <stop offset="100%" stop-color="${darker}" />
+            </linearGradient>
+          </defs>
+          <rect x="15" y="15" width="170" height="170" rx="42" fill="url(#grad_m_${uid})" />
+          <rect x="22" y="22" width="156" height="156" rx="36" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2" />
+          <g transform="translate(85, 34) scale(1.25)" stroke="#ffffff" fill="#ffffff" color="#ffffff" opacity="0.9">
+            ${iconSvg}
+          </g>
+          <text x="100" y="126" font-family="system-ui, -apple-system, sans-serif" font-size="${initials.length > 2 ? 42 : 54}" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="${initials.length > 2 ? 1 : 2}">${escapeXml(initials)}</text>
+          <rect x="65" y="142" width="70" height="3" rx="1.5" fill="#ffffff" opacity="0.6" />
+          <text x="100" y="165" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="800" fill="#ffffff" opacity="0.9" text-anchor="middle" letter-spacing="1.5">${escapeXml(catLabel)}</text>
+        </svg>
+      `.trim();
+    }
+
+    if (styleKey === 'shield') {
+      // Executive Shield & Crest (Width: 220, Height: 240)
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240" width="220" height="240">
+          <defs>
+            <linearGradient id="grad_s_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${primary}" />
+              <stop offset="100%" stop-color="${darker}" />
+            </linearGradient>
+          </defs>
+          <path d="M110 15 L190 45 V125 C190 180 110 220 110 220 C110 220 30 180 30 125 V45 Z" fill="#ffffff" stroke="${primary}" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M110 24 L180 50 V122 C180 170 110 208 110 208 C110 208 40 170 40 122 V50 Z" fill="${primary}" fill-opacity="0.08" />
+          <polygon points="110,38 112.5,43 118,43.5 114,47 115,52.5 110,49.5 105,52.5 106,47 102,43.5 107.5,43" fill="${primary}"/>
+          <polygon points="90,43 92,47 96,47.5 93,50 94,54.5 90,52 86,54.5 87,50 84,47.5 88,47" fill="${primary}" opacity="0.7"/>
+          <polygon points="130,43 132,47 136,47.5 133,50 134,54.5 130,52 126,54.5 127,50 124,47.5 128,47" fill="${primary}" opacity="0.7"/>
+          <g transform="translate(85, 68) scale(2.08)" stroke="${primary}" fill="${primary}" color="${primary}">
+            ${iconSvg}
+          </g>
+          <rect x="36" y="132" width="148" height="34" rx="8" fill="url(#grad_s_${uid})" />
+          <text x="110" y="154" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">${escapeXml((initials || companyName.slice(0, 10)).toUpperCase())}</text>
+          <text x="110" y="184" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="800" fill="${primary}" text-anchor="middle" letter-spacing="1.2">PREMIUM QUALITY</text>
+        </svg>
+      `.trim();
+    }
+
+    if (styleKey === 'hexagon') {
+      // Geometric Hexagon Emblem (Width: 200, Height: 200)
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+          <defs>
+            <linearGradient id="grad_hx_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${primary}" />
+              <stop offset="100%" stop-color="${darker}" />
+            </linearGradient>
+          </defs>
+          <polygon points="100,14 180,56 180,144 100,186 20,144 20,56" fill="${primary}" fill-opacity="0.07" stroke="${primary}" stroke-width="3.5" stroke-linejoin="round"/>
+          <polygon points="100,24 170,61 170,139 100,176 30,139 30,61" fill="none" stroke="${primary}" stroke-opacity="0.3" stroke-width="1.5"/>
+          <g transform="translate(80, 50) scale(1.66)" stroke="${primary}" fill="${primary}" color="${primary}">
+            ${iconSvg}
+          </g>
+          <text x="100" y="124" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1">${escapeXml(initials)}</text>
+          <rect x="70" y="134" width="60" height="2" fill="${primary}"/>
+          <text x="100" y="152" font-family="system-ui, -apple-system, sans-serif" font-size="8" font-weight="800" fill="${primary}" text-anchor="middle" letter-spacing="1.5">${escapeXml(catLabel)}</text>
+        </svg>
+      `.trim();
+    }
+
+    if (styleKey === 'seal') {
+      // Official Verification Stamp / Seal (Width: 220, Height: 220)
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220">
+          <circle cx="110" cy="110" r="98" fill="#ffffff" stroke="${primary}" stroke-width="4" />
+          <circle cx="110" cy="110" r="90" fill="none" stroke="${primary}" stroke-width="1.5" stroke-dasharray="3,3" />
+          <circle cx="110" cy="110" r="66" fill="${primary}" fill-opacity="0.08" stroke="${primary}" stroke-width="2" />
+          <polygon points="110,24 111.5,28 116,28 112.5,31 114,35 110,32.5 106,35 107.5,31 104,28 108.5,28" fill="${primary}"/>
+          <polygon points="50,110 52,113 56,113 53,115.5 54.5,119 50,117 45.5,119 47,115.5 44,113 48,113" fill="${primary}"/>
+          <polygon points="170,110 172,113 176,113 173,115.5 174.5,119 170,117 165.5,119 167,115.5 164,113 168,113" fill="${primary}"/>
+          <g transform="translate(85, 85) scale(2.08)" stroke="${primary}" fill="${primary}" color="${primary}">
+            ${iconSvg}
+          </g>
+          <text x="110" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="900" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">${escapeXml(companyName.slice(0, 18).toUpperCase())}</text>
+          <text x="110" y="160" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="800" fill="${primary}" text-anchor="middle" letter-spacing="1.5">★ OFFICIAL VERIFIED ★</text>
+          <text x="110" y="174" font-family="system-ui, -apple-system, sans-serif" font-size="7.5" font-weight="700" fill="#64748b" text-anchor="middle" letter-spacing="1">TIER-1 POS • CERTIFIED</text>
+        </svg>
+      `.trim();
+    }
+
+    // Default: 'pill' - Compact Modern Pill (Width: 360, Height: 84)
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 84" width="360" height="84">
+        <defs>
+          <linearGradient id="grad_p_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${primary}" />
+            <stop offset="100%" stop-color="${darker}" />
+          </linearGradient>
+        </defs>
+        <rect x="6" y="6" width="348" height="72" rx="36" fill="${primary}" fill-opacity="0.06" stroke="${primary}" stroke-width="2" />
+        <circle cx="42" cy="42" r="28" fill="url(#grad_p_${uid})" />
+        <g transform="translate(26, 26) scale(1.33)" stroke="#ffffff" fill="#ffffff" color="#ffffff">
+          ${iconSvg}
+        </g>
+        <text x="84" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="900" fill="#0f172a" letter-spacing="-0.3">${escapeXml(companyName.slice(0, 24))}</text>
+        <text x="84" y="56" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="700" fill="${primary}" letter-spacing="1.2" text-transform="uppercase">${escapeXml(tagline.slice(0, 30))}</text>
+      </svg>
+    `.trim();
+  }
+
+  // Convert SVG string to crisp PNG data URL
+  function convertSvgToDataUrl(svgString, callback) {
+    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = function () {
+      try {
+        const canvas = document.createElement('canvas');
+        const w = (img.naturalWidth || img.width || 380) * 2;
+        const h = (img.naturalHeight || img.height || 180) * 2;
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        const pngUrl = canvas.toDataURL('image/png');
+        callback(pngUrl);
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+        callback(svgDataUri);
+      }
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      callback(svgDataUri);
+    };
+    img.src = url;
+  }
+
+  // Logo Generator Modal Active State
+  let logoGenState = {
+    companyName: '',
+    tagline: '',
+    category: 'retail',
+    color: '#059669',
+    selectedStyle: 'horizontal',
+    seed: 1
+  };
+
+  window.openLogoGeneratorModal = function () {
+    logoGenState.companyName = state.company.name || 'OrionFx';
+    logoGenState.tagline = state.company.tagline || 'Quality Products & Services';
+    logoGenState.category = detectBusinessNature(state.company.name, state.company.tagline);
+    logoGenState.color = state.styling.primaryColor || '#059669';
+    logoGenState.seed = Math.floor(Math.random() * 1000);
+
+    const modal = document.getElementById('logo-generator-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      renderLogoGeneratorContent();
+    }
+  };
+
+  window.closeLogoGeneratorModal = function () {
+    const modal = document.getElementById('logo-generator-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  window.logoGenUpdateName = function (val) {
+    logoGenState.companyName = val || 'Company Name';
+    renderLogoGeneratorContent(true);
+  };
+
+  window.logoGenUpdateTagline = function (val) {
+    logoGenState.tagline = val || '';
+    renderLogoGeneratorContent(true);
+  };
+
+  window.logoGenSetCategory = function (catId) {
+    logoGenState.category = catId;
+    renderLogoGeneratorContent(false);
+  };
+
+  window.logoGenSetColor = function (hex) {
+    logoGenState.color = hex;
+    renderLogoGeneratorContent(false);
+  };
+
+  window.logoGenReroll = function () {
+    logoGenState.seed = Math.floor(Math.random() * 1000);
+    renderLogoGeneratorContent(false);
+    showToast('🎲 Generated fresh logo styles!');
+  };
+
+  window.autoGenerateQuickLogo = function () {
+    const compName = state.company.name || 'OrionFx';
+    const tagline = state.company.tagline || 'Retail & Cloud POS';
+    const detectedCat = detectBusinessNature(compName, tagline);
+    const primaryColor = state.styling.primaryColor || '#059669';
+    const initials = extractInitials(compName);
+
+    // Pick horizontal for thermal/corporate/modern for best header fit
+    const preferredStyle = state.styling.template === 'classic' ? 'shield' : (state.styling.template === 'minimal' ? 'monogram' : 'horizontal');
+    const svg = generateLogoSvg(preferredStyle, {
+      companyName: compName,
+      tagline: tagline || (detectedCat.toUpperCase() + ' SOLUTIONS'),
+      category: detectedCat,
+      color: primaryColor,
+      initials: initials
+    });
+
+    convertSvgToDataUrl(svg, function (dataUrl) {
+      state.company.logoUrl = dataUrl;
+      state.company.showLogo = true;
+      state.company.logoWidth = preferredStyle === 'horizontal' || preferredStyle === 'pill' ? 140 : 95;
+      saveToStorage();
+      render();
+      showToast(`✨ Generated ${detectedCat.toUpperCase()} logo matching ${state.styling.template.toUpperCase()} theme!`);
+    });
+  };
+
+  window.applyGeneratedLogo = function (styleKey) {
+    const svg = generateLogoSvg(styleKey, {
+      companyName: logoGenState.companyName,
+      tagline: logoGenState.tagline,
+      category: logoGenState.category,
+      color: logoGenState.color,
+      initials: extractInitials(logoGenState.companyName)
+    });
+
+    convertSvgToDataUrl(svg, function (dataUrl) {
+      state.company.logoUrl = dataUrl;
+      state.company.showLogo = true;
+      if (styleKey === 'horizontal' || styleKey === 'pill') {
+        state.company.logoWidth = 140;
+      } else {
+        state.company.logoWidth = 95;
+      }
+      saveToStorage();
+      window.closeLogoGeneratorModal();
+      render();
+      showToast('✨ Custom logo applied to receipt!');
+    });
+  };
+
+  window.downloadGeneratedLogo = function (styleKey) {
+    const svg = generateLogoSvg(styleKey, {
+      companyName: logoGenState.companyName,
+      tagline: logoGenState.tagline,
+      category: logoGenState.category,
+      color: logoGenState.color,
+      initials: extractInitials(logoGenState.companyName)
+    });
+
+    convertSvgToDataUrl(svg, function (dataUrl) {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `${(logoGenState.companyName || 'brand').toLowerCase().replace(/[^a-z0-9]/g, '-')}-logo-${styleKey}.png`;
+      a.click();
+      showToast('Downloaded transparent high-res logo PNG!');
+    });
+  };
+
+  function renderLogoGeneratorContent(preserveInputs) {
+    const container = document.getElementById('logo-generator-modal-content-container');
+    if (!container) return;
+
+    const styles = [
+      { key: 'horizontal', title: 'Horizontal Wordmark', desc: 'Emblem + name + subtitle. Ideal for 80mm POS & invoices.' },
+      { key: 'monogram', title: 'Modern Monogram Squircle', desc: 'Stylized brand initials inside gradient squircle.' },
+      { key: 'shield', title: 'Executive Shield & Crest', desc: 'Prestigious corporate badge with stars & banner.' },
+      { key: 'hexagon', title: 'Geometric Hexagon', desc: 'Precision high-tech outline with clean geometry.' },
+      { key: 'seal', title: 'Certified Official Stamp', desc: 'Double-ring verification seal with tier-1 stars.' },
+      { key: 'pill', title: 'Compact Modern Pill', desc: 'Minimalist pill badge with high-contrast icon circle.' }
+    ];
+
+    const currentCat = BUSINESS_CATEGORIES.find(c => c.id === logoGenState.category) || BUSINESS_CATEGORIES[0];
+    const initials = extractInitials(logoGenState.companyName);
+
+    const swatches = [
+      { name: 'Emerald', hex: '#059669' },
+      { name: 'Corporate Navy', hex: '#1e3a8a' },
+      { name: 'Slate Onyx', hex: '#0f172a' },
+      { name: 'Royal Violet', hex: '#7c3aed' },
+      { name: 'Ruby Crimson', hex: '#be123c' },
+      { name: 'Amber Gold', hex: '#d97706' },
+      { name: 'Ocean Blue', hex: '#0284c7' },
+      { name: 'Teal Modern', hex: '#0d9488' }
+    ];
+
+    container.innerHTML = `
+      <div class="space-y-4">
+        <!-- Top Config Inputs -->
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Company / Brand Name</label>
+              <input type="text" id="logogen-input-name" value="${escapeXml(logoGenState.companyName)}" oninput="logoGenUpdateName(this.value)" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white" placeholder="Enter company name..." />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Tagline / Subtitle (Optional)</label>
+              <input type="text" id="logogen-input-tagline" value="${escapeXml(logoGenState.tagline)}" oninput="logoGenUpdateTagline(this.value)" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 bg-white" placeholder="Retail, Cloud POS, etc." />
+            </div>
+          </div>
+
+          <!-- Nature of Business / Industry Selector -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="block text-[11px] font-bold text-slate-700">
+                Nature of Business / Industry: <span class="text-emerald-700 font-extrabold">${currentCat.icon} ${currentCat.label}</span>
+              </label>
+              <span class="text-[10px] text-slate-400">Click to switch icon &amp; archetype</span>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5">
+              ${BUSINESS_CATEGORIES.map(c => `
+                <button type="button" onclick="logoGenSetCategory('${c.id}')" class="p-1.5 rounded-lg border text-center transition flex flex-col items-center justify-center gap-0.5 ${logoGenState.category === c.id ? 'border-emerald-600 bg-emerald-100/70 text-emerald-950 font-bold ring-2 ring-emerald-500/20 shadow-2xs' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'}">
+                  <span class="text-base">${c.icon}</span>
+                  <span class="text-[10px] truncate max-w-full leading-tight font-medium">${c.label.split(',')[0]}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Color Theme Alignment -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-700">Brand Color:</span>
+              <button type="button" onclick="logoGenSetColor('${state.styling.primaryColor || '#059669'}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition flex items-center gap-1.5 ${logoGenState.color.toLowerCase() === (state.styling.primaryColor || '#059669').toLowerCase() ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}">
+                <span class="w-3 h-3 rounded-full border border-white/50" style="background: ${state.styling.primaryColor || '#059669'}"></span>
+                Sync with Template Theme (${state.styling.template.toUpperCase()})
+              </button>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${swatches.map(sw => `
+                <button type="button" onclick="logoGenSetColor('${sw.hex}')" title="${sw.name}" class="w-6 h-6 rounded-full border border-slate-300 transition hover:scale-110 flex items-center justify-center ${logoGenState.color.toLowerCase() === sw.hex.toLowerCase() ? 'ring-2 ring-slate-900 scale-110' : ''}" style="background: ${sw.hex}">
+                  ${logoGenState.color.toLowerCase() === sw.hex.toLowerCase() ? '<span class="text-white text-[10px] font-bold">✓</span>' : ''}
+                </button>
+              `).join('')}
+              <input type="color" value="${logoGenState.color}" onchange="logoGenSetColor(this.value)" title="Custom Color" class="w-6 h-6 rounded cursor-pointer border-0 p-0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 Live Generated Logo Variations Grid -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <div>
+              <span class="text-xs font-bold text-slate-800">Generated Logo Styles (Monogram: "${initials}")</span>
+              <p class="text-[10px] text-slate-500">Pick any design to apply to your receipt or save as transparent PNG</p>
+            </div>
+            <button type="button" onclick="logoGenReroll()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+              <span>🎲</span> Shuffle / Re-roll
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            ${styles.map(s => {
+              const svgCode = generateLogoSvg(s.key, {
+                companyName: logoGenState.companyName,
+                tagline: logoGenState.tagline,
+                category: logoGenState.category,
+                color: logoGenState.color,
+                initials: initials
+              });
+
+              return `
+                <div class="p-3.5 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition flex flex-col justify-between group">
+                  <div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="text-[11px] font-black text-slate-800">${s.title}</span>
+                      <span class="text-[9px] bg-slate-100 text-slate-600 font-mono px-1.5 py-0.2 rounded font-semibold uppercase">${s.key}</span>
+                    </div>
+
+                    <!-- Visual Logo Container -->
+                    <div class="h-28 bg-slate-50/80 rounded-lg border border-slate-100 p-2 flex items-center justify-center overflow-hidden group-hover:bg-slate-50 transition">
+                      <div class="max-w-full max-h-full flex items-center justify-center">
+                        ${svgCode}
+                      </div>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 mt-2 leading-tight">${s.desc}</p>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+                    <button type="button" onclick="applyGeneratedLogo('${s.key}')" class="flex-1 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition shadow-2xs flex items-center justify-center gap-1">
+                      <span>⚡</span> Apply to Receipt
+                    </button>
+                    <button type="button" onclick="downloadGeneratedLogo('${s.key}')" title="Download High-Res PNG" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition flex items-center justify-center">
+                      <span>📥</span> PNG
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Keep focus if user was typing in input
+    if (preserveInputs) {
+      const input = document.getElementById('logogen-input-name');
+      if (input && input.value !== logoGenState.companyName) {
+        input.value = logoGenState.companyName;
+      }
+    }
+  }
+
   // --- Digital Signature Canvas Modal ---
   let isDrawing = false;
   let signaturePadCanvas = null;
@@ -2598,9 +3131,37 @@
                 <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <span>🏢</span> Company Logo
                 </span>
-                ${state.company.logoUrl ? `
-                  <button type="button" onclick="removeLogo()" class="text-[11px] text-rose-600 font-bold hover:underline">Remove Logo</button>
-                ` : ''}
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="openLogoGeneratorModal()" class="text-[11px] text-blue-600 font-bold hover:underline flex items-center gap-1">
+                    <span>✨</span> Logo Studio
+                  </button>
+                  ${state.company.logoUrl ? `
+                    <span class="text-slate-300">|</span>
+                    <button type="button" onclick="removeLogo()" class="text-[11px] text-rose-600 font-bold hover:underline">Remove Logo</button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Smart Logo Generator Callout Banner -->
+              <div class="p-3 bg-gradient-to-r from-blue-50 via-indigo-50/40 to-emerald-50 rounded-xl border border-blue-200/80 space-y-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div class="flex items-center gap-1.5 font-bold text-xs text-slate-900">
+                    <span class="text-base">✨</span>
+                    <span>No Logo? Generate Instant Brand Logo</span>
+                    <span class="text-[9px] bg-emerald-700 text-white font-bold px-1.5 py-0.2 rounded tracking-wider uppercase">Auto Brand</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button type="button" onclick="autoGenerateQuickLogo()" class="px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold rounded-lg transition shadow-2xs flex items-center gap-1">
+                      <span>⚡</span> 1-Click Auto
+                    </button>
+                    <button type="button" onclick="openLogoGeneratorModal()" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold rounded-lg transition shadow-2xs flex items-center gap-1">
+                      <span>🎨</span> Logo Studio
+                    </button>
+                  </div>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-normal">
+                  Instantly creates a vector logo matching your <strong>Company Name</strong> ("${state.company.name || 'Company'}"), <strong>Business Industry</strong>, and <strong>Template Color Theme</strong> (${state.styling.template.toUpperCase()}).
+                </p>
               </div>
 
               <!-- Left & Right side: Choose File on Left, Placement / Alignment on Right -->
@@ -2618,7 +3179,7 @@
                       <input type="file" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer" />
                     </div>
                   </div>
-                  <p class="text-[10px] text-slate-400">Upload PNG, JPG, or SVG image logo</p>
+                  <p class="text-[10px] text-slate-400">Upload PNG, JPG, SVG or click Generate above</p>
                 </div>
 
                 <!-- Right Side: Logo Placement / Alignment -->
@@ -3062,12 +3623,7 @@
               OFX
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h1 class="text-sm font-extrabold text-slate-900 tracking-tight">OrionFx Receipt SaaS</h1>
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-300">
-                  Zero-NPM • GitHub & Web Ready
-                </span>
-              </div>
+              <h1 class="text-sm font-extrabold text-slate-900 tracking-tight">OrionFx Receipt SaaS</h1>
               <p class="text-[11px] text-slate-500">Standalone Client-Side POS & Invoicing Platform</p>
             </div>
           </div>
@@ -3314,6 +3870,45 @@
             <div class="flex gap-2">
               <button onclick="closeSignaturePad()" class="px-3 py-1.5 border border-slate-300 text-slate-700 rounded-lg text-xs font-bold">Cancel</button>
               <button onclick="saveSignaturePad()" class="px-4 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow-xs">Apply Signature</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart Business Logo Generator Modal -->
+      <div id="logo-generator-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+          <!-- Modal Header -->
+          <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-blue-600 text-white font-black flex items-center justify-center text-base shadow-sm">
+                ✨
+              </div>
+              <div>
+                <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                  Smart Business Logo Generator
+                  <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full uppercase">Vector &amp; High-DPI</span>
+                </h3>
+                <p class="text-[11px] text-slate-500">Generate professional, high-res logos customized for Company Name, Industry &amp; Color Theme</p>
+              </div>
+            </div>
+            <button onclick="closeLogoGeneratorModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl leading-none">&times;</button>
+          </div>
+
+          <!-- Modal Scrollable Body -->
+          <div class="p-6 overflow-y-auto flex-1 space-y-4" id="logo-generator-modal-content-container">
+            <!-- Dynamically populated by renderLogoGeneratorContent() -->
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs">
+            <span class="text-slate-500 text-[11px]">
+              Tip: Pick <strong>Horizontal Wordmark</strong> for full-width receipt headers, or <strong>Monogram / Seal</strong> for compact badges.
+            </span>
+            <div class="flex items-center gap-2">
+              <button onclick="closeLogoGeneratorModal()" class="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition">
+                Close
+              </button>
             </div>
           </div>
         </div>
