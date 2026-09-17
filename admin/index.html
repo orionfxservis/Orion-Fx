@@ -1406,7 +1406,7 @@
             localProjects = projects;
           }
           
-          const { data: blogs, error: blogErr } = await supabase.from('blogs').select('*').order('id', { ascending: true });
+          const { data: blogs, error: blogErr } = await supabase.from('orionfx_blogs').select('*').order('id', { ascending: true });
           if (blogErr) {
             console.error("Supabase Blogs fetch error:", blogErr.message);
           } else if (blogs && blogs.length > 0) {
@@ -1699,7 +1699,7 @@
         console.log("Editing existing blog with ID:", blog.id);
         if (isConfigured && blog.id) {
           try {
-            const { data, error } = await supabase.from('blogs').update(dbBlogData).eq('id', blog.id).select();
+            const { data, error } = await supabase.from('orionfx_blogs').update(dbBlogData).eq('id', blog.id).select();
             console.log("Supabase Update response:", { data, error });
             if (error) {
               alert("Supabase Update Error: " + error.message);
@@ -1716,7 +1716,7 @@
       } else {
         if (isConfigured) {
           try {
-            const { data, error } = await supabase.from('blogs').insert([dbBlogData]).select();
+            const { data, error } = await supabase.from('orionfx_blogs').insert([dbBlogData]).select();
             console.log("Supabase Insert response:", { data, error });
             if (error) {
               alert("Supabase Insert Error: " + error.message);
@@ -1805,7 +1805,7 @@
         const blog = localBlogs[index];
         if (isSupabaseConfigured() && blog.id) {
           try {
-            const { error } = await supabase.from('blogs').delete().eq('id', blog.id);
+            const { error } = await supabase.from('orionfx_blogs').delete().eq('id', blog.id);
             if (error) {
               alert("Supabase Delete Error: " + error.message);
               return;
