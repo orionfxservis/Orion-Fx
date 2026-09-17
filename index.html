@@ -2652,7 +2652,7 @@
                   ${b.short_description || b.description || ""}
                 </p>
               </div>
-              <a href="#" class="project-link" target="_blank" onclick="event.preventDefault(); openBlogModal(${b.id})">Read More</a>
+              <a href="#" class="project-link" target="_blank" onclick="event.preventDefault(); openBlogModal('${b.id}')">Read More</a>
             </article>
           `;
         }).join("");
