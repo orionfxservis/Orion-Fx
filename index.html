@@ -1594,7 +1594,7 @@
   <header id="header">
     <div class="container nav">
       <div class="brand" aria-label="Brand">
-        <img src="assets/logo/logo-hd.png" alt="Orion Fx Logo" class="brand-logo">
+        <img src="assets/logo/logo-new.png" alt="Orion Fx Logo" class="brand-logo">
         <span class="dot" aria-hidden="true"></span>
         <span>Orion Fx</span>
       </div>
@@ -2370,7 +2370,7 @@
         <!-- Brand Col -->
         <div class="footer-brand">
           <div class="brand" style="margin-bottom: 16px;">
-            <img src="assets/logo/logo-hd.png" alt="Orion Fx Logo" class="brand-logo">
+            <img src="assets/logo/logo-new.png" alt="Orion Fx Logo" class="brand-logo">
             <span class="dot"></span>
             <span>Orion Fx</span>
           </div>
@@ -2598,7 +2598,7 @@
 
       if (blogsGridContainer) {
         if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
-          supabase.from('blogs')
+          supabase.from('orionfx_blogs')
             .select('*')
             .order('date', { ascending: false })
             .limit(3)
