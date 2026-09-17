@@ -674,7 +674,7 @@
                   ${b.short_description || b.description || ""}
                 </p>
               </div>
-              <a href="#" class="project-link" onclick="event.preventDefault(); openBlogModal(${b.id})">Read Article</a>
+              <a href="#" class="project-link" onclick="event.preventDefault(); openBlogModal('${b.id}')">Read Article</a>
             </article>
           `;
         }).join("");
