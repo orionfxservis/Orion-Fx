@@ -148,7 +148,6 @@
     }
 
     .dashboard-card:hover {
-      transform: translateY(-4px);
       border-color: #00E5FF;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
     }
@@ -1017,29 +1016,6 @@
                   <textarea id="bArticle" rows="6" required placeholder="Write the main body of the article here..."></textarea>
                 </div>
 
-                <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
-                  <h5 style="margin: 0 0 12px 0; color: var(--primary);">Custom Editorial Section</h5>
-                  <div class="form-group">
-                    <label for="bSectionHeading">Section Heading</label>
-                    <input type="text" id="bSectionHeading" required value="Why SEO Matters for Small Businesses">
-                  </div>
-                  <div class="form-group">
-                    <label for="bSectionContent">Section Content</label>
-                    <textarea id="bSectionContent" rows="4" required placeholder="Write the content for this section..."></textarea>
-                  </div>
-                </div>
-
-                <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
-                  <h5 style="margin: 0 0 12px 0; color: var(--primary);">Conclusion</h5>
-                  <div class="form-group">
-                    <label>Heading</label>
-                    <input type="text" value="Conclusion" disabled style="opacity: 0.7; background: rgba(0,0,0,0.2)">
-                  </div>
-                  <div class="form-group">
-                    <label for="bConclusion">Conclusion Content</label>
-                    <textarea id="bConclusion" rows="3" required placeholder="Write the concluding thoughts..."></textarea>
-                  </div>
-                </div>
 
                 <div style="border-top: 1px solid var(--border-color); margin: 20px 0; padding-top: 15px;">
                   <h5 style="margin: 0 0 12px 0; color: var(--primary);">Additional SEO Details</h5>
@@ -1657,9 +1633,6 @@
         meta_description: document.getElementById("bMetaDescription").value,
         short_description: document.getElementById("bShortDescription").value,
         article: document.getElementById("bArticle").value,
-        section_heading: document.getElementById("bSectionHeading").value,
-        section_content: document.getElementById("bSectionContent").value,
-        conclusion: document.getElementById("bConclusion").value,
         category: document.getElementById("bCategory").value,
         tags: document.getElementById("bTags").value,
         image: document.getElementById("bImage").value,
@@ -1680,9 +1653,6 @@
         meta_description: blogData.meta_description,
         short_description: blogData.short_description,
         article: blogData.article,
-        section_heading: blogData.section_heading,
-        section_content: blogData.section_content,
-        conclusion: blogData.conclusion,
         category: blogData.category,
         tags: blogData.tags,
         image: blogData.image,
@@ -1777,9 +1747,6 @@
       document.getElementById("bMetaDescription").value = blog.meta_description || "";
       document.getElementById("bShortDescription").value = blog.short_description || "";
       document.getElementById("bArticle").value = blog.article || "";
-      document.getElementById("bSectionHeading").value = blog.section_heading || "Why SEO Matters for Small Businesses";
-      document.getElementById("bSectionContent").value = blog.section_content || "";
-      document.getElementById("bConclusion").value = blog.conclusion || "";
       document.getElementById("bCategory").value = blog.category || "";
       document.getElementById("bTags").value = blog.tags || "";
       document.getElementById("bImage").value = blog.image || "";
