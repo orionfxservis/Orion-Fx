@@ -1402,14 +1402,14 @@
           const { data: projects, error: projErr } = await supabase.from('projects').select('*').order('date', { ascending: false });
           if (projErr) {
             console.error("Supabase Projects fetch error:", projErr.message);
-          } else if (projects && projects.length > 0) {
+          } else if (projects) {
             localProjects = projects;
           }
           
           const { data: blogs, error: blogErr } = await supabase.from('orionfx_blogs').select('*').order('id', { ascending: true });
           if (blogErr) {
             console.error("Supabase Blogs fetch error:", blogErr.message);
-          } else if (blogs && blogs.length > 0) {
+          } else if (blogs) {
             localBlogs = blogs;
           }
 
