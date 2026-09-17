@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -526,7 +526,7 @@
   <header id="header">
     <div class="container nav">
       <a href="../index.html" class="brand" aria-label="Brand">
-        <img src="../assets/logo/logo.png" alt="Orion Fx Logo" class="brand-logo">
+        <img src="../assets/logo/logo-new.png" alt="Orion Fx Logo" class="brand-logo">
         <span class="dot" aria-hidden="true"></span>
         <span>Orion Fx</span>
       </a>
@@ -618,7 +618,7 @@
       const blogsGridContainer = document.getElementById("blogsGrid");
       if (blogsGridContainer) {
         if (window.supabase && typeof SUPABASE_URL !== 'undefined' && !SUPABASE_URL.includes("your-project-id")) {
-          supabase.from('blogs')
+          supabase.from('orionfx_blogs')
             .select('*')
             .order('date', { ascending: false })
             .then(({ data: blogs, error }) => {
