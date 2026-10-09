@@ -2992,6 +2992,7 @@
 
   // --- Main Editor UI Builder ---
   function renderEditorHtml() {
+    const totals = calculateTotals();
     const tmpl = state.styling.template || 'thermal';
     const primary = state.styling.primaryColor || '#059669';
 
@@ -3647,6 +3648,8 @@
       extraFeesHint.textContent = formatMoney(totals.totalExtraFees);
     }
   }
+  
+  window.renderPreview = renderPreview;
 
   // Full app re-render
   function render() {
