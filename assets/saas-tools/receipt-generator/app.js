@@ -227,27 +227,55 @@
   let historySearchTerm = '';
   let activeHistoryTab = 'all'; // 'all' or 'templates'
 
+  // Expose state on window so that inline event handlers (oninput, onchange) and external callers
+  // can directly access and mutate state properties in real-time
+  try {
+    Object.defineProperty(window, 'state', {
+      get() { return state; },
+      set(val) { state = val; },
+      configurable: true,
+      enumerable: true
+    });
+  } catch (e) {
+    window.state = state;
+  }
+
   function loadFromStorage() {
     try {
       const saved = localStorage.getItem('orionfx_receipt_data');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Ensure backward compatibility migrations
-        if (parsed.taxEnabled === undefined) parsed.taxEnabled = true;
-        if (!Array.isArray(parsed.taxes) || parsed.taxes.length === 0) {
-          parsed.taxes = [
-            { id: 'tax-1', name: parsed.taxLabel || 'Sales Tax / GST', rate: typeof parsed.taxRate === 'number' ? parsed.taxRate : 15, isCompound: false }
-          ];
-        }
-        if (parsed.handlingFee === undefined) parsed.handlingFee = 0;
-        if (parsed.serviceFee === undefined) parsed.serviceFee = 0;
-        if (Array.isArray(parsed.items)) {
-          parsed.items.forEach(it => {
+        if (parsed && typeof parsed === 'object') {
+          // Deep merge with DEFAULT_DATA so missing or legacy keys are always populated
+          const merged = JSON.parse(JSON.stringify(DEFAULT_DATA));
+          Object.assign(merged, parsed);
+          merged.company = { ...DEFAULT_DATA.company, ...(parsed.company || {}) };
+          merged.client = { ...DEFAULT_DATA.client, ...(parsed.client || {}) };
+          merged.currency = { ...DEFAULT_DATA.currency, ...(parsed.currency || {}) };
+          merged.payment = { ...DEFAULT_DATA.payment, ...(parsed.payment || {}) };
+          merged.signature = { ...DEFAULT_DATA.signature, ...(parsed.signature || {}) };
+          merged.styling = { ...DEFAULT_DATA.styling, ...(parsed.styling || {}) };
+
+          if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+            merged.items = parsed.items;
+          } else {
+            merged.items = JSON.parse(JSON.stringify(DEFAULT_DATA.items));
+          }
+          if (Array.isArray(parsed.taxes) && parsed.taxes.length > 0) {
+            merged.taxes = parsed.taxes;
+          } else {
+            merged.taxes = JSON.parse(JSON.stringify(DEFAULT_DATA.taxes));
+          }
+
+          if (merged.taxEnabled === undefined) merged.taxEnabled = true;
+          if (merged.handlingFee === undefined) merged.handlingFee = 0;
+          if (merged.serviceFee === undefined) merged.serviceFee = 0;
+          merged.items.forEach(it => {
             if (it.discountValue === undefined) it.discountValue = 0;
             if (!it.discountType) it.discountType = 'fixed';
           });
+          return merged;
         }
-        return parsed;
       }
     } catch (e) {
       console.warn('LocalStorage error:', e);
@@ -277,9 +305,23 @@
       const now = new Date();
       lastSavedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const el = document.getElementById('autosave-indicator-text');
-      if (el) el.textContent = `Saved ${lastSavedTime}`;
+      if (el) el.textContent = `Draft saved ${lastSavedTime}`;
     } catch (e) {}
   }
+  window.saveToStorage = saveToStorage;
+
+  window.updateField = function (path, value) {
+    if (!path) return;
+    const parts = path.split('.');
+    let curr = state;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!curr[parts[i]]) curr[parts[i]] = {};
+      curr = curr[parts[i]];
+    }
+    curr[parts[parts.length - 1]] = value;
+    saveToStorage();
+    renderPreview();
+  };
 
   // --- Financial Calculation Helpers ---
   function calculateTotals() {
