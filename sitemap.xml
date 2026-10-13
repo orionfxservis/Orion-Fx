@@ -3,11 +3,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-       <loc>https://www.orionfx.net/index.html</loc>
-       <lastmod>2026-09-17T09:08:17+00:00</lastmod>
-       <priority>1.0000</priority>
-  </url>
-  <url>
        <loc>https://www.orionfx.net/pages/projects.html</loc>
        <lastmod>2026-09-17T09:08:17+00:00</lastmod>
        <priority>0.8000</priority>
