@@ -665,7 +665,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({
 
       {/* Footer Branding line */}
       <div className="mt-12 pt-4 border-t border-neutral-200 text-center text-[11px] text-neutral-400">
-        <p>Thank you for your business. Generated securely via OrionFx Invoice SaaS.</p>
+        <p>Thank you for your business. Generated securely via InvoiceCraft by Orion Fx.</p>
       </div>
 
     </div>
