@@ -54,10 +54,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
               <div>
                 <h1 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-neutral-100 tracking-tight leading-tight whitespace-nowrap">
-                  OrionFx Invoice SaaS
+                  InvoiceCraft
                 </h1>
                 <p className="text-[11px] text-slate-500 dark:text-neutral-400 whitespace-nowrap">
-                  Standalone Client-Side POS &amp; Invoicing Platform
+                  Online Invoice Generator by Orion Fx
                 </p>
               </div>
             </button>

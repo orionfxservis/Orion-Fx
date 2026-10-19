@@ -43,7 +43,7 @@ export const NotificationCenterModal: React.FC<NotificationCenterModalProps> = (
       const res = await Notification.requestPermission();
       setPermissionState(res);
       if (res === 'granted') {
-        new Notification('OrionFx Invoice SaaS Alerts Enabled', {
+        new Notification('InvoiceCraft Alerts Enabled', {
           body: 'You will receive reminders for upcoming invoice due dates and recurring cycles.',
           icon: '/favicon.ico',
         });
