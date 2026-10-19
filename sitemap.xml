@@ -19,7 +19,7 @@
   </url>
   <url>
        <loc>https://www.orionfx.net/pages/saas-applications.html</loc>
-       <lastmod>2026-10-15T13:04:17+00:00</lastmod>
+       <lastmod>2026-10-19T20:30:00+00:00</lastmod>
        <priority>0.8000</priority>
   </url>
   <url>
@@ -48,8 +48,23 @@
        <priority>0.8000</priority>
   </url>
   <url>
+       <loc>https://www.orionfx.net/pages/receipt-generator.html</loc>
+       <lastmod>2026-10-19T20:30:00+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://www.orionfx.net/pages/invoicecraft.html</loc>
+       <lastmod>2026-10-19T20:30:00+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
        <loc>https://www.orionfx.net/assets/saas-tools/receipt-generator/index.html</loc>
-       <lastmod>2026-10-15T13:04:17+00:00</lastmod>
+       <lastmod>2026-10-19T20:30:00+00:00</lastmod>
+       <priority>0.6400</priority>
+  </url>
+  <url>
+       <loc>https://www.orionfx.net/assets/saas-tools/invoice-generator/index.html</loc>
+       <lastmod>2026-10-19T20:30:00+00:00</lastmod>
        <priority>0.6400</priority>
   </url>
 </urlset>
